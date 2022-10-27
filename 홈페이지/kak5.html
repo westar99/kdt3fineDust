@@ -5,8 +5,38 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관악구</title>
+    <link rel="stylesheet" href="css/tab.css">
 </head>
 <body>
-    <h3>미세먼지가 많을  때 가볼만 한 관악구</h3>
+    <h3>가볼만 한 관악구</h3>
+    <div class="gallery">
+        <input type="radio" id="street5Btn"name="tabBtn" checked>
+        <label for="street5Btn">신사리거리</label>
+        <input type="radio" id="park5Btn"name="tabBtn"checked>
+        <label for="park5Btn">낙성대공원</label>
+        <input type="radio" id="museum5Btn"name="tabBtn"checked>
+        <label for="museum5Btn">호림박물관</label>
+            <!-- https://place.map.kakao.com/15139364 street5-->
+            <!-- https://place.map.kakao.com/10203930 park5-->
+            <!-- https://place.map.kakao.com/21330649 museum5-->
+        <div class="tabContents">
+            <div id="street5"class="tabContent">
+                <h3>신림사거리</h3>
+                <p>젊은이들의 거리-신림사거리</p>
+                <img src="img/tourPicture/street5.jpg"alt="신림사거리">
+            </div>
+            <div id="park5"class="tabContent">
+                <h3>낙성대공원</h3>
+                <p>관악구에서 태어난 강감찬 장군</p>
+                <img src="img/tourPicture/park5.png"alt="낙성대공원">
+            </div>
+            <div id="museum5"class="tabContent">
+                <h3>호림박물관</h3>
+                <p>작지만 강한 박물관.미세먼지가 많을 때 추천!!</p>
+                <img src="img/tourPicture/museum5.png"alt="호림박물관">
+            </div>
+        </div>
+    </div>
+  
 </body>
 </html>

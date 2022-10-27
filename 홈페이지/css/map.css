@@ -3,12 +3,22 @@ body{
     background-color:rgb(159,214,251);
     position: relative;
 }
+@media screen and (max-width:600px){
+    body{background-color: mediumaquamarine;}
+};
+/* @media screen and (orientation:landscape){
+    body{background-color: rgb(147, 102, 205);}
+}; */
+body1{
+    position: relative;
+}
 .top_nav{
     width:50%;
     left:0;right: 0;margin: 0 auto ;
     padding: 40px;
     text-align: center;
-    min-width: 100px;
+    
+    /* min-width: 90px; */
 }
 li{
     list-style: none;
@@ -35,7 +45,7 @@ li{
     left:0;right: 0;margin: 0 auto ;
     padding:30px;
     bottom: 10px;
-    min-width: 100px;
+    /* min-width: 90px; */
     position: relative;
 }
 .map a:hover img{
@@ -59,7 +69,7 @@ a{text-decoration: none;}
     left:0;right: 0;margin: 0px auto ;
     margin-top: 4%;/* 50px*/
     top:95%;
-    min-width: 100px;
+    /* min-width: 90px; */
     overflow: hidden;
 }
 .news h3{
