@@ -1,34 +1,52 @@
 @charset "utf-8";
 *{padding: 0;margin: 0;}
+body{
+    background-color:rgb(159,214,251);
+    position: relative;
+}
 h3 {
+    color: rgb(61,157,222);
+    font-size: 2vw;/* 25px; */
+    font-weight: 700;
     width:50%;
-    left:0;right: 0;margin: 0 auto ;
-    padding: 10px;
+    margin: 0 auto ;
+    padding: 20px;
     text-align: center;
 }
 .gallery{
-    width: 700px; overflow: hidden;
-    border: 1px solid #ccc;
-    margin: 30px auto;
+    width: 60%; overflow: hidden;
+ 
+    border: 2px solid #ccc;
+    margin: 0px auto;
     background: #ededed;
 
+    max-width: 100%;/* 추가 이미지크기 자동조절*/
+    height: auto;/* 추가 이미지크기 자동조절 auto*/
+    display: block;/* 추가 이미지크기 자동조절*/
+    transition: 0.3s;
 }
 .gallery .tabContents{
     width: 100%; overflow:hidden ;
-    padding: 20px; box-sizing: border-box;
+    padding: 2vw; box-sizing: border-box;
     border-top: 1px solid #ccc;
     background-color: #fff;
+    font-size: 3vw;/* 50px; */
 
 }
 .gallery .tabContents h3{
-    width: 100%; height: 50px;
+    width: 100%; height: 3vw;
+    color: rgb(41,128,185);
+    font-size: 3vw;/* 50px; */
+    padding-left: 0px;
+    font-weight: 900;
 }
 .gallery .tabContents p{
-    width: 100%; height: 30px;
+    width: 100%; height: 30px;/* width: 100%; height: 30px; */
+    font-size: 1.5vw;
 }
 .gallery .tabContents img{
     display: block;
-    width: 100%; height: 600px;
+    width: 100%; height: 600px;    /* height: 600px; 50%*/
     object-fit: cover;
     /* 사이즈를 동일하게 처리 비율고정으로 꽉 채움 */
 }
@@ -42,9 +60,9 @@ h3 {
 }
 .gallery label{
     float: left;/*부모의 왼쪽에 붙여 사이여백없엠.블록요소로 자동변경*/
-    width: 100px; height: 50px;
-    text-align: center; line-height: 50px;
-    font-size: 18px; color: #333;
+    width: 10vw; height: 4vw;/* width: 100px; height: 50px; */
+    text-align: center; line-height: 4vw;/*50px;*/
+    font-size: 1.5vw;/*18px;*/ color: #333;
     cursor:pointer;
 }
 .gallery label:hover{
