@@ -12,30 +12,7 @@ body{
 body1{
     position: relative;
 }
-#iframediv{
-    top:-1100px
-}
-iframe{
-    width: 43%;/* 추가 이미지크기 자동조절 43%*/
-    height: 100%;/* 추가 이미지크기 자동조절600px*/
-    overflow: hidden;/* 추가 이미지크기 자동조절*/
-    left:0;right: 0;margin: 0 auto ;
-   
-    width: 50%;/* 추가 이미지크기 자동조절 43%*/
-    height: 560px;/* 추가 이미지크기 자동조절600px*/
-    overflow: hidden;/* 추가 이미지크기 자동조절*/
- 
-    top: 55px;
-    
-    padding:10px;
-    bottom: 10px; 
-    max-width: 100%;/* 추가 이미지크기 자동조절*/
-    display: block;/* 추가 이미지크기 자동조절*/
-   
-    position: fixed;
-    border: none;
-    text-align: center;
-}
+
 .top_nav{
     width:50%;
     left:0;right: 0;margin: 0 auto ;
@@ -48,29 +25,48 @@ li{
     list-style: none;
 }
 .top_nav title1{
-    
     color: rgb(61,157,222);
     font-size: 2vw;/* 25px; */
     font-weight: 700;
-    
 }
 .top_nav title2{
     color: rgb(41,128,185);
-    font-size: 4vw;/* 50px; */
+    font-size: 3.5vw;/* 50px; */
     text-decoration: underline;
     padding-left: 10px;
     font-weight: 900;
     
 }
+
+#iframediv{
+    
+    position:relative;
+    width: 430px;
+    height: 540px;
+    top:-200px;
+    left: -15px;
+}
+iframe{
+    width: 100%;/* 430px; */
+    height: 100%;/* 550px; */
+    top:-200px;
+    
+    overflow: hidden;
+    position:absolute;
+    border: none;
+    text-align: center;
+    opacity: 0.5;
+}
 .map{
+    top:15vw;
     width: 43%;/* 추가 이미지크기 자동조절 43%*/
-    height: 50%;/* 추가 이미지크기 자동조절600px*/
-    overflow: hidden;/* 추가 이미지크기 자동조절:넘어간건 숨김*/
+    height: 60%;/* 추가 이미지크기 자동조절600px*/
+    overflow: hidden;/* 추가 이미지크기 자동조절*/
     left:0;right: 0;margin: 0 auto ;
     padding:30px;
     bottom: 10px;
     /* min-width: 90px; */
-    position: relative;
+    position: absolute;
 }
 .map a:hover img{
     transform:scale(1.2);
@@ -80,7 +76,7 @@ li{
     height: auto;/* 추가 이미지크기 자동조절*/
     display: block;/* 추가 이미지크기 자동조절*/
     transition: 0.3s;
-    opacity: 0.1;
+    
 }
 a{text-decoration: none;}
 .news{
@@ -92,7 +88,7 @@ a{text-decoration: none;}
     background-color: rgb(230, 228, 245);/* beige*/
     position: absolute;/*more의 위치기준을 news로 하기 위해*/
     left:0;right: 0;margin: 0px auto ;
-    margin-top: 4%;/* 50px*/
+    margin-top: 2%;/* 50px*/
     margin-left: 27%;/* 수동조절이라 마음에 안듬*/
     top:95%;
     /* min-width: 90px; */

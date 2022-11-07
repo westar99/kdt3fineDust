@@ -5,19 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>내일미세먼지현황</title>
-    <link rel="stylesheet" href="css/map1.css" />
+    <link rel="stylesheet" href="css/map2.css" />
 </head>
 <body>
 
     <body1>
     <div class="top_nav">
-        <title1>내일 여행을 계획하고 있는 여행자들을 위한</title1><br>
-        <title2>미세먼지 예측서비스</title2>
+        <title1>서울여행을 계획하는 여행자들을 위한</title1><br>
+        <title2>실시간 미세먼지 확인</title2>
     </div>
-    <div id="iframediv">
-        <iframe src="https://cleanair.seoul.go.kr/main.htm?area=111212&type=pm10" name="iframe" id="iframe" scrolling="no" aligh="middle"> iframe이 있어던 자리 입니다 </iframe>
-    </div>
-	
+
+    
+        <div id="iframediv">
+            <iframe src="https://www.seoul.go.kr/mseoul/eco/air/AirMain.do" frameBorder=1 scrolling="no" ></iframe>
+        </div>
+    
     
 	<div class="map">
         <a href="https://www.airkorea.or.kr/web/">
@@ -53,7 +55,31 @@
             </map>
         </a>
     </div>
-    
+    <div class="news">
+        <h3>미세먼지소식</h3>
+        <a href="#" class="more" title="미세먼지소식 더보기">
+            <img src="img/more1.gif" alt="더보기 아이콘">
+        </a>
+        <ul>
+            <li>
+                <a href="#">이 싸이트 광고 찾아요</a>
+                <span class="date">2022-10-12</span><br>
+            </li>
+            <li>
+                <a href="#">한 번 클릭해주세요</a>
+                <span class="date">2022-10-13</span><br>
+            </li>
+            <li>
+                <a href="#">실내 관광지 추천합니다</a>
+                <span class="date">2022-10-14</span><br>
+            </li>
+            <li>
+                <a href="#">원래 대상은 외국인으로 하려고 했는데 그게 팀원들이 찬성을 안해서 어쩔수 없이 괴롭다</a>
+                <span class="date">2022-10-15</span>
+            </li>
+        </ul>
+        
+    </div>
 </body1>    
 </body>
 </html>
