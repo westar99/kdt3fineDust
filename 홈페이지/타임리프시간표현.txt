@@ -1,0 +1,18 @@
+목표:년도.날자.시간까지만 출력
+
+//<td>${#temporals.format( obj.createdDate, 'yyyy-MM-dd HH:mm' )}</td>
+<td>${#temporals.format( obj.createdDate, 'yyyy-MM-dd HH:mm' )}</td>
+${#temporals.createDate(data.date, 'yyyyMMdd')}
+
+타임리프 표현법
+<td th:text="${#temporals.format( row.createdDate, 'yyyy-MM-dd HH:mm:ss' )}"></td>
+응용
+<td th:text="${#temporals.format( obj.createdDate, 'yyyy-MM-dd HH:mm:ss' )}"></td> 안됨
+기타
+<td><fmt:formatDate pattern="yyyy/MM/dd" value="${obj.createdDate}"/></td>안됨
+
+원 입력된 값(js)
+<td>${obj.createdDate}</td> 
+
+해결값-결국 그냥 스트링으로 뽑아냄
+<td>${obj.createdDate.substring(0,10)}</td>

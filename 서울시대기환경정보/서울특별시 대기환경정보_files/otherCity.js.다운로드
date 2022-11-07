@@ -1,0 +1,520 @@
+
+
+
+		
+
+
+
+(function(window){
+	
+	var _contextPath;
+	if(!CONTEXT_PATH){
+		_contextPath = '/';
+	}else{
+		_contextPath = CONTEXT_PATH;
+	}
+
+	var Api = {
+		api: axios.create({
+			baseURL: _contextPath,
+		}),
+		getOtherAir: function (arg) {
+			axios.all([this.getSubGlobal(arg), this.getSubCapital()])
+				.then(axios.spread(function (global, capital) {
+					OtherCityMap.setSubData(global, capital);
+					OtherCityMap.displaySubMain();
+				}))
+		},
+		getSubGlobal: function (arg) {
+			return this.api.get('sub/global/' + arg);
+		},
+		getSubCapital: function () {
+			return this.api.get('sub/capital');
+		},
+
+	};
+
+
+	var OtherCityMap = {}; // 다른 도시대기질
+	
+	OtherCityMap.Global = {
+		Data: {
+			capital: null,
+			global: null,
+		},
+		HTMLElement: null,
+	};
+	
+	OtherCityMap.get = function(arg){
+		if(!arg) arg = 'pm25';
+		Api.getOtherAir(arg);
+	}
+
+	OtherCityMap.setSubData = function (global, capital) {
+		var type = '';
+		if(typeof CleanMap === 'undefined'){
+			type = 'pm25';
+		}else{
+			type = CleanMap.Global.CurrentAirType;
+		}
+		var airType = type + 'Value';
+//		this.Global.Data.global = global.data.list[0];
+		this.Global.Data.global = global.data.response.body.items[0];
+//		this.Global.Data.capital = capital.data.list;
+		this.Global.Data.capital = capital.data.response.body.items;
+		var seoul = {
+			"cityName": "서울",
+			"dataTime": this.Global.Data.global.dataTime,
+		};
+		var incheon = {
+			"cityName": "인천",
+			"dataTime": this.Global.Data.global.dataTime,
+		}
+
+		seoul[airType] = this.Global.Data.global.seoul;
+		incheon[airType] = this.Global.Data.global.incheon;
+		this.Global.Data.capital.push(seoul)
+		this.Global.Data.capital.push(incheon)
+	};
+
+	OtherCityMap.openSubMap = function () {
+		var subElement = this.Global.HTMLElement.otherCity;
+		var popWrap = subElement.children[0];
+		var display = window.getComputedStyle(subElement).display;
+		if (display === 'none') {
+			subElement.style.display = 'flex';
+			popWrap.tabIndex = '0';
+			if ( !mobileCheck2() )
+				popWrap.focus();
+			return true;
+		} else {
+			subElement.style.display = 'none';
+			popWrap.removeAttribute('tabIndex');
+			return false;
+		}
+	};
+
+	OtherCityMap.setDomElement = function (obj) {
+		if (!obj) {
+			console.log('setDomElement() is not called');
+			return;
+		}
+		for (var i in obj) {
+			if (!obj[i]) {
+				console.error(i + ' Element is undefined');
+			}
+		}
+		this.Global.HTMLElement = obj;
+		this.initEvent(obj);
+	};
+
+	OtherCityMap.initEvent = function (obj) {
+		obj.capitalBtn.addEventListener('click', this.onToggle);
+		obj.globalBtn.addEventListener('click', this.onToggle);
+	};
+
+	OtherCityMap.onToggle = function (event) {
+		var capitalBtn = OtherCityMap.Global.HTMLElement.capitalBtn;
+		var globalBtn = OtherCityMap.Global.HTMLElement.globalBtn;
+
+		event.target.title = "선택됨";
+		
+		if(event.target == capitalBtn) 
+			globalBtn.removeAttribute("title");
+		else if(event.target == globalBtn) 
+			capitalBtn.removeAttribute("title");
+		
+		if ( this.id == "globalBtn" ) {
+			document.getElementById('otherlegendOnOff').style.display = "inline-block";
+			document.getElementById('otherlegendOnOff').style.visibility = "visible";
+		}
+		if ( this.id == "capitalBtn" ) {
+			document.getElementById('otherlegendOnOff').style.display = "none";
+			document.getElementById('otherlegendOnOff').style.visibility = "hidden";
+		}
+		
+		if ( this.id == "globalBtn" && globalBtn.className == "on" ) {
+			return;
+		}
+		if ( this.id == "capitalBtn" && capitalBtn.className == "on" ) {
+			document.getElementById('otherlegendOnOff').style.display = "none";
+			document.getElementById('otherlegendOnOff').style.visibility = "hidden";
+			return;
+		}
+		
+		globalBtn.classList.toggle('on');
+		capitalBtn.classList.toggle('on');
+	};
+	
+	OtherCityMap.setColor = function(obj, value) {
+		obj.parentElement.style.background = value;
+	};
+
+	OtherCityMap.displaySubMain = function () {
+		
+		var type = '';
+		if(typeof CleanMap === 'undefined'){
+			type = 'pm25';
+		}else{
+			type = CleanMap.Global.CurrentAirType;
+		}
+
+		var calculated = UtilsOther.common(type);
+		
+		var airType = type + 'Value';
+//		console.warn('---- displaySub --- airType : ' + airType);
+		
+		var htmlElement = OtherCityMap.Global.HTMLElement;
+
+		var globalData = OtherCityMap.Global.Data.global;
+		htmlElement._gyeonggi.innerHTML = globalData.gyeonggi || '점검';
+		OtherCityMap.setColor(htmlElement._gyeonggi, calculated(globalData.gyeonggi).color);
+		htmlElement._gangwon.innerHTML = globalData.gangwon || '점검';
+		OtherCityMap.setColor(htmlElement._gangwon, calculated(globalData.gangwon).color);
+		htmlElement._chungbuk.innerHTML = globalData.chungbuk || '점검';
+		OtherCityMap.setColor(htmlElement._chungbuk, calculated(globalData.chungbuk).color);
+		htmlElement._chungnam.innerHTML = globalData.chungnam || '점검';
+		OtherCityMap.setColor(htmlElement._chungnam, calculated(globalData.chungnam).color);
+		htmlElement._jeonbuk.innerHTML = globalData.jeonbuk || '점검';
+		OtherCityMap.setColor(htmlElement._jeonbuk, calculated(globalData.jeonbuk).color);
+		htmlElement._jeonnam.innerHTML = globalData.jeonnam || '점검';
+		OtherCityMap.setColor(htmlElement._jeonnam, calculated(globalData.jeonnam).color);
+		htmlElement._gyeongbuk.innerHTML = globalData.gyeongbuk || '점검';
+		OtherCityMap.setColor(htmlElement._gyeongbuk, calculated(globalData.gyeongbuk).color);
+		htmlElement._gyeongnam.innerHTML = globalData.gyeongnam || '점검';
+		OtherCityMap.setColor(htmlElement._gyeongnam, calculated(globalData.gyeongnam).color);
+		htmlElement._jeju.innerHTML = globalData.jeju || '점검';
+		OtherCityMap.setColor(htmlElement._jeju, calculated(globalData.jeju).color);
+
+		htmlElement._incheon.innerHTML = globalData.incheon || '점검';
+		OtherCityMap.setColor(htmlElement._incheon, calculated(globalData.incheon).color);
+		htmlElement._daegu.innerHTML = globalData.daegu || '점검';
+		OtherCityMap.setColor(htmlElement._daegu, calculated(globalData.daegu).color);
+		htmlElement._daejeon.innerHTML = globalData.daejeon || '점검';
+		OtherCityMap.setColor(htmlElement._daejeon, calculated(globalData.daejeon).color);
+		htmlElement._gwangju.innerHTML = globalData.gwangju || '점검';
+		OtherCityMap.setColor(htmlElement._gwangju, calculated(globalData.gwangju).color);
+		htmlElement._sejong.innerHTML = globalData.sejong || '점검';
+		OtherCityMap.setColor(htmlElement._sejong, calculated(globalData.sejong).color);
+		htmlElement._seoul.innerHTML = globalData.seoul || '점검';
+		OtherCityMap.setColor(htmlElement._seoul, calculated(globalData.seoul).color);
+		htmlElement._ulsan.innerHTML = globalData.ulsan || '점검';
+		OtherCityMap.setColor(htmlElement._ulsan, calculated(globalData.ulsan).color);
+		htmlElement._busan.innerHTML = globalData.busan || '점검';
+		OtherCityMap.setColor(htmlElement._busan, calculated(globalData.busan).color);
+
+		var capitalData = OtherCityMap.Global.Data.capital;
+		if(!capitalData) return;
+		
+		
+		var obj = {};
+		
+		capitalData.forEach(function (i){
+			obj[i.districtNumSeq] = {};
+			obj[i.districtNumSeq][airType] = i[airType];
+		});
+
+		// obj[districtNumSeq][airType]
+		htmlElement.GapyeongGun.innerHTML = obj['001'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.GapyeongGun, calculated(obj['001'][airType]).color);
+		htmlElement.GoyangSi.innerHTML = obj['002'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.GoyangSi, calculated(obj['002'][airType]).color);
+		htmlElement.GwacheonSi.innerHTML = obj['003'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.GwacheonSi, calculated(obj['003'][airType]).color);
+		htmlElement.GwangmyeongSi.innerHTML = obj['004'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.GwangmyeongSi, calculated(obj['004'][airType]).color);
+		htmlElement.GwangjuSi.innerHTML = obj['005'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.GwangjuSi, calculated(obj['005'][airType]).color);
+		htmlElement.GuriSi.innerHTML = obj['006'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.GuriSi, calculated(obj['006'][airType]).color);
+		htmlElement.GunpoSi.innerHTML = obj['007'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.GunpoSi, calculated(obj['007'][airType]).color);
+		htmlElement.GimpoSi.innerHTML = obj['008'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.GimpoSi, calculated(obj['008'][airType]).color);
+		htmlElement.NamnyangjuSi.innerHTML = obj['009'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.NamnyangjuSi, calculated(obj['009'][airType]).color);
+		htmlElement.DongducheonSi.innerHTML = obj['010'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.DongducheonSi, calculated(obj['010'][airType]).color);
+		htmlElement.BucheonSi.innerHTML = obj['011'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.BucheonSi, calculated(obj['011'][airType]).color);
+		htmlElement.SeongnamSi.innerHTML = obj['012'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.SeongnamSi, calculated(obj['012'][airType]).color);
+		htmlElement.SuwonSi.innerHTML = obj['013'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.SuwonSi, calculated(obj['013'][airType]).color);
+		htmlElement.SiheungSi.innerHTML = obj['014'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.SiheungSi, calculated(obj['014'][airType]).color);
+		htmlElement.AnsanSi.innerHTML = obj['015'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.AnsanSi, calculated(obj['015'][airType]).color);
+		htmlElement.AnsungSi.innerHTML = obj['016'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.AnsungSi, calculated(obj['016'][airType]).color);
+		htmlElement.AnyangSi.innerHTML = obj['017'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.AnyangSi, calculated(obj['017'][airType]).color);
+		htmlElement.YangjuSi.innerHTML = obj['018'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.YangjuSi, calculated(obj['018'][airType]).color);
+		htmlElement.YangpyeongGun.innerHTML = obj['019'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.YangpyeongGun, calculated(obj['019'][airType]).color);
+		htmlElement.YeojuGun.innerHTML = obj['020'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.YeojuGun, calculated(obj['020'][airType]).color);
+		htmlElement.YeoncheonGun.innerHTML = obj['021'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.YeoncheonGun, calculated(obj['021'][airType]).color);
+		htmlElement.OsanSi.innerHTML = obj['022'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.OsanSi, calculated(obj['022'][airType]).color);
+		htmlElement.YonginSi.innerHTML = obj['023'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.YonginSi, calculated(obj['023'][airType]).color);
+		htmlElement.UiwangSi.innerHTML = obj['024'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.UiwangSi, calculated(obj['024'][airType]).color);
+		htmlElement.UijeongbuSi.innerHTML = obj['025'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.UijeongbuSi, calculated(obj['025'][airType]).color);
+		htmlElement.IcheonSi.innerHTML = obj['026'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.IcheonSi, calculated(obj['026'][airType]).color);
+		htmlElement.PajuSi.innerHTML = obj['027'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.PajuSi, calculated(obj['027'][airType]).color);
+		htmlElement.PyeongtaekSi.innerHTML = obj['028'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.PyeongtaekSi, calculated(obj['028'][airType]).color);
+		htmlElement.PocheonSi.innerHTML = obj['029'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.PocheonSi, calculated(obj['029'][airType]).color);
+		htmlElement.HanamSi.innerHTML = obj['030'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.HanamSi, calculated(obj['030'][airType]).color);
+		htmlElement.HwaseongSi.innerHTML = obj['040'][airType] || '점검';
+		OtherCityMap.setColor(htmlElement.HwaseongSi, calculated(obj['040'][airType]).color);
+		htmlElement.Incheon.innerHTML = globalData.incheon || '점검';
+		OtherCityMap.setColor(htmlElement.Incheon, calculated(globalData.incheon).color);
+		htmlElement.Seoul.innerHTML = globalData.seoul || '점검';
+		OtherCityMap.setColor(htmlElement.Seoul, calculated(globalData.seoul).color);
+		
+//		htmlElement.otherlegendTime.innerHTML = "기준일시 : " + UtilsOther.formattingDate(globalData.dataTime) || '';
+		htmlElement.otherlegendTime.innerHTML = "" + UtilsOther.formattingDate(globalData.dataTime) || ''; 
+
+	};
+	
+	if (typeof window.OtherCityMap === 'undefined' && !window.OtherCityMap) {
+		window.OtherCityMap = OtherCityMap;
+	};
+	
+	
+	
+	var UtilsOther = {
+			GLOBAL: {
+				ERROR: { text: '점검', color: '#717b84', command:'error', },
+				GOOD: { text: '좋음', color: '#5c8cdd', command:'good', },
+				NORMAL: { text: '보통', color: '#65b24b', command:'normal', },
+				BAD: { text: '나쁨', color: '#e2d058', command:'bad', },
+				FETAL: { text: '매우 나쁨', color: '#ec7a7a', command:'fetal' },
+			},
+			common : function (airType) {
+				return function (value) {
+					if ( value == "" ) {
+						return UtilsOther.fineDustColor("");
+					}
+					if (airType === 'pm10') {
+						return UtilsOther.dustColor(parseFloat(value));
+					} else if (airType === 'pm25') {
+						return UtilsOther.fineDustColor(parseFloat(value));
+					} else if (airType === 'o3') {
+						return UtilsOther.ozoneColor(parseFloat(value));
+					} else if (airType === 'no2') {
+						return UtilsOther.no2Color(parseFloat(value));
+					} else if (airType === 'so2') {
+						return UtilsOther.so2Color(parseFloat(value));
+					} else if (airType === 'co') {
+						return UtilsOther.coColor(parseFloat(value));
+					}
+				}
+			},
+			fineDustColor: function (value) {
+				/*
+				* 
+				초미세먼지 (PM-2.5)
+				① 좋음 0~15 
+				② 보통 16~35 
+				③ 나쁨 36~75 
+				④ 매우나쁨 76~
+				*/
+				if(this.isInvalid(value)) return this.GLOBAL.ERROR;
+
+				if (value >= 0 && value <= 15) return this.GLOBAL.GOOD;
+				else if (value > 15 && value <= 35) return this.GLOBAL.NORMAL;
+				else if (value > 35 && value <= 75) return this.GLOBAL.BAD;
+				else if (value > 75) return this.GLOBAL.FETAL;
+			},
+			dustColor: function (value) {
+				/*
+				* 미세먼지 (PM-10)
+				① 좋음 0~30 
+				② 보통 31~80 
+				③ 나쁨 81~150 
+				④ 매우나쁨 151~
+				*/
+				if(this.isInvalid(value)) return this.GLOBAL.ERROR;
+
+				if (value >= 0 && value <= 30) return this.GLOBAL.GOOD;
+				else if (value > 30 && value <= 80) return this.GLOBAL.NORMAL;
+				else if (value > 80 && value <= 150) return this.GLOBAL.BAD;
+				else if (value > 150) return this.GLOBAL.FETAL;
+			},
+			ozoneColor: function (value) {
+				/*
+				* 오존 (o3)
+				① 좋음 0~0.03 
+				② 보통 0.031~0.09 
+				③ 나쁨 0.091~0.15 
+				④ 매우나쁨 0.151~
+				*/
+				if(this.isInvalid(value)) return this.GLOBAL.ERROR;
+				
+				if (value >= 0 && value <= 0.03) return this.GLOBAL.GOOD;
+				else if (value > 0.03 && value <= 0.09) return this.GLOBAL.NORMAL;
+				else if (value > 0.09 && value <= 0.15) return this.GLOBAL.BAD;
+				else if (value >= 0.151) return this.GLOBAL.FETAL;
+			},
+			no2Color: function(value){
+				if(this.isInvalid(value.no2)) return this.GLOBAL.ERROR;
+				
+				if (value.no2 >= 0 && value.no2 <= 0.030) return this.GLOBAL.GOOD;
+				else if (value.no2 <= 0.060) return this.GLOBAL.NORMAL;
+				else if (value.no2 <= 0.20) return this.GLOBAL.BAD;
+				else if (value.no2 >= 0.201) return this.GLOBAL.FETAL;
+			},
+			coColor: function(value){
+				if(this.isInvalid(value.co)) return this.GLOBAL.ERROR;
+
+				if (value.co >= 0 && value.co <= 2) return this.GLOBAL.GOOD;
+				else if (value.co <= 9) return this.GLOBAL.NORMAL;
+				else if (value.co <= 15) return this.GLOBAL.BAD;
+				else if (value.co >= 15.01) return this.GLOBAL.FETAL;
+			},
+			so2Color: function(value){
+				if(this.isInvalid(value.so2)) return this.GLOBAL.ERROR;
+
+				if (value.so2 >= 0 && value.so2 <= 0.02) return this.GLOBAL.GOOD;
+				else if (value.so2 <= 0.05) return this.GLOBAL.NORMAL;
+				else if (value.so2 <= 0.15) return this.GLOBAL.BAD;
+				else if (value.so2 >= 0.15) return this.GLOBAL.FETAL;
+			},
+			isInvalid: function (value){
+				if ( value == "" ) return true;
+				if(typeof value !== 'number') return true;
+				if(typeof value === 'undefined' && 
+				!value) return true;
+				if (value < 0) return true;
+				return false;
+			},
+			whereIs: function (userPos)/* 좌표를 구 코드로 변환 */ {
+				if (!userPos) userPos = [37.5670364, 126.9769381]; // 중구
+
+				for (var i = 0; i < REGION_INFO.length; ++i) {
+					if (this.isInside(userPos, REGION_INFO[i].geo[0])) {
+
+						return REGION_INFO[i].msradmCd;
+					}
+				}
+				return REGION_INFO[24].msradmCd;
+			},
+			isInside: function (userPos, vs) {
+				/* userPos(사용자좌표)가 좌표(vs)내에 존재하는지 */
+
+				// https://github.com/substack/point-in-polygon , MIT
+				// ray-casting algorithm based on
+
+				var x = userPos[0], y = userPos[1];
+
+				var inside = false;
+				for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+					var xi = vs[i][0], yi = vs[i][1];
+					var xj = vs[j][0], yj = vs[j][1];
+
+					var intersect = ((yi > y) != (yj > y))
+						&& (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+					if (intersect) inside = !inside;
+				}
+
+				return inside;
+			},
+			getGlobalCode: function (regionCode)/* 자치구코드로 권역코드 얻기 */ {
+				if (!regionCode) return;
+				var found = '';
+				GLOBAL_INFO.forEach(function (i) {
+					i.child.forEach(function (childCode) {
+						if (regionCode === childCode) return found = i.msradmCd;
+					})
+				});
+
+				return found;
+			},
+			getAverage: function (data) {
+				return this.average(this.Global.CurrentAirType)(data);
+			},
+			average: function (type) {
+				return function (data) {
+					if (!data) return -1;
+					var result = 0;
+//					var size = data.length;
+					var size = 0;
+					data.forEach(function (i) {
+						result += i[type] || 0;
+						if ( i[type] != null ) size++;
+					})
+					result = result / size;
+					if (result < 0) return -1;
+					result = result.toFixed(3) - 0;
+					var obj = {};
+					obj[type] = result;
+					return obj[type];
+				}
+			},
+			seoulAvgStatus: function (airType) {
+				return function (_value) {
+					var obj = {};
+					obj[airType] = _value;
+					return UtilsOther.common(airType)(obj);
+				}
+			},
+			formattingDate: function (arg) {
+				arg = arg + '';
+				var result = '';
+				result += arg.substr(0, 4) + '년 ';
+				result += arg.substr(5, 2) + '월 ';
+				result += arg.substr(8, 2) + '일 ';
+				result += arg.substr(11, 2) + '시';
+				return result;
+			},
+			convertAirTypeKor: function(arg){
+				if(arg === 'pm10'){
+					return '미세먼지';
+				}else if(arg === 'pm25'){
+					return '초미세먼지';
+				}else if(arg === 'o3'){
+					return '오존';
+				}else{
+					console.error('unexpected argument');
+					return '';
+				}
+			},
+			convertStationCode: function(arg){
+				// TB_OP_MSRNTW 의 MSRNTW_CD로 변경
+				if(arg === 'ROAD'){
+					return 'B';
+				}else if(arg === 'BORDER'){
+					return 'G';
+				}else if(arg === 'DIMEN'){
+					return 'H';
+				}else if(arg === 'CITY'){
+					return 'A';
+				}
+			},
+			getKorName: function(code, layerInfo){
+				var korName = '중구';
+				layerInfo.forEach(function(i){
+					if(i.msradmCd === code){
+						korName = i.korName;
+					}
+				})
+				return korName;
+			},
+
+		};
+	
+})(window);
+
+
+

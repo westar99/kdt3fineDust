@@ -1,0 +1,17 @@
+$(function(){
+   //tabs width
+  $(".tabs ul").each(function(){
+        var col = $(this).attr("col");     
+  })
+
+  $(".icon-fav").click(function(e){
+        e.preventDefault();
+        $(this).toggleClass("on");
+        if($(this).hasClass("on")){
+              $(this).text("선택됨");
+        } else{
+            $(this).text("선택안됨");
+        }
+  })
+
+});

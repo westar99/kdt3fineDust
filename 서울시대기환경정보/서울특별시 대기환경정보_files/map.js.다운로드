@@ -1,0 +1,2680 @@
+
+/*
+   상속 관계
+   - Api : 단독
+   - Utils -> CleanMap -> CleanMapDOM
+
+   외부 라이브러리
+   - axios,
+   - axios를 사용하기 위한 promise polyfill
+   
+   
+   README 
+   - CleanMap.Global.IsMobile 을 if문 타는 것들,
+	 CleanMap.mobileMarkerEvent, enableMobileStyle 함수등은
+	  모바일에서만 marker를 찍기 위한 것들으로써 삭제해도 됨.
+*/
+
+		
+
+(function (window) {
+
+	'use strict'
+
+	var _contextPath;
+	if(typeof CONTEXT_PATH === 'undefined'){
+		_contextPath = 'https://cleanair.seoul.go.kr';
+	}else{
+		_contextPath = CONTEXT_PATH;
+	}
+	
+	var MAP_LEVEL = {
+		whole: 5, part: 7,
+	}
+
+	var msie = window.navigator.userAgent.indexOf("MSIE");
+	
+	var timer;
+
+
+	var Api = {
+		api: axios.create({
+			baseURL: _contextPath,
+		}),
+		getRegionDataFromServer: function () {
+			return this.api.get('current/region/A').then(function (res) {
+				CleanMap.setDatas(res.data, 'region');
+				CleanMap.drawLayer(REGION_INFO);
+				CleanMap.setAirInfoBox();
+				CleanMap.setSeoulAverage();
+				CleanMap.setLock(false);
+			});
+		},
+		getGlobalDataFromServer: function () {
+			return this.api.get('current/global').then(function (res) {
+				CleanMap.setDatas(res.data, 'global');
+				CleanMap.drawLayer(GLOBAL_INFO, REGION_INFO);
+				
+				CleanMap.setAirInfoBox();
+				CleanMap.setSeoulAverage();
+				CleanMap.setLock(false);
+			});
+		},
+		getStationDataFromServer: function (stationType) {
+			var param = Utils.convertStationCode(stationType);
+			
+			var getStationDataHandler = function (res) {
+				if(res)
+					CleanMap.Global.Datas.station[stationType] = res.data;
+				//간이 측정소 배열에 시간별 오염도 데이터도 들어있음.
+				//오염도 데이터를 별도로 분리할 경우, 측정소 배열과 데이터 배열의 요소를 비교할 때 측정소가 너무 많아서 비효율적임
+				else
+					CleanMap.Global.Datas.station[stationType] = STATION_SIMPLE_INFO;
+					
+				CleanMap.drawStation(stationType);
+				CleanMap.setLock(false);
+			}
+
+			if(stationType === "SIMPLE"){
+				return getStationDataHandler();
+			}
+			else	
+				return this.api.get('current/region/' + param).then(getStationDataHandler);
+			
+		},
+		getLastModified: function () {
+			return this.api.get('current/last-modified');
+		},
+		getMaxDateofSimple : function(handler){
+			return this.api.get('airquality/getSimpleAirPollutantInfoWithAvgMaxTime').then(function(result){
+				if(result.data)
+					handler(result.data);
+			});
+		},
+		updateMainInformation: function () {// 비상저감조치, 대기오염 주의보/경보, 대기오염예보, 공지사항
+			return this.api.get('main/information').then(function (res) {
+				CleanMapDOM.setInformationBox(res.data);
+				console.log(res.data);	//main/information 요청 데이터
+				
+				var ozoneAlertStatus =  res.data.airForecast[2].content.alertstep;
+				
+				if(ozoneAlertStatus && ozoneAlertStatus !== "없음"){
+					Api.getLatestWarningInfo("o3").then(function(warningInfo){
+						if(warningInfo.data){
+							CleanMapDOM.setOzoneStatusByRegion(warningInfo.data);
+						}
+					});
+				}
+				
+				CleanMap.setLock(false);
+			});
+		},
+		init: function(geoCode){
+			axios.all([this.getLastModified(),  this.api.get('current/region/A')])
+				.then(axios.spread(function(lastModified, region){
+					CleanMap.Global.Datas.LastModified = lastModified.data;	//TODO DB에서 가져오는데 문제 생기면 수정해야함
+					console.warn('init updated LastModified : ' + Utils.formattingDate(CleanMap.Global.Datas.LastModified));
+					CleanMap.setDatas(region.data, 'region');
+					CleanMap.drawLayer(REGION_INFO);
+					CleanMap.setAirInfoBox();
+					CleanMap.setSeoulAverage();
+				}));
+			
+			if(STATION_SIMPLE_INFO.length === 0 && !Api.isGettingSimpleStations){
+				Api.isGettingSimpleStations = true;
+				
+				var getMaxHandler = function(res){
+					if(res && res.msrdt){
+						var maxDt = res.msrdt;
+						CleanMap.Global.Datas.MaxDateOfSimple = maxDt;
+						
+						//'airquality/getSimpleAirPollutantInfo?mode=hour&station=Y'
+						//_contextPath + '/code/getSimpleStations', {params: {"lGroup" : "I"}}
+						//_contextPath + '/airquality/getSimpleAirPollutantInfo', {params: {"mode" : "hour", "station" : "Y", "dateTime" : "202008251000"}}
+						
+						Api.api.get('airquality/getSimpleAirPollutantInfo', {params: {"mode" : "hour", "station" : "Y", "dateTime" : maxDt}})
+						.then(function(res){
+							if(res.data.length > 0) {
+								STATION_SIMPLE_INFO = res.data;
+								
+//								console.log(res.data);
+								
+							}
+							Api.isGettingSimpleStations = false;
+						});
+						
+					}
+				};
+				
+				Api.getMaxDateofSimple(getMaxHandler);
+			}
+
+		},
+		getOtherAir: function (arg) {
+			axios.all([this.getSubGlobal(arg), this.getSubCapital()])
+				.then(axios.spread(function (global, capital) {
+					OtherCityMap.setSubData(global, capital);
+					OtherCityMap.displaySubMain();
+					CleanMap.setLock(false);
+				}));
+		},
+		getSubGlobal: function (arg) {
+			return this.api.get('sub/global/' + arg);
+		},
+		getSubCapital: function () {
+			return this.api.get('sub/capital');
+		},
+		getPopupList: function(){
+			return this.api.get('main/popupList').then(CleanMapDOM.openMainPopup);
+		},
+		
+		getLatestWarningInfo: function(pollutant){
+			return this.api.get('forecast/getLatestWarningInfo', {
+				"params": {
+					"pollutant" : pollutant
+				}
+			});
+		},
+		
+		isGettingSimpleStations: false,
+
+	};
+
+	var Utils = {
+		GLOBAL: {
+			ERROR: { text: '점검중', color: '#717b84', command:'error', },
+			GOOD: { text: '좋음', color: '#5c8cdd', command:'good', },
+			NORMAL: { text: '보통', color: '#65b24b', command:'normal', },
+			BAD: { text: '나쁨', color: '#e2d058', command:'bad', },
+			FETAL: { text: '매우나쁨', color: '#ec7a7a', command:'fetal' },
+		},
+		common : function (airType) {
+			return function (value) {
+				if (airType === 'pm10') {
+					return Utils.dustColor(value);
+				} else if (airType === 'pm25') {
+					return Utils.fineDustColor(value);
+				} else if (airType === 'o3') {
+					return Utils.ozoneColor(value);
+				} else if (airType === 'no2') {
+					return Utils.no2Color(value);
+				} else if (airType === 'so2') {
+					return Utils.so2Color(value);
+				} else if (airType === 'co') {
+					return Utils.coColor(value);
+				}
+			}
+		},
+		fineDustColor: function (value) {
+			/*
+			* 
+			초미세먼지 (PM-2.5)
+			① 좋음 0~15 
+			② 보통 16~35 
+			③ 나쁨 36~75 
+			④ 매우나쁨 76~
+			*/
+			if(this.isInvalid(value.pm25)) return this.GLOBAL.ERROR;
+			
+			value.pm25 = Math.round(value.pm25);
+
+			if (value.pm25 >= 0 && value.pm25 < 16) return this.GLOBAL.GOOD;
+			else if (value.pm25 >= 16 && value.pm25 < 36) return this.GLOBAL.NORMAL;
+			else if (value.pm25 >= 36 && value.pm25 < 76) return this.GLOBAL.BAD;
+			else if (value.pm25 >= 76) return this.GLOBAL.FETAL;
+		},
+		dustColor: function (value) {
+			/*
+			* 미세먼지 (PM-10)
+			① 좋음 0~30 
+			② 보통 31~80 
+			③ 나쁨 81~150 
+			④ 매우나쁨 151~
+			*/
+			if(this.isInvalid(value.pm10)) return this.GLOBAL.ERROR;
+
+			value.pm10 = Math.round(value.pm10);
+
+			if (value.pm10 >= 0 && value.pm10 < 31) return this.GLOBAL.GOOD;
+			else if (value.pm10 >= 31 && value.pm10 < 81) return this.GLOBAL.NORMAL;
+			else if (value.pm10 >= 81 && value.pm10 < 151) return this.GLOBAL.BAD;
+			else if (value.pm10 >= 151) return this.GLOBAL.FETAL;
+		},
+		ozoneColor: function (value) {
+			/*
+			* 오존 (o3)
+			① 좋음 0~0.03 
+			② 보통 0.031~0.09 
+			③ 나쁨 0.091~0.15 
+			④ 매우나쁨 0.151~
+			*/
+			if(this.isInvalid(value.o3)) return this.GLOBAL.ERROR;
+
+			value.o3 = Math.round(value.o3 * 1000) / 1000;
+			
+			if (value.o3 >= 0 && value.o3 < 0.031) return this.GLOBAL.GOOD;
+			else if (value.o3 >= 0.031 && value.o3 < 0.091) return this.GLOBAL.NORMAL;
+			else if (value.o3 >= 0.091 && value.o3 < 0.151) return this.GLOBAL.BAD;
+			else if (value.o3 >= 0.151) return this.GLOBAL.FETAL;
+		},
+		no2Color: function(value){
+			if(this.isInvalid(value.no2)) return this.GLOBAL.ERROR;
+
+			value.no2 = Math.round(value.no2 * 1000) / 1000;
+			
+			if (value.no2 >= 0 && value.no2 < 0.031) return this.GLOBAL.GOOD;
+			else if (value.no2 >= 0.031 && value.no2 < 0.061) return this.GLOBAL.NORMAL;
+			else if (value.no2 >= 0.061 && value.no2 < 0.201) return this.GLOBAL.BAD;
+			else if (value.no2 >= 0.201) return this.GLOBAL.FETAL;
+		},
+		coColor: function(value){
+			if(this.isInvalid(value.co)) return this.GLOBAL.ERROR;
+			
+			value.co = Math.round(value.co * 100) / 100;
+
+			if (value.co >= 0 && value.co < 2.01) return this.GLOBAL.GOOD;
+			else if (value.co >= 2.01 && value.co < 9.01) return this.GLOBAL.NORMAL;
+			else if (value.co >= 9.01 && value.co < 15.01) return this.GLOBAL.BAD;
+			else if (value.co >= 15.01) return this.GLOBAL.FETAL;
+		},
+		so2Color: function(value){
+			if(this.isInvalid(value.so2)) return this.GLOBAL.ERROR;
+			
+			value.so2 = Math.round(value.so2 * 1000) / 1000;
+
+			if (value.so2 >= 0 && value.so2 < 0.021) return this.GLOBAL.GOOD;
+			else if (value.so2 >= 0.021 && value.so2 < 0.051) return this.GLOBAL.NORMAL;
+			else if (value.so2 >= 0.051 && value.so2 < 0.151) return this.GLOBAL.BAD;
+			else if (value.so2 >= 0.151) return this.GLOBAL.FETAL;
+		},
+		isInvalid: function (value){
+			if(typeof value !== 'number') return true;
+			if(typeof value === 'undefined' && 
+			!value) return true;
+			if (value < 0) return true;
+			return false;
+		},
+		whereIs: function (userPos)/* 좌표를 구 코드로 변환 */ {
+			if (!userPos) userPos = [37.5670364, 126.9769381]; // 중구
+
+			for (var i = 0; i < REGION_INFO.length; ++i) {
+				if (this.isInside(userPos, REGION_INFO[i].geo[0])) {
+
+					return REGION_INFO[i].msradmCd;
+				}
+			}
+			return REGION_INFO[24].msradmCd;
+		},
+		isInside: function (userPos, vs) {
+			/* userPos(사용자좌표)가 좌표(vs)내에 존재하는지 */
+
+			// https://github.com/substack/point-in-polygon , MIT
+			// ray-casting algorithm based on
+
+			var x = userPos[0], y = userPos[1];
+
+			var inside = false;
+			for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+				var xi = vs[i][0], yi = vs[i][1];
+				var xj = vs[j][0], yj = vs[j][1];
+
+				var intersect = ((yi > y) != (yj > y))
+					&& (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+				if (intersect) inside = !inside;
+			}
+
+			return inside;
+		},
+		getGlobalCode: function (regionCode)/* 자치구코드로 권역코드 얻기 */ {
+			if (!regionCode) return;
+			var found = '';
+			GLOBAL_INFO.forEach(function (i) {
+				i.child.forEach(function (childCode) {
+					if (regionCode === childCode) return found = i.msradmCd;
+				})
+			});
+
+			return found;
+		},
+		getAverage: function (data) {
+			return this.average(this.Global.CurrentAirType)(data);
+		},
+		average: function (type) {
+			return function (data) {
+				if (!data) return -1;
+				var result = 0;
+//				var size = data.length;
+				var size = 0;
+				data.forEach(function (i) {
+					result += i[type] || 0;
+					if ( i[type] != null ) size++;
+				})
+				result = result / size;
+				if (result < 0) return -1;
+				result = result.toFixed(3) - 0;
+				var obj = {};
+				obj[type] = result;
+				return obj[type];
+			}
+		},
+		seoulAvgStatus: function (airType) {
+			return function (_value) {
+				var obj = {};
+				obj[airType] = _value;
+				return Utils.common(airType)(obj);
+			}
+		},
+		formattingDate: function (arg) {
+			arg = arg + '';
+			var result = '';
+			result += arg.substr(0, 4) + '년 ';
+			result += arg.substr(4, 2) + '월 ';
+			result += arg.substr(6, 2) + '일 ';
+			result += arg.substr(8, 2) + '시';
+			return result;
+		},
+		convertAirTypeKor: function(arg){
+			if(arg === 'pm10'){
+				return '미세먼지';
+			}else if(arg === 'pm25'){
+				return '초미세먼지';
+			}else if(arg === 'o3'){
+				return '오존';
+			}else{
+				console.error('unexpected argument');
+				return '';
+			}
+		},
+		convertStationCode: function(arg){
+			// TB_OP_MSRNTW 의 MSRNTW_CD로 변경
+			if(arg === 'ROAD'){
+				return 'B';
+			}else if(arg === 'BORDER'){
+				return 'G';
+			}else if(arg === 'DIMEN'){
+				return 'H';
+			}else if(arg === 'CITY'){
+				return 'A';
+			}
+		},
+		getKorName: function(code, layerInfo){
+			var korName = '중구';
+			layerInfo.forEach(function(i){
+				if(i.msradmCd === code){
+					korName = i.korName;
+				}
+			})
+			return korName;
+		},
+
+	};
+
+	var CleanMap = Object.create(Utils);
+
+	CleanMap.Global = {
+		PolyLayer: new Map(), // 그려지는 모든 Layer(자치구,권역등등)
+		NameMarker: new Map(), // 자치구/권역 이름 마커
+		AlertMarker: new Map(), // 오존 주의보/경보 마커
+		PoiMarker: {},  // 측정망 Poi
+		BoundaryLayer: [], // 서울 내/외 경계 Layer
+		Datas: {
+			LastModified: moment(new Date()).format("YYYYMMDDHH00"), //default date 202002270900 
+			MaxDateOfSimple: null,	//간이측정망 최근 데이터의 날짜
+			region: {
+				data: null,
+			},
+			global: {
+				data: null,
+			},
+			station:{
+				ROAD: null, BORDER: null, DIMEN: null, CITY: null, DISPLAY: STATION_DISPLAY_INFO, SIMPLE: null
+			},
+		},
+		SelectedAreaCode: REGION_INFO[24].msradmCd, // 현재 선택된 구(기본:중구)
+		CurrentAirType: 'pm25', // 기본 대기질(초미세 - 겨울에 변경)
+//		CurrentAirType: 'o3', // 기본 대기질(오존 - 여름에 변경)
+		CurrentCategory: 'REGION', // 기본 구분(권역별)
+		CurrentOnStation: { // 측정망
+			CITY: false, ROAD: false, BORDER: false, DIMEN: false, DISPLAY: false, SIMPLE: false
+		},
+		ClickedLayer : null,  // 지도 클릭 시 nameMarker 테두리 style 적용을 위한 전역변수
+		IsSatellite : false,  // 위성모드 인지,
+		IsMobile: false,
+		IsAlertMarkerLoaded: false,	//오존 주의보/경보 마커 로딩 여부 
+		ZoomTemp: 5,	//이전 줌 사이즈와 비교하기 위한 임시변수
+	};
+	
+	CleanMap.initialize = function(geoCode, _airType){
+		console.warn('CleanMap.initialize() - ' + geoCode);
+		
+		CleanMap.setCurrentAirType(_airType);
+		
+		CleanMap.Global.IsMobile = mobileCheck();
+		
+		var mapLevel;
+		
+		if(CleanMap.Global.IsMobile) {
+			mapLevel = 4;
+			document.getElementById('legendOnOff').style.display = "none";
+		} else
+			mapLevel = 5;
+		
+		_map.setView([37.566611, 126.978509], mapLevel); 
+		BaseMapChange(_map, L.Dawul.BASEMAP_GEN);  
+		
+		CleanMap.setSeoulBoundary(); // 서울전체경계
+
+		Api.init(geoCode);
+		this.Global.SelectedAreaCode = geoCode;
+		
+		CleanMapDOM.changeSelectBox(geoCode);
+		
+		//TODO
+		Api.updateMainInformation();
+		
+		// 간이측정망 display 처리
+		CleanMap.setSimpleDescCtrl(_airType);
+	}
+	
+	CleanMap.lock = false,
+	CleanMap.setLock = function(_lock){
+		// TODO 비정상적인 이유로 lock을 잡았을 시 해당 이유를 제거/해결 후 , 혹은 일정시간 후 lock이 풀리게끔 처리. 
+		this.lock= _lock;
+	},
+	CleanMap.isLock = function(){
+		return this.lock;
+	},
+	
+	
+
+	CleanMap.getPolyLayer = function (code)/* 해당 layer return */ {
+		if (!code) return;
+		return this.Global.PolyLayer.get(code);
+	};
+
+	CleanMap.setDatas = function (_data, categoryType){
+		/* categoryType : 이 함수가 호출되는 시점이 async할때 전역 대기질 값 사용 금지 위함 */ 
+		if (!_data) return;
+		this.Global.Datas[categoryType].data = _data;
+	};
+
+	CleanMap.getDatas = function () {
+		if (this.Global.CurrentCategory === 'REGION') {
+			return this.Global.Datas.region.data;
+		} else if (this.Global.CurrentCategory === 'GLOBAL') {
+			return this.Global.Datas.global.data;
+		} else {
+			return this.Global.Datas.region.data;
+		}
+	};
+	
+	// 권역/자치구 변경
+	CleanMap.setCategory = function (_value) {
+		if (!_value) return;
+		if(CleanMap.isLock()) return;
+		CleanMap.setLock(true);
+
+		this.Update();
+
+		this.Global.CurrentCategory = _value;
+		console.warn('currentAirType : ' + this.Global.CurrentAirType);
+		console.warn('currentCategory : ' + this.Global.CurrentCategory);
+		console.warn('CurrentOnStationType : ' + this.Global.CurrentOnStation);
+
+		CleanMapDOM.changeSelectBoxCategory();
+	};
+	
+	
+	// 측정소 선택
+	CleanMap.setStationType = function (_type) {
+		if (!_type) return;
+		if(CleanMap.isLock()) return;
+		CleanMap.setLock(true);
+		
+		if(_type === 'ETC'){  // 배경+경계+입체
+			this.Global.CurrentOnStation.BORDER = this.Global.CurrentOnStation.BORDER ? false : true;
+			this.Global.CurrentOnStation.DIMEN = this.Global.CurrentOnStation.DIMEN ? false : true;
+		}
+		else{
+			this.Global.CurrentOnStation[_type] = this.Global.CurrentOnStation[_type] ? false : true;
+		}
+
+		this.Update();
+
+
+		console.warn('currentAirType : ' + this.Global.CurrentAirType);
+		console.warn('currentCategory : ' + this.Global.CurrentCategory);
+		console.warn('CurrentOnStationType : ' + this.Global.CurrentOnStation);
+
+		return true;
+	};
+
+	// 대기질(pm25, pm10, o3) 선택
+	CleanMap.changeAirType = function (_airType) {
+		if(CleanMap.isLock()) return;
+		CleanMap.setLock(true);
+		
+		// 간이측정망 display 처리
+		CleanMap.setSimpleDescCtrl(_airType);
+		
+		CleanMap.setSimpleStation(_airType); // 초미세먼지가 아닌경우 간이측정망 FALSE 처리
+
+		this.Global.CurrentAirType = _airType || this.Global.CurrentAirType;
+
+		CleanMapDOM.changeLegend(); // 지도 범례 변경
+		this.Update();
+		
+		//TODO
+		//if(_airType === 'o3' && this.Global.CurrentCategory === 'GLOBAL')
+			//CleanMapDOM.printAlertMarkerOnMap();
+		
+		console.warn('currentAirType : ' + this.Global.CurrentAirType);
+		console.warn('currentCategory : ' + this.Global.CurrentCategory);
+		console.warn('CurrentOnStationType : ' + this.Global.CurrentOnStation)
+		
+//		선택한 대기질 쿠키 저장
+		setCookie("ckAirType", this.Global.CurrentAirType);
+		
+		
+
+	};
+	
+
+
+	// 다른 도시 대기질
+	CleanMap.otherAirMap = function () {
+		if(CleanMap.isLock()) return;
+		CleanMap.setLock(true);
+
+		this.Update();
+
+		if (OtherCityMap.openSubMap()) {
+			Api.getOtherAir(this.Global.CurrentAirType);
+		}
+	};
+
+	CleanMap.Update = function () {
+		
+		Api.getLastModified().then(function (res) {
+			console.log(CleanMap.Global.Datas.LastModified);
+			if (res.data > CleanMap.Global.Datas.LastModified) {
+				CleanMap.Global.Datas.LastModified = res.data;	//TODO DB에서 가져오는데 문제 생기면 수정해야함
+				console.warn('newly updated LastModified : ' + Utils.formattingDate(CleanMap.Global.Datas.LastModified));
+				CleanMap.dataSelector(false);
+			} else {
+				CleanMap.dataSelector(true);
+			}
+	
+		}).catch(function(error){
+			//console.error(error);
+			CleanMap.setLock(false);
+		});
+		
+	};
+
+	CleanMap.dataSelector = function (useCache) {
+		console.log('useCache: ');
+		console.log(useCache);
+		
+		if (this.Global.CurrentCategory === 'GLOBAL') {
+			if (useCache) { // 기존의 데이터를 사용
+				if (!this.Global.Datas.global.data) { // 권역기능을 최초로 수행시킨 경우
+					Api.getGlobalDataFromServer();
+					return;
+				}
+				//this.drawLayer(GLOBAL_INFO);
+				
+				this.drawLayer(GLOBAL_INFO, REGION_INFO);
+				this.setAirInfoBox();
+				this.setSeoulAverage();
+			} else if(!useCache) {
+				if (this.isEnableStation()) {
+					CleanMap.deleteNameMarker();
+					this.getStationData(useCache);
+					return;
+				}
+				Api.getGlobalDataFromServer();
+			}
+
+		} else if (this.Global.CurrentCategory === 'REGION') {
+
+			if (useCache) {
+				this.drawLayer(REGION_INFO);
+				this.setAirInfoBox();
+				this.setSeoulAverage();
+			} else if(!useCache) {
+				if (this.isEnableStation()) {
+					CleanMap.deleteNameMarker();
+					this.getStationData(useCache);
+					return;
+				}
+				Api.getRegionDataFromServer();
+			}
+		}
+		
+		
+		Api.updateMainInformation();
+		
+	};
+	
+	/*
+	 * additonalLayer 가 없을 때는
+	 * 자치구별을 선택해서 CleanMap.drawLayer(REGION_INFO)을 호출한 경우  
+	 * additonalLayer 가 없을 때는 
+	 * CleanMap.drawLayer(GLOBAL_INFO, REGION_INFO) 을 호출한 경우
+	 */
+	
+	CleanMap.drawLayer = function (layerInfo, additonalLayer) {
+		console.log('drawLayer');
+		
+		console.log('satellite : ' + this.Global.IsSatellite);
+		console.log('mobile : ' + this.Global.IsMobile);
+
+		this.clearLayerObject(); // 기존 모든 layer 삭제
+		this.allClearPoi(); // 측정망 poi 모두 삭제
+		
+		_map._onResize();
+		
+		layerInfo.forEach(function (i) {
+			
+			var layer = CleanMap.setPolygonLayer(i);
+
+			//console.log("layer");
+			//console.log(layer);
+
+			CleanMap.Global.PolyLayer.set(i.msradmCd, layer);
+
+			CleanMap.addEventLayer(layer);
+
+		});
+		
+		//additonalLayer: 권역지도에서 자치구 레이어
+		if(additonalLayer){
+			additonalLayer.forEach(function (i) {
+				var layer = CleanMap.setPolygonLayer(i);
+				var regionBorderColor;
+				
+				if(CleanMap.isEnableStation())
+					regionBorderColor = '#000';
+				else
+					regionBorderColor = '#325e89'
+
+				layer.setStyle({
+					weight: 1,	//두께
+					color: regionBorderColor,	//325e89
+					fillColor: '#000',
+					fillOpacity: 0,
+				})
+				CleanMap.Global.PolyLayer.set(i.msradmCd, layer);
+
+				CleanMap.addEventLayer(layer);
+
+			});
+		}
+	
+
+		if (this.isEnableStation()) {
+			CleanMap.deleteNameMarker();
+			this.getStationData(true);
+
+		} else { // 측정망 선택 모드가 아니라면 자치구/권역이므로 polygon 색 채우기~
+			if(this.Global.IsSatellite) return;
+
+			if(!this.Global.IsMobile){
+				this.drawNameMarker(layerInfo);
+				
+				if(CleanMap.Global.CurrentCategory === 'GLOBAL' && CleanMap.Global.CurrentAirType === 'o3') {
+					CleanMapDOM.printAlertMarkerOnMap();
+				}
+			}
+			
+			this.fillColor(this.Global.CurrentAirType);
+
+		}
+	};
+	
+	CleanMap.getStationData = function(useCache){
+		this.getEnabledStation().forEach(function(stationType){
+			if(!CleanMap.Global.Datas.station[stationType]){ // 최초 수행시
+				Api.getStationDataFromServer(stationType);
+			}else if(useCache){
+				CleanMap.drawStation(stationType);
+			}else if(!useCache){
+				Api.getStationDataFromServer(stationType);
+			}
+		});
+	};
+
+	
+	CleanMap.drawNameMarker = function(layerInfo){
+		layerInfo.forEach(function(i){
+			var marker = CleanMap.setNameMarker(i);
+			CleanMap.Global.NameMarker.set(i.msradmCd, marker);
+			CleanMap.addEventLayer(null, marker);
+		})	
+	}
+	
+	CleanMap.addEventLayer = function(layer, marker){
+		if(this.Global.IsMobile){
+			layer.addEventListener('touchstart', CleanMap.enableMobileStyle, false);
+			layer.addEventListener('click', CleanMap.enableMobileStyle, false);
+			layer.addEventListener('click', CleanMap.mobileSetAirInfo, false);
+			return;
+		}
+		
+		if(layer){
+			layer.addEventListener('click', CleanMap.layerEvent);
+			layer.addEventListener('touchstart', CleanMap.layerEvent);
+			layer.addEventListener('click', CleanMap.enableStyle);
+			layer.addEventListener('touchstart', CleanMap.enableStyle);
+		}
+
+		
+		if(!marker) return;
+		marker.addEventListener('click', CleanMap.markerEvent);
+		marker.addEventListener('touchstart', CleanMap.markerEvent);
+		marker.addEventListener('click', CleanMap.enableStyle);
+		marker.addEventListener('touchstart', CleanMap.enableStyle);
+	};
+
+	
+	CleanMap.initMobileMarker = function(code, layerInfo){
+		console.log('initMobileMarker');
+		
+		if(this.Global.IsSatellite) return;
+		if(code === 'ALL') return;
+		if(code === '') return;
+		
+		if(CleanMap.Global.CurrentCategory === 'GLOBAL' && CleanMap.Global.CurrentAirType === 'o3') {
+			CleanMapDOM.printAlertMarkerOnMap(code);
+		}
+	
+		var data = CleanMap.getDatas();
+		var color = 0;
+		var marker;
+		var calculated = Utils.common(CleanMap.Global.CurrentAirType);
+		
+		var targetMarker;
+		layerInfo.forEach(function(i){
+			if(i.msradmCd === code){
+				targetMarker = i;
+			}
+		});
+		
+		data.forEach(function(i){
+			if(i.msradmCd === code){
+				color = calculated(i).color;
+				marker = CleanMap.setNameMarker(targetMarker);
+				marker._icon.firstChild.style.color = '#000';
+				marker._icon.firstChild.style.backgroundColor = color;
+				CleanMap.Global.NameMarker.set(code, marker);
+				return;
+			}
+		})
+	}
+
+	CleanMap.mobileSetAirInfo = function(e){
+		if (CleanMap.isEnableStation()) return;
+		var temp = e.target.geojson.properties;
+		CleanMapDOM.changeSelectBox(temp.msradmCd);
+		CleanMap.setAirInfoBox(temp.msradmCd);
+	};
+
+	CleanMap.enableMobileStyle = function(e){
+		console.log('enableMobileStyle');
+	
+		if (CleanMap.isEnableStation()) return;
+
+		var temp = e.target ? e.target.geojson.properties : e;
+		var data = CleanMap.getDatas();
+		
+		if(CleanMap.Global.NameMarker.size > 0){
+			CleanMap.deleteNameMarker();
+		}
+		
+		if(CleanMap.Global.AlertMarker && CleanMap.Global.AlertMarker.size > 0){
+			CleanMap.deleteAlertMarker();
+		}
+
+		var marker = CleanMap.setNameMarker(temp);
+		CleanMap.Global.NameMarker.set(temp.msradmCd, marker);
+		
+	
+		var calculated = Utils.common(CleanMap.Global.CurrentAirType);
+		var color = 0;
+	
+		data.forEach(function (i) {
+			if (!calculated(i).color) console.log('error - fillColorDust() - calculatedColor');
+			if(i.msradmCd === temp.msradmCd){
+				color = calculated(i).color;
+			}
+		});
+	
+		marker._icon.firstChild.style.backgroundColor = color;
+		marker._icon.firstChild.style.color = '#000';
+		
+//		모바일에서도 쿠키 세팅
+		try {
+			if (CleanMap.Global.CurrentCategory === "REGION") {
+				setCookie("ckRegionCode", temp.msradmCd);
+			} else {
+				setCookie("ckRegionCode", "0");
+			}
+		} catch (e) {
+		}
+
+	};
+	
+	
+
+	
+	CleanMap.layerEvent = function(e){
+		var temp = e.target.geojson.properties;
+//		CleanMapDOM.changeSelectBox(temp.korName);
+		if (CleanMap.Global.CurrentCategory === "REGION") {
+			CleanMapDOM.changeSelectBox(temp.msradmCd);
+			CleanMap.setAirInfoBox(temp.msradmCd);
+		} else {
+			CleanMapDOM.changeSelectBox(CleanMap.getGlobalCode(temp.msradmCd));
+			CleanMap.setAirInfoBox(CleanMap.getGlobalCode(temp.msradmCd));
+		}
+		
+		//_map.setView(temp.center, MAP_LEVEL.part);  // 클릭한 구역의 center 좌표로 이동
+	};
+	
+	CleanMap.markerEvent = function(e){
+		var temp = e.target.options.icon.options;
+		
+		CleanMapDOM.changeSelectBox(temp.msradmCd);
+		CleanMap.setAirInfoBox(temp.msradmCd);
+		//_map.setView(temp.center, MAP_LEVEL.part);  // 클릭한 구역의 center 좌표로 이동
+	};
+
+	CleanMap.enableStyle = function(e){
+		if(CleanMap.Global.ClickedLayer){
+			CleanMap.Global.ClickedLayer.classList.toggle('name-marker-active');
+		}
+
+		var	temp = e.target.options.icon ? e.target.options.icon.options : e.target.geojson.properties;
+
+		var foundMarker = CleanMap.Global.NameMarker.get(CleanMap.Global.CurrentCategory === "GLOBAL" ? temp.msradmCd.length == 3 ? temp.msradmCd : CleanMap.getGlobalCode(temp.msradmCd) : temp.msradmCd);
+		if(!foundMarker) return;
+		foundMarker._icon.firstChild.classList.add('name-marker-active');
+		CleanMap.Global.ClickedLayer = foundMarker._icon.firstChild;
+		
+		// 마커 자치구 코드 쿠키 생성
+		if (CleanMap.Global.CurrentCategory === "REGION") {
+			setCookie("ckRegionCode", temp.msradmCd);
+		} else {
+			setCookie("ckRegionCode", "0");
+		}
+		
+	};
+	
+	CleanMap.initMarkerStyle = function(code){
+		if(CleanMap.Global.ClickedLayer){
+			CleanMap.Global.ClickedLayer.classList.toggle('name-marker-active');
+		}
+
+		var foundMarker = CleanMap.Global.NameMarker.get(code);
+		if(!foundMarker) return;
+		foundMarker._icon.firstChild.classList.add('name-marker-active');
+		CleanMap.Global.ClickedLayer = foundMarker._icon.firstChild;
+	}
+
+
+	CleanMap.setPolygonLayer = function (arg) {
+		var coords = this.makeGeoJson(arg, arg.type);
+		var polygonWeight;
+		
+		if(this.Global.CurrentCategory === "GLOBAL"){
+			polygonWeight = 2.5;
+		}
+		else
+			polygonWeight = 1;
+		
+		return new L.GeoJSON(
+			coords, {
+				style: function () {
+					return {
+						clickable: true,
+						weight: polygonWeight,   // 라인굵기(if zero, none) //2.5
+						opacity: 1,   // 투명도
+						color: CleanMap.Global.IsSatellite ? 'white' : 'black',  // polygon 경계 색
+				};
+			}
+		}).addTo(_map);
+	};
+	
+	CleanMap.makeGeoJson = function (arg, _type) {
+		var obj = {
+			geometry: {
+				type: _type,
+				coordinates: arg.geo
+			},
+			type: "Feature",
+			properties: {
+				msradmCd: arg.msradmCd,
+				korName: arg.korName,
+				center: arg.center,
+				groupName: arg.groupName,
+			},
+		}
+		return obj;
+	};
+
+	/*  요구사항 변경으로 인한 주석 처리 ( 자치구/권역 시 확대기능 )
+	CleanMap.setView = function (arg) {
+		if (!arg) return;
+		var centerCodinerate = this.getPolyLayer(arg).geojson.properties.center;
+		_map.setView(centerCodinerate, this.Global.IsMobile ? 4 : MAP_LEVEL.part);
+	};
+	*/
+
+	CleanMap.setNameMarker = function (arg) {
+		var point = arg.center;
+
+		var nameMarker = new L.Marker(
+				new L.LatLng(point[0], point[1]),
+				{
+					icon: new L.divIcon({   // 마커 찍기
+						className: 'marker-region',
+						html: '<div class="name-marker" data-code="'+arg.msradmCd+'">' + arg.korName + '</div>',
+						iconSize: L.point(50, 50),
+						msradmCd: arg.msradmCd,
+						korName: arg.korName || '',
+						groupName: arg.groupName || '',
+						center: arg.center || ''
+					})
+				}).addTo(_map);
+		
+		
+		return nameMarker;
+	};
+
+	//측정소와 매칭되는 데이터를 가져와서 어떤 색 아이콘을 사용할지 결정
+	CleanMap.getIcon = function(stationData, _icon){
+		if(_icon === 'DISPLAY') return _icon;
+		var airType = this.Global.CurrentAirType;
+		var calculated = Utils.common(airType);
+
+		var data;
+		data = this.Global.Datas.station[_icon];
+		if(!data) return '';
+		var ret = ''
+
+		for(var i = 0; i < data.length; i++){
+			var dataCode = data[i].msradmCd;
+			if(stationData.msradmCd === dataCode){
+				ret = calculated(data[i]).command;
+				return ret;
+			}
+		}
+		
+		return ret;
+	};
+
+	CleanMap.setPoiMarker = function (staticData, _icon) {
+
+		var iconPath = './img/markerImg/';
+		var ret = this.getIcon(staticData, _icon);
+		if(!ret) return new L.Marker();
+		
+		if (_icon === 'CITY') {
+		// 측정망 - 도시 대기는 자치/권역을 구분하지 않으므로 자치구를 기준으로 표출
+			iconPath += 'city_'+ ret +'.png';
+		} else if (_icon === 'ROAD') {
+			iconPath += 'road_'+ ret +'.png';
+		} else if (_icon === 'BORDER' || _icon === 'DIMEN') {
+			iconPath += 'dimen_'+ ret +'.png';
+		} else if (_icon === 'DISPLAY') {
+			iconPath += 'display.png';
+		}
+		
+		
+		return this.createPoiMarker(staticData, iconPath, _icon);
+		
+	};
+	
+	CleanMap.createPoiMarker = function(staticData, iconPath, type){
+		var marker = new L.Marker(
+			new L.LatLng(staticData.geo[0], staticData.geo[1]),
+			{
+				icon: new L.Icon({   // 마커 찍기
+					iconUrl: iconPath,   // 핀 이미지
+					iconAnchor: [13, 34],  // 오프셋 (핀의 끝이 좌표로 매칭하기 위해 적용)
+					opacity: 0.8,
+					prop: staticData,
+				})
+			}).addTo(_map);	//16099 리비전에서 추가됨. 왜 두 번하는지 모르겠음
+		
+
+			marker.addTo(_map);
+
+			marker.addEventListener('click', function(e){
+				prevFocus = e.originalEvent.target;
+				CleanMap.setStationAirInfo(e.target.options.icon.options.prop, type);
+				CleanMapDOM.poiPopup(e.target.options.icon.options.prop);
+			})
+			
+			marker.addEventListener('touchstart', function(e){
+				//console.log('touch test');
+				CleanMap.setStationAirInfo(e.target.options.icon.options.prop, type);
+				CleanMapDOM.poiPopup(e.target.options.icon.options.prop);
+			})
+			
+			//tooltip 표시를 위해 타이틀 설정
+			if(staticData && staticData.name){
+				marker._icon.dataset.name = staticData.name;
+				marker._icon.dataset.msradmCd = staticData.msradmCd;
+				marker._icon.dataset.type = type;
+			}
+
+		return marker;
+	}
+ 
+	CleanMap.setPoiMarkerSimple = function (station) {
+		var style = '';
+
+		var airType = this.Global.CurrentAirType;
+		var status = Utils.common(airType)(station);
+		//값이 0일 때의 처리는 따로 안 했음
+		style += 'background-color: ' + status.color + '; ';
+		style += 'color: #000; ';
+		style += 'border: 1px solid #000;';
+		
+		var pollutantVal = (Utils.isInvalid(station[airType])) ? '' : Math.round(station[airType]);
+		var pollutantText = "<span style='color: " + status.color + "'>" + pollutantVal + ( pollutantVal !== '' ? PollutantUtil.getUnit(airType) : '') + " " + status.text +  "</span>";
+		var popupContent = ((airType === "pm10") ? "미세먼지 " : (airType === "pm25") ? "초미세먼지 " : " ") + "(" + PollutantUtil.getAbbreviation(airType) + ") : "+ pollutantText;
+		popupContent +=  "<br>설치 지점 : " + station.name;
+		popupContent +=  "<br>위치 : " + station.addr;
+		popupContent +=  "<br>구분 : " + station.locKindNm;
+		if(station.locKindNm == "공사장") {
+			if(station.kind == "21") popupContent +=  " (내부)";
+			else if(station.kind == "11") popupContent +=  " (외부)";
+		}
+//		var maxDt = CleanMap.Global.Datas.MaxDateOfSimple;
+		//popupContent += "(" + ( (station.addr) ? station.addr : "" ) + ")"
+		
+//		if(maxDt)
+//			popupContent += "<br>기준시간 : " + ((maxDt) ? moment(maxDt, "YYYYMMDDHHmm").format("YYYY년 MM월 DD일 HH시") : ""); 
+		var tippyInstance;
+		var innerDiv = '<div class="simple-marker" data-code="' + station.msradmCd + '" style="' + style + '"></div>';
+		
+		return new L.Marker(
+				new L.LatLng(station.lat, station.lng),
+				{
+					icon: new L.divIcon({   // 마커 찍기
+						className: 'marker-region',
+						html: innerDiv,
+						iconSize: L.point(10, 10),
+						msradmCd: station.msradmCd,
+						korName: station.name || '',
+//						center: arg.center || ''
+					}),
+					"data-test" : "test"
+				})
+				.on('add', function(e){
+					var markerDiv = document.querySelector('.simple-marker[data-code="' + station.msradmCd + '"]');
+					
+					if(markerDiv && markerDiv.parentNode){
+						
+						//TODO tippy 떴을 때 포커스 처리(모달에 닫기 버튼에 포커스 주고 닫으면 클릭한 마커에 포커스)
+						/*
+						markerDiv.parentNode.addEventListener('focusout', function(e){
+							console.log('focusout');
+						});
+						*/
+						
+						tippyInstance = tippy(markerDiv.parentNode, {
+							content: popupContent,
+							allowHTML: true,
+							trigger: 'click focusin mouseenter',
+						});
+						
+						markerDiv.parentNode.addEventListener('click', function(e){
+							
+							STATION_CITY_INFO.forEach(function(i){
+								var areaName;
+								var areaData;
+								var regionArray = CleanMap.Global.Datas.region.data;
+								
+								if(i.msradmCd === station.area){
+									areaName = i.name;
+									
+									if(regionArray) {
+										areaData = regionArray.filter(function(item){
+											return item.msradmCd === station.area
+										});
+										
+										if(areaData && areaData.length > 0)
+											CleanMapDOM.printAirInfoBox(areaData[0], areaName);
+										else
+											CleanMapDOM.printAirInfoBox(null, areaName);
+									}
+									
+									return;
+								}
+							})
+							
+							//
+						});
+					}
+				})
+				.on('remove', function(e){
+					if(tippyInstance){
+						tippyInstance.destroy();
+					}
+				})
+				.addTo(_map)
+				;
+	};
+
+
+	CleanMap.setSeoulBoundary = function ()/* 서울 외부 그리기 */ {
+		this.boundaryClearLayer();
+		var _box = [[44.31966896812577, 116.0942882570142], [30.600299610290307, 118.0929104284933], [30.08298290668961, 139.79432563712925], [43.88750193477647, 142.32693628876675]];
+		var latLngs = [];
+		latLngs.push(_box);
+		latLngs.push(BOUNDARY_SEOUL);
+
+		var boundary = L.polygon(latLngs, {
+			color: '#a0a0a0', 
+			fillColor: '#BEBEBE',
+			fill: true,
+			weight: 4,   // 라인굵기(if zero, none)
+			fillOpacity: 0.5,
+		}).addTo(_map);
+
+		this.Global.BoundaryLayer.push(boundary);
+	};
+	
+	CleanMap.boundaryClearLayer = function () /* 내/외부 경계 지우기 */ {
+		if (typeof this.Global.BoundaryLayer !== 'undefined' && this.Global.BoundaryLayer) {
+			this.Global.BoundaryLayer.forEach(function (layer) {
+				_map.removeLayer(layer);
+				layer = null;
+			})
+			this.Global.BoundaryLayer = [];
+		};
+	};
+	
+	// nameMarker도 지움
+	CleanMap.deleteFillColor = function(){
+
+		if (this.Global.PolyLayer) {
+			this.Global.PolyLayer.forEach(function (value) {
+				value.setStyle({fillColor: 'none', color:'white', weight: 2})
+			});
+		}
+
+		this.deleteNameMarker();
+	}
+	
+	CleanMap.deleteNameMarker = function(){
+		
+		if (CleanMap.Global.NameMarker) {
+			CleanMap.Global.NameMarker.forEach(function (value) {
+				_map.removeLayer(value);
+			});
+			CleanMap.Global.NameMarker.clear();
+		};
+	}
+	
+	CleanMap.deleteAlertMarker = function(){
+		
+		if (this.Global.AlertMarker) {
+			this.Global.AlertMarker.forEach(function (value) {
+				_map.removeLayer(value);
+			});
+			
+			this.Global.AlertMarker.clear();
+		}
+		
+		CleanMap.Global.IsAlertMarkerLoaded = false;
+	}
+
+	CleanMap.clearLayerObject = function () /* layer(자치구등 모든~) 모두 지우기 */ {
+		console.warn('clearLayerObject');
+		console.warn('---------delete-------');
+		if (this.Global.PolyLayer) {
+			this.Global.PolyLayer.forEach(function (value) {
+				_map.removeLayer(value);
+			});
+			this.Global.PolyLayer.clear();
+		};
+
+		if (this.Global.NameMarker) {
+			this.Global.NameMarker.forEach(function (value) {
+				_map.removeLayer(value);
+			});
+			this.Global.NameMarker.clear();
+		};
+		
+		CleanMap.deleteAlertMarker();
+		
+	};
+
+
+	CleanMap.getEnabledStation = function(){
+		var list = [];
+		for (var i in this.Global.CurrentOnStation) {
+			if (this.Global.CurrentOnStation[i]) list.push(i);
+		}
+		return list;
+	};
+
+	CleanMap.isEnableStation = function () {
+		for (var i in this.Global.CurrentOnStation) {
+			if (this.Global.CurrentOnStation[i]) return true;
+		}
+		return false;
+	};
+
+	CleanMap.allClearPoi = function () {
+		for (var cur in this.Global.CurrentOnStation) {
+			if (this.Global.PoiMarker[cur]) {
+				this.Global.PoiMarker[cur].forEach(function (value) {
+					_map.removeLayer(value);
+				});
+				this.Global.PoiMarker[cur].clear();
+				this.Global.PoiMarker[cur] = null;
+			}
+		}
+	};
+	
+	CleanMap.drawStation = function(arg){
+		this.Global.PoiMarker[arg] = new Map();
+
+		if (arg === 'CITY') {
+			STATION_CITY_INFO.forEach(function (i) {
+				CleanMap.Global.PoiMarker['CITY'].set(i.msradmCd, CleanMap.setPoiMarker(i, 'CITY'));
+			});
+		}
+		if (arg === 'ROAD') {
+			STATION_ROAD_INFO.forEach(function (i) {
+				CleanMap.Global.PoiMarker['ROAD'].set(i.msradmCd, CleanMap.setPoiMarker(i, 'ROAD'));
+			});
+		}
+		if (arg === 'BORDER') {
+			STATION_BORDER_INFO.forEach(function (i) {
+				CleanMap.Global.PoiMarker['BORDER'].set(i.msradmCd, CleanMap.setPoiMarker(i, 'BORDER'));
+			});
+		}
+		if (arg === 'DIMEN') {
+			STATION_DIMEN_INFO.forEach(function (i) {
+				CleanMap.Global.PoiMarker['DIMEN'].set(i.msradmCd, CleanMap.setPoiMarker(i, 'DIMEN'));
+			});
+		}
+		if (arg === 'DISPLAY'){
+			STATION_DISPLAY_INFO.forEach(function (i) {
+				CleanMap.Global.PoiMarker['DISPLAY'].set(i.msradmCd, CleanMap.setPoiMarker(i, 'DISPLAY'));
+			});
+		}
+		if (arg === 'SIMPLE'){
+			//console.log(this.Global.CurrentOnStation);
+			
+			
+			if(this.Global.CurrentAirType === 'pm25') {
+				STATION_SIMPLE_INFO.forEach(function (i) {
+					CleanMap.Global.PoiMarker['SIMPLE'].set(i.msradmCd, CleanMap.setPoiMarkerSimple(i));
+				});
+			} else {
+				//CleanMap.drawStation('CITY');
+				this.Global.CurrentOnStation.SIMPLE = false; // 초미세먼지가 아닌경우 간이측정망 FALSE 처리
+			}
+			
+//			if(this.Global.CurrentAirType === 'o3')
+//				alert("간이측정망은 오존 대기질정보를 측정하지 않습니다.");
+//			else
+//			{
+//				STATION_SIMPLE_INFO.forEach(function (i) {
+//					CleanMap.Global.PoiMarker['SIMPLE'].set(i.msradmCd, CleanMap.setPoiMarkerSimple(i));
+//				});
+//			}
+		}
+
+		
+		if(timer)
+			clearTimeout(timer);
+		
+		timer = setTimeout(function(){
+			var tippyInstances = tippy('img.leaflet-marker-icon', {
+				onShow: function(instance){
+					
+					if(mobileCheck())
+						return false;
+					
+					var target = instance.reference;
+					var div = document.createElement('div');
+					
+					div.innerHTML = CleanMapDOM.tooltipContent(target);
+					
+					instance.setContent(div);
+				},
+				trigger: 'mouseenter',
+				allowHTML: true,
+				delay: 0,
+				theme: 'white'
+			});
+				
+		}, 800);
+	}
+	
+
+	CleanMap.fillColor = function (airType) {
+		var data = this.getDatas();
+		if ( data != null ) {
+			var calculated = Utils.common(airType);
+			data.forEach(function (i) {
+				if (!calculated(i).color) console.log('error - fillColorDust() - calculatedColor');
+				var foundLayer = CleanMap.Global.PolyLayer.get(i.msradmCd);
+				var foundMarker = CleanMap.Global.NameMarker.get(i.msradmCd);
+				
+				if (!foundLayer) {
+					console.error('fetchDatas의 code와 REGION_INFO의 code를 확인하셈');
+					return;
+				}
+				
+				var color = calculated(i).color;
+				CleanMap.fillLayer(foundLayer, color);
+				CleanMap.fillNameMarker(foundMarker, color);
+	
+			});
+		}
+	};
+	
+	CleanMap.fillLayer = function(foundLayer, color){
+		if(!CleanMap.Global.IsSatellite){
+			var borderWeight;
+			
+			if(CleanMap.Global.CurrentCategory === "GLOBAL")
+				borderWeight = 2.5;
+			else
+				borderWeight = 2;
+			
+			foundLayer.setStyle({
+				weight: borderWeight,	//두께
+				color: '#325e89',
+				fillColor: color,
+				fillOpacity: 0.7,
+			})
+		}
+	}
+	
+	CleanMap.fillNameMarker = function(foundMarker, color){
+		if(!CleanMap.Global.IsMobile){
+			foundMarker._icon.firstChild.style.backgroundColor = color;
+			foundMarker._icon.firstChild.style.color = '#000';
+		}
+	}
+
+
+	CleanMap.setAirInfoBox = function (_code)/* 대기질 정보 */ {
+		var fetchDatas = this.getDatas();
+
+		var code = _code || this.Global.SelectedAreaCode;
+		var layerInfo;
+		if (this.Global.CurrentCategory === 'GLOBAL') {
+			if ( _code && _code.length > 4 ) _code = this.getGlobalCode(_code);
+			code = _code || ( code.length > 4 ? this.getGlobalCode(code) : code );
+			layerInfo = GLOBAL_INFO;
+			console.log(code);
+			this.Global.SelectedAreaCode = code;
+			CleanMapDOM.HTMLElement.selectGlobal.value = code;
+			//CleanMapDOM.changeSelectBox(code === '' ? '서울시전체' : this.getKorName(code, layerInfo));
+		} else {
+			if ( code.length == 3 ) code = CleanMapDOM.HTMLElement.selectRegion.value;
+			this.Global.SelectedAreaCode = code;
+			layerInfo = REGION_INFO;
+			//CleanMapDOM.changeSelectBox(code === 'ALL' ? '서울시전체' : this.getKorName(code, layerInfo));
+		}
+
+		if(this.Global.IsMobile){
+			if (this.isEnableStation()) return;
+			CleanMap.deleteNameMarker();
+			CleanMap.deleteAlertMarker();
+			CleanMap.initMobileMarker(code, layerInfo);
+
+		}else{
+			CleanMap.initMarkerStyle(code);
+		}
+		
+
+		if(code === 'ALL'){
+			CleanMap.wholeSeoulAvg();
+			return;
+		}
+		
+		var layer = this.getPolyLayer(code);
+		if(!layer) return;
+		var korName = layer.geojson.properties.korName;
+
+		console.log('선택된 자치구/권역 : ' + korName + '[' + code + ']');
+
+		var ckAirType = this.Global.CurrentAirType; 
+		history.pushState("", "", "?area=" + code + "&type=" + ckAirType);
+		var changeFunc = toggleFunc('main-select', 'air');
+		changeFunc(CleanMap.changeAirType); //대기질 변경
+		
+		fetchDatas.forEach(function (i) {
+			if (i.msradmCd === code){
+				CleanMapDOM.printAirInfoBox(i, korName);
+			}
+		})
+	};
+
+	CleanMap.setStationAirInfo = function (_code, type)/* 측정망 대기질 정보 */ {
+		var fetchDatas = this.Global.Datas.station;
+
+			console.log('선택된 측정망 : ' + _code.name + '[' + _code.msradmCd + ']');
+			if(!fetchDatas[type]) return;
+			fetchDatas[type].forEach(function (i) {
+				if (i.msradmCd === _code.msradmCd){
+					CleanMapDOM.printAirInfoBox(i, _code.name);
+				}
+			});
+		
+	}
+
+
+	CleanMap.setSeoulAverage = function () {
+		// 자치구/권역 선택과 상관없이 자치구 기준으로 평균
+		var data = this.Global.Datas.region.data;
+		var avgValue = this.getAverage(data);
+		var getStatus = this.seoulAvgStatus(this.Global.CurrentAirType)(avgValue);
+
+		CleanMapDOM.printSeoulAverage(avgValue, getStatus.text);
+		CleanMapDOM.switchTowerImg(getStatus.command);
+	};
+	
+	CleanMap.openPopup = function(){
+		Api.getPopupList();
+	}
+
+	
+	CleanMap.wholeSeoulAvg = function(){
+		var data = this.getDatas();
+		
+		var result = {
+				pm10:0, pm25:0, so2:0, co:0, o3:0, no2:0,
+		};
+		var count = {
+				pm10:0, pm25:0, so2:0, co:0, o3:0, no2:0,
+		};
+
+		data.forEach(function(i){
+			for(var value in i){
+				if(value !== 'msradmCd'){
+					result[value] = result[value] + i[value];
+					count[value]++;
+				}
+			}
+		})
+		
+		for(var value in result){
+			result[value] = result[value] / count[value];
+		}
+
+		CleanMapDOM.printAirInfoBox(result, '서울시');
+		var airType = this.Global.CurrentAirType;
+		
+		var getStatus = this.seoulAvgStatus(airType)(result[airType]);
+
+		CleanMapDOM.printSeoulAverage(result[airType], getStatus.text);
+		CleanMapDOM.switchTowerImg(getStatus.command);
+	};
+
+	CleanMap.getTransform = function (el) {
+	    var results = $(el).css('-webkit-transform').match(/matrix(?:(3d)\(\d+(?:, \d+)*(?:, (\d+))(?:, (\d+))(?:, (\d+)), \d+\)|\(\d+(?:, \d+)*(?:, (\d+))(?:, (\d+))\))/)
+
+	    if(!results) return [0, 0, 0];
+	    if(results[1] == '3d') return results.slice(2,5);
+
+	    results.push(0);
+	    return results.slice(5, 8);
+	}
+	
+	
+	//TODO 줌 이벤트가 발생할 때 마커 위치 이동을 위한 핸들러
+	CleanMap.zoomEventHandler = function(){
+		_map.on('zoomend', function(i){
+			console.log(i);
+			//console.log(CleanMap.Global.AlertMarker);
+			
+			if(CleanMap.Global.AlertMarker){
+				CleanMap.Global.AlertMarker.forEach(function(item){
+					
+				    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))  // If Internet Explorer, return version number
+				    {
+						var off = $('.marker-msrrgn-' + item.options.msrrgn).offset();
+						off.top = off.top - 40; 
+						
+						$('.marker-msrrgn-' + item.options.msrrgn).offset(off)
+				        //alert(parseInt(ua.substring(msie + 5, ua.indexOf(".", msie))));
+				    }
+				});
+			}	
+		});
+	}
+
+
+
+	var CleanMapDOM = Object.create(CleanMap);
+
+	CleanMapDOM.HTMLElement = null;
+
+	
+	CleanMapDOM.elt = function(name, attributes){
+		var node = document.createElement(name);
+
+		if(attributes){
+
+			for(var attr in attributes){
+				if(attributes.hasOwnProperty(attr)){
+					node.setAttribute(attr, attributes[attr]);
+			    }
+			}
+		}
+
+		for(var i = 2; i < arguments.length; i++){
+			var child = arguments[i];
+			if(typeof child == "string"){
+				child = document.createTextNode(child);
+			}
+
+				node.appendChild(child);
+		}
+
+		return node;
+	}
+
+	CleanMapDOM.setInformationBox = function (arg)/**/ {
+		var data = arg;
+		if (!data) {
+			console.error('getting information data');
+			return;
+		}
+		this.printBoardList(data.board);
+		this.printDayForecast(data.dayForecast);
+
+		data.alertStatus.forEach(function(i){ // 예비/비상저감조치 
+			CleanMapDOM.printAlertStatus(i);
+		});
+
+		data.airForecast.forEach(function(i){ // 대기오염 주의보 경보
+			CleanMapDOM.createAirForecastText(i);
+		});
+		
+		CleanMapDOM.highlightAlert();
+	};
+
+	CleanMapDOM.printBoardList = function (arg) {
+		
+		this.removeAllChildElement(CleanMapDOM.HTMLElement.board);
+		
+		var aEl = this.elt('a', {"href":_contextPath + '/board/boardList?board=notice', "title": '공지사항 더보기'}, '더보기 +');
+		var dtEl = this.elt('dt', null, '공지사항', aEl);
+		CleanMapDOM.HTMLElement.board.appendChild(dtEl);
+		var temp = '';
+		arg.forEach(function (i, idx) {
+			var dd = document.createElement('dd');
+			var text = "<a href='javascript:boardView(" + i.seq + ")'>" + i.title + '</a><span>'+ (i.regdate || '-') +'</span>';
+			dd.innerHTML = text;
+			CleanMapDOM.HTMLElement.board.appendChild(dd);
+		})
+	};
+	
+	CleanMapDOM.changeLegend = function(){
+		this.HTMLElement.pm25Legend[0].style.display = 'none';
+		this.HTMLElement.pm10Legend[0].style.display = 'none';
+		this.HTMLElement.o3Legend[0].style.display = 'none';
+		if(this.Global.CurrentAirType === 'pm25'){
+			this.HTMLElement.pm25Legend[0].style.display = 'inline-block';
+		}else if(this.Global.CurrentAirType === 'pm10'){
+			this.HTMLElement.pm10Legend[0].style.display = 'inline-block';
+		}else if(this.Global.CurrentAirType === 'o3'){
+			this.HTMLElement.o3Legend[0].style.display = 'inline-block';
+		}
+		
+	};
+
+	//예비/비상저감조치
+	CleanMapDOM.printAlertStatus = function (data) {
+		var emerType = data.type;
+		var emerDt = data.applcDt;
+		
+		var toAttachElement = this.HTMLElement[data.type+'Alert'];
+		this.removeAllChildElement(toAttachElement);
+	
+		var liTag = document.createElement('a'); // 예비/비상저감조치
+		
+		if(emerDt == null || emerDt == ""){
+			console.log('alertStatus(예비/비상저감조치) 값 없음');
+			data.applcDt = this.Global.Datas.LastModified; // tb_op_1hrtms의 최근 날짜 기준
+			data.style = "none";
+			data.text = "<strong> 발령없음</strong>";
+			if(emerType === 'prkplc'){
+				liTag.setAttribute('href', _contextPath + '/institution/prkplcContent');
+			} else if(emerType === 'spare') {
+				liTag.setAttribute('href', _contextPath + '/institution/prkplcContent?spare');
+			}
+		} else {
+			if(emerType === 'prkplc'){
+				data.style = "worst";
+				data.text = "<strong> 발령</strong>";
+				liTag.setAttribute('href', _contextPath + '/institution/prkplcContent');
+				
+			} else if(emerType === 'spare') {
+				data.style = "bad";
+				data.text = "<strong> 발령</strong>";
+				liTag.setAttribute('href', _contextPath + '/institution/prkplcContent?spare');
+			}
+		}
+		
+		
+		
+		
+		liTag.innerHTML = "<h3>예비/비상저감조치 발령</h3><p class='date-unit'>"+ LDT + "</p>" +
+				"<span class='txt'>" + data.status + data.text + "</span>" +
+				"<div class='status "+ data.style + "'><span></span>"+data.text+"</div>";
+		
+		toAttachElement.appendChild(liTag);
+		
+		if(emerDt == null || emerDt == ""){
+			this.setAlertLevel(toAttachElement.firstChild, 'none');
+		} else {
+			if(emerType === 'prkplc'){
+				this.setAlertLevel(toAttachElement.firstChild, 'worst');
+			} else if(emerType === 'spare') {
+				this.setAlertLevel(toAttachElement.firstChild, 'bad');
+			}
+		}
+
+		
+//		this.HTMLElement.emerDate.innerHTML =  this.formattingDate(emerStatus.applcDt);
+//		this.HTMLElement.emerDate.innerHTML =  LDT;	//localDateTime
+//		this.HTMLElement.emerText.innerHTML = data.pollutant;
+		
+		/*if(emerType === 'prkplc'){
+			this.setAlertLevel(toAttachElement.firstChild, 'worst');
+		}
+		*/	
+
+	};
+	
+	CleanMapDOM.createAirForecastText = function(data){
+		
+		if(data.type === 'o3'){
+			//TODO o3 의 경우 기간에 따라서 막거나 예보 안한다는 내용 표출 해야함.
+			if(1 == 0)
+				data.content = null;
+		}
+		
+		var alertYnStr = "";
+
+		if(!data.content || (data.content.applcUse && data.content.applcUse == 'N')){
+			data.content = {};
+			data.content.applcDt = "" + this.Global.Datas.LastModified;
+			data.content.pollutant = data.type;
+			data.content.faOn = '없음';
+			data.content.alertText = ' <strong> 발령없음</strong>';
+			alertYnStr = " style='color:#000;'";
+		}else{
+			if(data.content.faOn === 'a'){
+				if(data.content.alertstep === 'A') {
+					data.content.alertText = ' 경보<strong> 발령</strong>';
+				}
+				else if(data.content.alertstep === 'W') {
+					data.content.alertText = ' 주의보<strong> 발령</strong>';
+				}
+				else if(data.content.alertstep === 'R') {
+					data.content.alertText = ' 주의보 예비<strong> 발령</strong>';
+				} else {
+					data.content.alertText = ' 주의보<strong> 발령</strong>';
+				}
+			}
+		}
+		
+		
+		var toAttachElement = this.HTMLElement[data.type+'Alert'];
+		this.removeAllChildElement(toAttachElement);
+	
+		var liTag = document.createElement('a'); // 대기오염 주의보/경보
+		liTag.setAttribute('href', _contextPath + '/forecast/airWarning');
+		
+		liTag.innerHTML = "<h3>대기오염 주의보/경보</h3><p class='date-unit'>"+ LDT + "</p>" +
+				"<span class='txt'"+alertYnStr+">" + this.convertAirTypeKor(data.content.pollutant) + data.content.alertText +"</span>" +
+				"<div class='status "+ this.convertFaOn(data.content.faOn).style + "'><span></span>" + this.convertFaOn(data.content.faOn).text + "</div>";
+	
+		toAttachElement.appendChild(liTag);
+	
+		if(data.content.faOn === 'a'){
+
+			if(data.content.alertstep === 'A') {
+				this.setAlertLevel(toAttachElement.firstChild, 'worst');
+			}
+			else if(data.content.alertstep === 'W') {
+				this.setAlertLevel(toAttachElement.firstChild, 'bad');
+			}
+			else if(data.content.alertstep === 'R') {
+				this.setAlertLevel(toAttachElement.firstChild, 'bad');
+			} 
+//			this.setAlertLevel(toAttachElement.firstChild, 'bad');
+
+		}else if(data.content.faOn === 'f'){
+			this.setAlertLevel(toAttachElement.firstChild, 'bad');
+		}else{
+			this.setAlertLevel(toAttachElement.firstChild, 'none');
+		}
+
+	};
+
+	
+	CleanMapDOM.setAlertLevel = function(targetEl, level){
+		if(level === 'worst'){ // 발령
+			targetEl.lastElementChild.classList.add('worst');
+			targetEl.lastElementChild.classList.remove('none');
+			var span = '<span class="emerStatus" style="color:#ec7a7a;"></span> <strong>발령</strong>';
+			targetEl.children[3].innerHTML = span;
+
+		}else if(level === 'bad'){ // 주의보(비상저감)
+			targetEl.lastElementChild.classList.add('worst');
+			targetEl.lastElementChild.classList.remove('none');
+			var span = '<span class="emerStatus" style="background:#ec7a7a;"></span> <strong>발령</strong>';
+			targetEl.children[3].innerHTML = span;
+			targetEl.lastElementChild.style.color = '#ec7a7a';
+			
+		}else if(level === 'none'){ 
+			targetEl.lastElementChild.classList.remove('worst');
+			targetEl.lastElementChild.classList.add('none');
+			var span = '<span class="emerStatus" style="background:#fff; color:#aaa"></span> <strong>없음</strong>';
+			targetEl.children[3].innerHTML = span;
+		}
+
+	};
+	
+
+	
+	CleanMapDOM.convertFaOn = function(arg){
+		if(!arg) return;
+		var obj = {
+			fetal : { text: '심각', style: 'worst' },
+			worst : { text: '나쁨', style: 'bad' },
+			none : { text: '없음', style: 'none'},
+		}
+
+		if(arg === '없음'){
+			return obj.none;
+		}else if(arg === 'a'){ //경보
+			return obj.fetal;
+		}else if(arg === 'f'){ //예보
+			return obj.worst;
+		}
+	};
+
+	CleanMapDOM.printDayForecast = function (arg) {
+		if (!arg || arg.length < 1) return;
+		
+		this.HTMLElement.currentAirType.innerHTML = this.convertAirTypeKor(this.Global.CurrentAirType);
+		
+		//기준일시
+//		if(arg.today && arg.today.indatestr){
+		if(arg.today && arg.today.indate){
+			var formatted = moment(arg.today.indate, "YYYYMMDDHH").format("YYYY년 MM월 DD일 HH시");
+			//var formatted = moment("2020070702", "YYYYMMDDHH").format("YYYY년 MM월 DD일 HH시");
+			//this.HTMLElement.dayForecastDate.innerHTML = arg.today.indatestr + " 기준";
+			this.HTMLElement.dayForecastDate.innerHTML = formatted + " 기준";
+		}
+		else
+			this.HTMLElement.dayForecastDate.innerHTML = this.formattingDate(this.Global.Datas.LastModified) + " 기준";
+		
+		//console.log(this.Global.Datas.LastModified);
+		
+		if(arg.today){
+			this.convertDayForecastIcon('오늘', arg.today, this.HTMLElement.forecast1);
+
+		}else if(!arg.today){
+			this.convertDayForecastIcon('오늘', null, this.HTMLElement.forecast1);
+		}
+
+		if(arg.tommorow){
+			this.convertDayForecastIcon('내일', arg.tommorow, this.HTMLElement.forecast2);
+		}else if(!arg.tommorow){
+			this.convertDayForecastIcon('내일', null, this.HTMLElement.forecast2);
+		}
+		
+		if(arg.after){
+			this.convertDayForecastIcon('모레', arg.after, this.HTMLElement.forecast3);
+		}else if(!arg.after){
+			this.convertDayForecastIcon('모레', null, this.HTMLElement.forecast3);
+		}
+		
+		
+	};
+
+
+	CleanMapDOM.convertDayForecastIcon = function(day, data, parentEl){
+		var airType = this.Global.CurrentAirType;
+		
+		var type = '';
+		
+		if(!data){
+			this.notYetNotice(day, parentEl);
+			return;
+		}else if(data[airType] === '보통'){
+			type = 'normal';
+		}else if(data[airType] === '좋음'){
+			type = 'good';
+		}else if(data[airType] === '나쁨'){
+			type = 'bad';
+		}else if(data[airType] === '매우나쁨'){
+			// 기존까지의 db자료에서는 보이지 않음
+			type = 'worst';
+		}else if(data[airType] === '예보없음' && airType !== 'o3'){
+			type = 'normal';
+		}
+		else if(airType === 'o3'){
+			// TODO 오존의 경우 발표기간이 아닐 경우에 대한 표시. 화면설계서 참조.
+			this.notYetNotice(day, parentEl);
+			return;
+		}
+		else{
+			console.log('undefined day forecast argument');
+			return;
+		}
+	
+		this.removeAllChildElement(parentEl);
+
+		this.HTMLElement.forecast1.style.display = 'inline-block';
+		this.HTMLElement.forecast2.style.display = 'inline-block';
+		var spanEl = this.elt('span', null, day);
+		var imgEl = this.elt('img', { src: _contextPath + '/images/main_pic_' + type + '.png', alt: data[airType]});
+		var strongEl = this.elt('strong', null, data[airType]);
+		var divEl = "";
+		if(airType === 'o3') {
+			this.HTMLElement.forecast1.style.width = "46%";
+			this.HTMLElement.forecast2.style.width = "46%";
+			this.HTMLElement.forecast3.style.display = "none";
+			divEl = this.elt('div', { class:type, style:"width:108px;" }, imgEl, strongEl);
+		} else {
+			this.HTMLElement.forecast3.style.display = 'inline-block';
+			this.HTMLElement.forecast1.style.width = "";
+			this.HTMLElement.forecast2.style.width = "";
+			
+			this.HTMLElement.ozoneForecast.style.display = 'none';
+			this.HTMLElement.ozoneForecast.firstElementChild.style.display = 'none';
+			divEl = this.elt('div', { class:type }, imgEl, strongEl);
+		}
+		
+//		this.HTMLElement.ozoneForecast.style.display = 'inline-block';
+
+		
+		
+		parentEl.appendChild(spanEl);
+		parentEl.appendChild(divEl);
+	}
+	
+	CleanMapDOM.notYetOzoneNotice = function(day){
+		var now = moment();
+		var nowYear = now.get('year');
+		var isOzonePeriod = now.isBetween(nowYear + '-' + '04-15', nowYear + '-' + '10-16');
+
+		//TODO 현재 오존 표시하는 기간인 경우의 처리. 추후 기간 DB에서 확인하는 코드로 변경
+		if( isOzonePeriod ) {
+			return false;
+		}
+		this.HTMLElement.forecast1.style.display = 'none';
+		this.HTMLElement.forecast2.style.display = 'none';
+		this.HTMLElement.forecast3.style.display = 'none';
+		this.HTMLElement.ozoneForecast.style.display = 'block';
+		this.HTMLElement.ozoneForecast.style.width = '100%';
+		this.HTMLElement.ozoneForecast.firstElementChild.style.display = 'block';
+		this.HTMLElement.ozoneForecast.firstElementChild.style.marginRight = '15px';
+		this.HTMLElement.ozoneForecast.firstElementChild.style.width = 'calc(100% - 15px)';
+		
+		return true;
+	}
+	
+	CleanMapDOM.notYetNotice = function(day, parentEl)/*예보없음처리.*/{
+		//TODO 현재 오존 표시하는 기간이 아닐 경우 notYetOzoneNotice 에서 화면 처리
+		if(this.Global.CurrentAirType === 'o3') {
+			if(this.notYetOzoneNotice())
+				return;
+		}
+		this.removeAllChildElement(parentEl);
+		
+		this.HTMLElement.forecast1.style.display = 'block';
+		this.HTMLElement.forecast2.style.display = 'block';
+		this.HTMLElement.forecast3.style.display = 'block';
+		this.HTMLElement.ozoneForecast.style.display = 'none';
+
+		var spanEl = this.elt('span', null, day);
+		var pEl = this.elt('p', null);
+		
+		if(this.Global.CurrentAirType === 'o3'){
+			if(day == '오늘')
+				pEl.innerHTML = '<p>특이사항<br>없음</p>';
+            else if(day == '내일')
+                pEl.innerHTML = '<p>17시<br>이후<br>발표 예정</p>';
+			else
+				pEl.innerHTML = '<p>-</p>';
+		}
+		else
+			pEl.innerHTML = '<p>17시<br>이후<br>발표 예정</p>';
+		
+		var divEl = "";
+		
+		if(this.Global.CurrentAirType === 'o3') {
+			this.HTMLElement.forecast1.style.width = "46%";
+			this.HTMLElement.forecast2.style.width = "46%";
+			this.HTMLElement.forecast3.style.display = "none";
+			divEl = this.elt('div', { style:"width:108px;" }, pEl);
+		} else {
+			this.HTMLElement.forecast3.style.display = 'inline-block';
+			this.HTMLElement.forecast1.style.width = "";
+			this.HTMLElement.forecast2.style.width = "";
+			divEl = this.elt('div', null, pEl);
+		}
+		
+		parentEl.appendChild(spanEl);
+		parentEl.appendChild(divEl);
+	}
+
+	CleanMapDOM.removeAllChildElement = function(node){
+		if(!node) return;
+		while (node.hasChildNodes()) {
+		    node.removeChild(node.lastChild);
+		}
+	}
+
+
+	
+
+	CleanMapDOM.printSeoulAverage = function (arg, status) { // 서울시 평균
+		
+		var avg = Math.round(arg);
+		var text = avg === -1 ? '점검중' : avg + '㎍/㎥';
+
+		if(this.Global.CurrentAirType === 'o3'){
+			avg = (arg).toFixed(3);
+			text = avg === -1 ? '점검중' : avg + 'ppm';
+		}
+
+		this.HTMLElement.seoulAvg.innerHTML = text;
+		this.changeTextStyle(this.HTMLElement.seoulAvgText, status);
+		this.HTMLElement.seoulAvgText.innerHTML = status;
+		this.HTMLElement.seoulDateTime.innerHTML = this.formattingDate(this.Global.Datas.LastModified) || '점검중';
+	};
+
+	CleanMapDOM.switchTowerImg = function(imgType){
+//		console.log("this.Global.CurrentAirType = " + this.Global.CurrentAirType);
+		this.HTMLElement.namsanGood.style.display = 'none';
+		this.HTMLElement.namsanNormal.style.display = 'none';
+		this.HTMLElement.namsanBad.style.display = 'none';
+		this.HTMLElement.namsanFetal.style.display = 'none';
+		this.HTMLElement.namsanGood2.style.display = 'none';
+		this.HTMLElement.namsanNormal2.style.display = 'none';
+		this.HTMLElement.namsanBad2.style.display = 'none';
+		this.HTMLElement.namsanFetal2.style.display = 'none';
+		
+		/*
+		if ( this.Global.CurrentAirType == "pm10" ) {
+			if(imgType === 'good'){
+				this.HTMLElement.namsanGood2.style.display = 'block';
+			}else if(imgType === 'normal'){
+				this.HTMLElement.namsanNormal2.style.display = 'block';
+			}else if(imgType === 'bad'){
+				this.HTMLElement.namsanBad2.style.display = 'block';
+			}else if(imgType === 'fetal'){
+				this.HTMLElement.namsanFetal2.style.display = 'block';
+			}else{
+				this.HTMLElement.namsanNormal2.style.display = 'block';
+			}
+		} else
+		*/
+		{
+			if(imgType === 'good'){
+				this.HTMLElement.namsanGood.style.display = 'block';
+			}else if(imgType === 'normal'){
+				this.HTMLElement.namsanNormal.style.display = 'block';
+			}else if(imgType === 'bad'){
+				this.HTMLElement.namsanBad.style.display = 'block';
+			}else if(imgType === 'fetal'){
+				this.HTMLElement.namsanFetal.style.display = 'block';
+			}else{
+				this.HTMLElement.namsanNormal.style.display = 'block';
+			}
+		}
+		
+	};
+
+	CleanMapDOM.printAirInfoBox = function (data, korName)/* 대기질 정보 창에 표출 */ {
+		if (!data) return;  
+		/*   수치 표출    */
+
+		this.HTMLElement.regionName.innerHTML = korName || '점검중'; // 구 이름
+		this.HTMLElement.dateTime.innerHTML = this.formattingDate(this.Global.Datas.LastModified) || '점검중';
+		this.HTMLElement.pm25El.innerHTML = (Utils.isInvalid(data.pm25)) ? '-' : Math.round(data.pm25); // 초미세
+		this.HTMLElement.pm10El.innerHTML = (Utils.isInvalid(data.pm10)) ? '-' : Math.round(data.pm10); // 미세
+		this.HTMLElement.o3El.innerHTML = (Utils.isInvalid(data.o3)) ? '-' : (data.o3).toFixed(3); // 오존
+		this.HTMLElement.no2El.innerHTML = (Utils.isInvalid(data.no2)) ? '-' : (data.no2).toFixed(3); // 이산화질소
+		this.HTMLElement.coEl.innerHTML = (Utils.isInvalid(data.co)) ? '-' : (data.co).toFixed(1); // 일산화탄소
+		this.HTMLElement.so2El.innerHTML = (Utils.isInvalid(data.so2)) ? '-' : (data.so2).toFixed(3); // 이산화황
+
+		this.changeTextStyle(this.HTMLElement.pm25Stat, Utils.fineDustColor(data).text);
+		this.changeTextStyle(this.HTMLElement.pm10Stat, Utils.dustColor(data).text);
+		this.changeTextStyle(this.HTMLElement.o3Stat, Utils.ozoneColor(data).text);
+		this.changeTextStyle(this.HTMLElement.no2Stat, Utils.no2Color(data).text);
+		this.changeTextStyle(this.HTMLElement.coStat, Utils.coColor(data).text);
+		this.changeTextStyle(this.HTMLElement.so2Stat, Utils.so2Color(data).text);
+
+	};
+
+	CleanMapDOM.changeTextStyle = function(element, data){
+		var classList = element.classList;
+		var resultText;
+		var clsName;
+		
+		if(element.id){
+			if(element.id  === "seoulAvgText")
+				resultText = document.getElementById("seoulAvg");	//span
+			else if(element.id  !== "seoulAvgText")
+				resultText = element.parentElement.querySelector("td.result");	//td
+		}
+		
+		while (classList.length > 0) {
+		   classList.remove(classList.item(0));
+		}
+		element.innerHTML = data || '점검중';
+		if(data === '좋음'){
+			clsName = 'status good';
+		}else if(data === '보통'){
+			clsName = 'status normal';
+		}else if(data === '나쁨'){
+			clsName = 'status bad';
+		}else if(data === '매우나쁨'){
+			clsName = 'status worst';
+		}
+		
+		if(clsName) {
+			element.className = clsName;
+			
+			
+			if(resultText) {
+				if(resultText.tagName === "TD")
+					resultText.className = "result " + clsName;
+				else if(resultText.tagName === "SPAN")
+					resultText.className = clsName;
+			}
+		}
+			
+	};
+
+	CleanMapDOM.changeSelectBoxCategory = function () {
+		console.log(this.Global.CurrentCategory);
+		if (this.Global.CurrentCategory === "REGION") {	//자치구
+			_map.setView([37.566611, 126.978509], this.Global.IsMobile ? 4 : MAP_LEVEL.whole);  // 지도 좌표 이동
+			this.HTMLElement.selectGlobal.style.display = 'none';
+			//this.HTMLElement.globalLabel.style.display = 'none';
+			//this.HTMLElement.regionLabel.style.display = 'block';
+			this.HTMLElement.selectRegion.style.display = 'block';
+			//this.HTMLElement.regionLabel.innerHTML = '중구';
+			
+//			var alertMarkerOn = document.querySelectorAll(".name-marker.alert-forecast.on");
+//			
+//			if(alertMarkerOn)
+//				alertMarkerOn.forEach(function(item){item.className = "name-marker alert-forecast"});
+			
+		} else {	//권역
+			_map.setView([37.566611, 126.978509], this.Global.IsMobile ? 4 : MAP_LEVEL.whole);  // 지도 좌표 이동
+			this.HTMLElement.selectGlobal.style.display = 'block';
+			//this.HTMLElement.globalLabel.style.display = 'block';
+			//this.HTMLElement.regionLabel.style.display = 'none';
+			this.HTMLElement.selectRegion.style.display = 'none';
+			//this.HTMLElement.globalLabel.innerHTML = '도심권';
+			
+			//
+//			if(CleanMap.Global.IsAlertMarkerLoaded === true) {
+//				var alertMarker = document.querySelectorAll(".name-marker.alert-forecast");
+//				
+//				if(alertMarker)
+//					alertMarker.forEach(function(item){item.className = "name-marker alert-forecast on"});
+//			}
+		}
+	};
+
+	CleanMapDOM.setDomElement = function (obj) {
+		if (!obj) {
+			console.log('setDomElement() is not called');
+			return;
+		}
+		for (var i in obj) {
+			if (!obj[i]) {
+				console.error(i + ' Element is undefined');
+			}
+		}
+		this.HTMLElement = obj;
+		this.initEvent(obj);
+	};
+
+	CleanMapDOM.initEvent = function (obj) {
+		if(!obj.selectGlobal) return;
+		if(!obj.selectRegion) return;
+
+		obj.selectGlobal.addEventListener('change', this.selectChangeEvt);
+		obj.selectRegion.addEventListener('change', this.selectChangeEvt);
+		
+		if(obj.question){
+			obj.question.addEventListener('click', this.clickQuestionMarkEvt);
+			obj.question.addEventListener('keydown', this.keydownQuestionMarkEvt);
+			
+		}
+
+	};
+
+	CleanMapDOM.selectChangeEvt = function (e) {
+
+		var regionCode = e.target.options[e.target.selectedIndex].value;
+		if(CleanMap.Global.ClickedLayer){
+			CleanMap.Global.ClickedLayer.classList.remove('name-marker-active');
+			CleanMap.Global.ClickedLayer = 0;
+		}
+		
+		var foundMarker = CleanMap.Global.NameMarker.get(regionCode);
+		if(foundMarker){
+			foundMarker._icon.firstChild.classList.add('name-marker-active');
+			CleanMap.Global.ClickedLayer = foundMarker._icon.firstChild;
+		}
+
+
+		if (regionCode === 'ALL') {
+			e.target.selectedIndex = 0;
+			_map.setView([37.566611, 126.978509], CleanMap.Global.IsMobile ? 4 : MAP_LEVEL.whole); 
+			if(CleanMap.Global.IsMobile){
+				CleanMap.deleteNameMarker();
+			}
+			CleanMap.wholeSeoulAvg();
+			CleanMap.Global.SelectedAreaCode = 'ALL';
+			return;
+		} else {
+			if(CleanMap.Global.IsMobile){
+				console.log("Mobile test!!!")
+			
+				var foundCode;
+				REGION_INFO.forEach(function(i){
+					if(i.msradmCd === regionCode){
+						foundCode = i;
+						return;
+					}
+				})
+				GLOBAL_INFO.forEach(function(i){
+					if(i.msradmCd === regionCode){
+						foundCode = i;
+						return;
+					}
+				})
+				CleanMap.enableMobileStyle(foundCode);
+			}
+
+			CleanMap.setAirInfoBox(regionCode);
+		}
+	};
+		
+	CleanMapDOM.clickQuestionMarkEvt = function(e){
+		prevFocus = e.target;
+		
+		CleanMapDOM.openSimpleInfoPopup();
+	}
+		
+	CleanMapDOM.keydownQuestionMarkEvt = function(e){
+		prevFocus = e.target;
+		
+		if (e.key === "Enter") {
+	        e.preventDefault();
+			CleanMapDOM.openSimpleInfoPopup();
+	    }
+	}
+	
+	CleanMapDOM.changeSelectBox = function(msradmCd){
+		if (this.Global.CurrentCategory === "REGION") {
+			this.HTMLElement.selectRegion.value = msradmCd;
+		}else{
+			this.HTMLElement.selectGlobal.value = msradmCd;
+		}
+	}
+	
+	CleanMapDOM.poiPopup = function(arg){
+		//click event
+		var mainPop = this.HTMLElement.poiPopupLayer.children[0];
+		
+		this.HTMLElement.popStationNm.innerHTML = arg.name;
+		this.HTMLElement.popAddr.innerHTML = arg.addr;
+		this.HTMLElement.popBeginYear.innerHTML = arg.beginYear;
+		this.HTMLElement.popMeasureItem.innerHTML = arg.measureItem;
+		
+		this.HTMLElement.poiPopupLayer.style.display = 'flex';
+		
+		mainPop.tabIndex = '0';
+		mainPop.focus();
+	}
+	/*	CleanMapDOM.greenAreaPopup = function(arg){
+			this.HTMLElement.greenPopupLayer.style.display = 'flex';
+		};
+		
+		CleanMapDOM.focusAreaPopup = function(arg){
+			this.HTMLElement.focusPopupLayer.style.display = 'flex';
+		};*/
+	
+	CleanMapDOM.openSimpleInfoPopup = function(e){
+		this.HTMLElement.simpleInfoPopup.style.display = "flex";
+		var simpleInfoPopup = this.HTMLElement.simpleInfoPopup.children[0];
+		simpleInfoPopup.tabIndex = '0';
+		simpleInfoPopup.focus();
+	}
+	
+	CleanMapDOM.openMainPopup = function(res){
+		if (getCookieExistence("cleanair_nopopup"))
+			return;
+			
+		//var mainPopup = document.getElementById("mainPopup");
+		//var ulSlides = mainPopup.getElementsByClassName("slides")[0]
+		
+		if(res){
+			var list = res.data;
+			var hostname = location.hostname;
+			
+			if(list.length < 1)
+				return;
+			
+			for(var i = 0; i < list.length; i++){
+				var slide = document.createElement("div");
+				
+				var p = document.createElement("div");
+				var title = document.createElement("b");
+				var content = document.createElement("div");
+
+				p.classList.add("par");
+				
+				title.classList.add("popup-title");
+				title.textContent = list[i].popTitle;
+
+				if(list[i].popTy == "TY_TXT") {
+					p.classList.add("par-text");
+					content.classList.add("popup-contents");
+					content.textContent = list[i].popContents;
+					content.style.whiteSpace = "pre-line";
+				}
+				if(list[i].popTy == "TY_IMG"){
+					content.classList.add("popup-contents2");
+					var img = document.createElement("img");
+					
+					img.src = _contextPath + "/getPopup/" + list[i].popSeq;
+					img.alt = list[i].popTitle + " 팝업 이미지";
+					
+					// 팝업올린 seq 맞추어야 함, index.jsp에 선언되어 있음.
+					if ( list[i].popSeq == "18" ) {
+						img.useMap = "#pop_emer";
+					}
+					if ( list[i].popSeq == "23" ) {
+						img.useMap = "#pop_spare"; 
+					}
+					if ( list[i].popSeq == "19" || list[i].popSeq == "20") {
+						img.useMap = "#pop_pm10";
+					}
+					if ( list[i].popSeq == "21" || list[i].popSeq == "22") {
+						img.useMap = "#pop_pm25";
+					}
+					if ( list[i].popSeq == "24" || list[i].popSeq == "25") {
+						img.useMap = "#pop_ozone";
+					}
+					if ( list[i].popSeq == "26") {
+						img.useMap = "#pop_ozone_guide";
+					}
+					
+					if(list[i].popLnk){
+						var aTag = document.createElement("a");
+						aTag.href = _contextPath + list[i].popLnk;
+						aTag.appendChild(img);
+						content.appendChild(aTag);
+					}
+					else{
+						content.appendChild(img);
+					}
+
+				}
+				
+				if(list[i].popTy == "TY_TXT") {
+					slide.style.overflowY = "scroll";
+					p.appendChild(title);
+				}
+				
+				p.appendChild(content);
+				slide.appendChild(p);
+				CleanMapDOM.HTMLElement.popNotice.appendChild(slide);
+			}
+			
+			CleanMapDOM.HTMLElement.mainPopup.getElementsByClassName("total-slides")[0].textContent = list.length;
+			CleanMapDOM.HTMLElement.mainPopup.style.display = "flex";
+			
+			loadSlick();
+		}
+		
+		// 220110 - 이미지맵 사용시 반응형 웹 별로 좌표 위치 재설정
+		$('img[usemap]').rwdImageMaps();
+		
+	}
+	
+	CleanMapDOM.tooltipContent = function(obj){
+		var tooltipCont = '측정소명 : ' + obj.dataset.name||'';
+		var _msradmCd = obj.dataset.msradmCd;
+
+		var found;
+		var stations;
+		var stationType = obj.dataset.type;
+		var pollutantType = this.Global.CurrentAirType;
+		var pollutantVal;
+		var pollutantText;
+		var status;
+		
+		if(stationType)
+			stations = CleanMap.Global.Datas.station[stationType];
+
+		//filter: IE >= 9
+		if(stations)
+			found = stations.filter(function(item) { return item.msradmCd === _msradmCd; })[0];
+		
+		if(found){
+			switch(pollutantType){
+			case 'pm25':
+				status = Utils.fineDustColor(found);
+				pollutantVal = (Utils.isInvalid(found.pm25)) ? '-' : Math.round(found.pm25);
+				pollutantText = "<span style='color: " + status.color + "'>" + pollutantVal + "㎍/m³ " + status.text +  "</span>";
+				tooltipCont += '<br>초미세먼지(PM-2.5) : ' + pollutantText;
+				break;
+			case 'pm10':
+				status = Utils.dustColor(found);
+				pollutantVal = (Utils.isInvalid(found.pm10)) ? '-' : Math.round(found.pm10);
+				pollutantText = "<span style='color: " + status.color + "'>" + pollutantVal + "㎍/m³ " + status.text +  "</span>";
+				tooltipCont += '<br>미세먼지(PM-10) : ' + pollutantText;
+				break;
+			case 'o3':
+				status = Utils.ozoneColor(found);
+				pollutantVal = (Utils.isInvalid(found.o3)) ? '-' : (found.o3).toFixed(3);
+				pollutantText = "<span style='color: " + status.color + "'>" + pollutantVal + "ppm " + status.text +  "</span>";
+				tooltipCont += '<br>오존(O<sub>3</sub>) : ' + pollutantText;
+				break;
+			}
+		}
+		
+		return tooltipCont;
+	}
+	
+	//주의보/경보 발령 건수가 하나일 때 발령 슬라이드를 먼저 노출시키고 애니메이션 정지
+	CleanMapDOM.highlightAlert = function(){
+		var waList = document.querySelectorAll('.main-caution .status.worst,.main-caution .status.bad');
+		var emerList = document.querySelectorAll('.main-emergency .status.worst,.main-emergency .status.bad');
+		
+		if(waList && waList.length == 1) {
+			var onId = waList[0].parentElement.parentElement.id;
+			$('.main-caution').flexslider("pause");
+			
+			switch(onId){
+			case "pm25Alert":
+				$('.main-caution').flexslider(0);
+				break;
+			case "pm10Alert":
+				$('.main-caution').flexslider(1);
+				break;
+			case "o3Alert":
+				$('.main-caution').flexslider(2);
+				break;
+			}
+		}
+		
+		if(emerList && emerList.length == 1) {
+			var onId = emerList[0].parentElement.parentElement.id;
+			$('.main-emergency').flexslider("pause");
+			
+			switch(onId){
+			case "prkplcAlert":
+				$('.main-emergency').flexslider(0);
+				break;
+			case "spareAlert":
+				$('.main-emergency').flexslider(1);
+				break;
+			}
+		}
+	}
+	
+	CleanMapDOM.setOzoneStatusByRegion = function(data){
+		//TODO 발령상태인 오존을 이용해 작업
+		//var useList = warningInfo.data.filter(function(item) { return item.applcUse === 'Y' });
+		var o3AlertStatus = document.querySelector("#o3Alert span.txt");
+		var regionUl = document.querySelector("#o3Alert ul.region-o3");
+		
+		if(!regionUl && o3AlertStatus){
+			var div = document.createElement("div");
+			regionUl = document.createElement("ul");
+			regionUl.className = "region-o3";
+			
+			data.forEach(function (item) {
+				var li = document.createElement("li");
+				
+				li.innerText = "▶ " + item.msrrgnNm + " : " + (item.applcUse === 'N' ? "발령없음" : item.alertStepNm);
+				regionUl.appendChild(li);
+			});
+			
+			div.appendChild(regionUl);
+			
+			o3AlertStatus.parentNode.insertBefore(div, o3AlertStatus.nextSibling);
+			
+			$(function(){
+				$(div).vTicker();
+			})
+
+		}
+	}
+	
+	CleanMapDOM.printAlertMarkerOnMap = function(msrrgnSelected){
+		if(CleanMap.Global.IsAlertMarkerLoaded)
+			return;
+		
+		
+		Api.getLatestWarningInfo("o3").then(function(warningInfo){
+			if(warningInfo.data){
+				console.log("console.log");
+				console.log(warningInfo.data);
+				
+				//발령된 예/경보
+				var ozoneAlert = warningInfo.data.filter(
+						function(data) { 
+							 var isElement = data.applcUse === 'Y' && data.faOn === 'a' && data.useStatus === 'Y';
+							 
+							 if(msrrgnSelected)
+								 isElement = isElement && (msrrgnSelected === data.msrrgn);
+							 
+							 return isElement;
+						} 
+					);
+				
+				console.log(ozoneAlert);
+				
+				var callbackAlert = function(element){
+					console.log("element: " );
+					console.log(element);	//ozoneAlert의 요소
+
+					var matching = GLOBAL_INFO.find(function(glb){return glb.msradmCd === element.msrrgn});
+
+					var alertMarker = new L.Marker(
+						new L.LatLng(matching.center[0], matching.center[1]),
+						{
+							icon: new L.divIcon({   // 마커 찍기
+								className: 'name-marker alert-forecast on ' + 'marker-msrrgn-' + element.msrrgn,
+								/*html: '<div class="name-marker" data-code="'+arg.msradmCd+'">' + arg.korName + '</div>',*/
+								iconSize: L.point(30, 30),
+							}),
+							msrrgn: element.msrrgn,
+						})
+					.on("add", function(e){
+
+						var off = $('.marker-msrrgn-' + element.msrrgn).offset();
+						off.top = off.top - 40;
+						
+						$('.marker-msrrgn-' + element.msrrgn).offset(off);
+					})
+					.addTo(_map);
+					
+					
+					CleanMap.Global.AlertMarker.set('marker-msrrgn-' + element.msrrgn, alertMarker);
+					
+					CleanMapDOM.onClickOzoneAlarmMarker('.marker-msrrgn-' + element.msrrgn, element, matching);
+				}
+				
+				if(ozoneAlert)
+					ozoneAlert.forEach(callbackAlert);
+			}
+
+		});
+		
+		CleanMap.Global.IsAlertMarkerLoaded = true;
+
+	}
+	
+	CleanMapDOM.onClickOzoneAlarmMarker = function(target, element, matching){
+		//element: ozoneAlert의 요소
+		
+		//1. 권역 데이터 중 발령된 오존에 해당하는 데이터를 가져옴
+		//2. 권역 데이터 요소의 child 속성이 해당 권역의 자치구
+		//3. child로 부터 가져온 자치구에 해당하는 데이터를 가져옴
+		
+		var children;
+		var found;
+		
+		if(matching)
+			children = matching.child;
+		
+		
+		//TODO	
+		var amTippyInstance = tippy(target, {
+			onShow: function(instance){
+				
+					//if(mobileCheck())
+						//return false;
+					
+					var div = document.createElement('div');
+					var inner = "<div><b>" + element.msrrgnNm + " 오존 " + element.alertStepNm + "</b></div>"; 
+					var table = document.createElement('table');
+					var idx = 0;
+
+					var regionArray = CleanMap.Global.Datas.region.data;
+					var sortedChildren;
+					
+					sortedChildren = children.sort(function(a, b){
+						var foundA = REGION_INFO.find(function(region){
+							
+							return region.msradmCd === a;
+						});
+						
+						var foundB = REGION_INFO.find(function(region){
+							return region.msradmCd === b;
+						});
+						
+						if(foundA && foundB) {
+							return foundA.korName < foundB.korName ? -1 : foundA.korName > foundB.korName ? 1 : 0;
+						}
+						
+						return 0;
+					});
+					
+					children.forEach(function(child){
+						
+						if(regionArray){
+							
+							found = regionArray.find(function(region){
+								return region.msradmCd === child;
+							});
+							
+							if(found){
+								var tr = table.insertRow(idx++);
+								
+								var tdName = tr.insertCell(0);
+								var txtName = document.createTextNode(REGION_MAPPING[found.msradmCd]);
+								tdName.appendChild(txtName);
+								
+								var tdValue = tr.insertCell(1);
+								var txtValue = document.createTextNode((found && found.o3) ? found.o3.toFixed(3) + "ppm" : "자료 없음");
+								tdValue.appendChild(txtValue);
+								
+								//주의보, 경보
+								if(found.o3 >= 0.12)
+									tdValue.className = "ozone-region-alert";
+
+								console.log(found);
+							}
+							
+						}
+					});
+
+					
+					div.innerHTML = inner;
+					div.appendChild(table);
+					
+					instance.setContent(div);
+				},
+			trigger: 'click',
+			allowHTML: true,
+			delay: 0,
+			theme: 'white'
+		});
+
+		//document.getElementById("alertPop").style.display = "flex";
+		
+	}
+	
+	CleanMap.setCurrentAirType = function (_airType)/* airType Set */ {
+		this.Global.CurrentAirType = _airType || this.Global.CurrentAirType;
+		CleanMapDOM.changeLegend();
+	};
+	
+	CleanMap.setSimpleDescCtrl = function (_airType) {
+		var sObj = document.getElementById("ddSimple");
+		if ( sObj ) {
+			if ( _airType == "" ) _airType = this.Global.CurrentAirType;
+			if ( _airType == "pm25" ) {
+				sObj.style.display = "";
+				if ($(".station-select").css("display") == "block") {
+					$('.widget-wrap>.map-widget>.main-select-btn').css("top","135px");	//오염물질 선택
+					$('.widget-wrap>.map-widget>.main-temp').css("top","151px"); //좌측상태창
+				}
+			} else {
+				sObj.style.display = "none";
+				
+				if ($(".station-select").css("display") == "block") {
+					$('.widget-wrap>.map-widget>.main-select-btn').css("top","106px");	//오염물질 선택
+					$('.widget-wrap>.map-widget>.main-temp').css("top","122px"); //좌측상태창
+				}
+			}
+		}
+	}
+	
+	CleanMap.setSimpleStation = function (_airType) {
+		if ( _airType == "" ) _airType = this.Global.CurrentAirType;
+		if ( _airType == "pm25" ) {
+			var sObj = document.getElementById("ddSimple");
+			if ( sObj ) {
+				if ( sObj.style.display != "none" && $('#ddSimple').children('div').children('a')[0].classList.contains('on') ) {
+					this.Global.CurrentOnStation.SIMPLE = true;
+				}
+			}
+		} else {
+			this.Global.CurrentOnStation.SIMPLE = false;
+		}
+	}
+	
+	if (typeof window.CleanMap === 'undefined' && !window.CleanMap) {
+		window.CleanMap = CleanMap;
+		window.CleanMapDOM = CleanMapDOM;
+	}
+
+})(window);

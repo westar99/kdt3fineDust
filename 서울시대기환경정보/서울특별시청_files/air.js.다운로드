@@ -1,0 +1,1125 @@
+
+function airCommFn(id){
+	tabEvent(id);
+	if(id == 'airPm'){
+		AirWholeDataPM25();
+	}else{
+		baseFCMain('pm25');
+	}
+}
+
+function tabEvent(id){
+	$("#navTabs li").removeClass("active");
+	$("#"+id).addClass("active");
+}
+
+
+function convertPM10IconImg (value) {
+	var temp = '';
+	if (value > 0 && value <= 30) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_1.png' class='aImgIcon' alt='좋음'>";
+	} else if (value > 0 && value <= 80) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_2.png' class='aImgIcon' alt='보통'>";
+	} else if (value > 0 && value <= 150) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_3.png' class='aImgIcon' alt='나쁨'>";
+	} else if (value > 150) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_4.png' class='aImgIcon' alt='매우나쁨'>";
+	} else {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_0.png' class='aImgIcon' alt='점검중'>";
+	}
+	return temp;
+}
+
+
+function convertPM25IconImg (value) {
+	var temp = '';
+	if (value > 0 && value <= 15) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_1.png' class='aImgIcon' alt='좋음'>";
+	} else if (value > 0 && value <= 35) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_2.png' class='aImgIcon' alt='보통'>";
+	} else if (value > 0 && value <= 75) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_3.png' class='aImgIcon' alt='나쁨'>";
+	} else if (value > 75) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_4.png' class='aImgIcon' alt='매우나쁨'>";
+	} else {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_0.png' class='aImgIcon' alt='점검중'>";
+	}
+	return temp;
+}
+
+function convertO3IconImg (value) {
+	var temp = '';
+	if (value > 0 && value <= 0.030) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_1.png' class='aImgIcon' alt='좋음'>";
+	} else if (value > 0 && value <= 0.090) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_2.png' class='aImgIcon' alt='보통'>";
+	} else if (value > 0 && value <= 0.150) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_3.png' class='aImgIcon' alt='나쁨'>";
+	} else if (value > 0.151) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_4.png' class='aImgIcon' alt='매우나쁨'>";
+	} else {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_0.png' class='aImgIcon' alt='점검중'>";
+	}
+	return temp;
+}
+
+function convertCoIconImg (value) {
+	var temp = '';
+	if (value > 0 && value <= 2.00) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_1.png' class='aImgIcon' alt='좋음'>";
+	} else if (value > 0 && value <= 9.00) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_2.png' class='aImgIcon' alt='보통'>";
+	} else if (value > 0 && value <= 15.00) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_3.png' class='aImgIcon' alt='나쁨'>";
+	} else if (value > 15.01) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_4.png' class='aImgIcon' alt='매우나쁨'>";
+	} else {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_0.png' class='aImgIcon' alt='점검중'>";
+	}
+	return temp;
+}
+
+function convertNoIconImg (value) {
+	var temp = '';
+	if (value > 0 && value <= 0.030) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_1.png' class='aImgIcon' alt='좋음'>";
+	} else if (value > 0 && value <= 0.060) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_2.png' class='aImgIcon' alt='보통'>";
+	} else if (value > 0 && value <= 0.200) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_3.png' class='aImgIcon' alt='나쁨'>";
+	} else if (value > 0.201) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_4.png' class='aImgIcon' alt='매우나쁨'>";
+	} else {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_0.png' class='aImgIcon' alt='점검중'>";
+	}
+	return temp;
+}
+
+function convertSoIconImg (value) {
+	var temp = '';
+	if (value > 0 && value <= 0.020) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_1.png' class='aImgIcon' alt='좋음'>";
+	} else if (value > 0 && value <= 0.050) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_2.png' class='aImgIcon' alt='보통'>";
+	} else if (value > 0 && value <= 0.150) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_3.png' class='aImgIcon' alt='나쁨'>";
+	} else if (value > 0.151) {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_4.png' class='aImgIcon' alt='매우나쁨'>";
+	} else {
+		temp = "<img src='/res_mseoulM/images/mobile/eco/circle_0.png' class='aImgIcon' alt='점검중'>";
+	}
+	return temp;
+}
+
+function basePMInfo(airType){
+	var req = {"timeStamp" : parseInt(new Date().getTime().toString().substring(0, 10))};
+	com.ajax( {
+				type : 'POST',
+				dataType : 'json',
+				url : '/mseoul/eco/air/selectAirReformWholeInfo.do',
+				data : req,
+				async : false ,
+				success : function(data) {
+
+
+					var temp = "";
+					
+					var A101 = 0;
+					var A103 = 0;
+					var A105 = 0;
+					var A106 = 0;
+					var A107 = 0;
+					var A108 = 0;
+					var I101 = 0;
+					var I103 = 0;
+					var I105 = 0;
+					var I106 = 0;
+					var I107 = 0;
+					var I108 = 0;
+					
+					if(data.returnValue != null){
+						if (data.returnValue.SULFUROUS != '0') {
+							// 아황산가스
+							A101 = data.returnValue.SULFUROUS + "ppm";
+							I101 = data.returnValue.SULFUROUS;
+						} else {
+							A101 = "점검중";
+							I101 = 0;
+						}
+	
+						if (data.returnValue.NITROGEN != '0') {
+							// 이산화질소
+							A103 = data.returnValue.NITROGEN + "ppm";
+							I103 = data.returnValue.NITROGEN;
+						} else {
+							A103 = "점검중";
+							I103 = 0;
+						}
+	
+						if (data.returnValue.CARBON != '0') {
+							// 일산화탄소
+							A105 = data.returnValue.CARBON + "ppm";
+							I105 = data.returnValue.CARBON;
+						} else {
+							A105 = "점검중";
+							I105 = 0;
+						}
+	
+						if (data.returnValue.OZONE != '0') {
+							// 오존
+							A106 = data.returnValue.OZONE + "ppm";
+							I106 = data.returnValue.OZONE;
+						} else {
+							A106 = "점검중";
+							I106 = 0;
+						}
+	
+						if (data.returnValue.PM10 != '0') {
+							// 미세먼지
+							A107 = data.returnValue.PM10 + "㎍/㎥";
+							I107 = data.returnValue.PM10;
+						} else {
+							A107 = "점검중";
+							I107 = 0;
+						}
+	
+						if (data.returnValue.PM25 != '0') {
+							// 미세먼지
+							A108 = data.returnValue.PM25 + "㎍/㎥";
+							I108 = data.returnValue.PM25;
+						} else {
+							A108 = "점검중";
+							I108 = 0;
+						}
+					}
+					
+					temp += '<div class="tab-content" id="tab1">';
+					
+					temp += '<div class="h-menu type2">';
+					temp += '<h4 class="imgExplain" style=" height:20px;"></h4>';
+					temp += '<span class="chk-box">';
+					temp += '<input name="ColorBlind" id="ColorBlind" type="checkbox">';
+					temp += '<label for="ColorBlind"><span>색약보정</span></label>';
+					temp += '</span>';
+					temp += '</div>';
+					
+					temp += '<div class="air-wrap">';
+					
+					temp += '<div class="air-map">';
+					temp += '<div class="air-type">';
+					temp += '<div class="radio-set">';
+					
+					var checkedPm25 = '';
+					var checkedPm = '';
+					var checkedOzone = '';
+					if(airType == 'pm25') checkedPm25 ='checked';
+					if(airType == 'pm') checkedPm ='checked';
+					if(airType == 'ozone') checkedOzone ='checked';
+					
+					temp += '<input type="radio" id="type01" name="imgtype" '+checkedPm25+' value="pm25" class="imgRadio"><label for="type01" class="first"><span>초미세먼지</span></label>';
+					temp += '<input type="radio" id="type02" name="imgtype" '+checkedPm+' value="pm" class="imgRadio"><label for="type02"><span>미세먼지</span></label>';
+					temp += '<input type="radio" id="type03" name="imgtype" '+checkedOzone+' value="ozone" class="imgRadio"><label for="type03"><span>오존</span></label>';
+					
+					temp += '</div>';
+					temp += '</div>';
+					temp += '<div class="media">';
+					temp += '<div class="map"></div>';
+//					temp += '<div class="wrapperImgArea" style="width:100%;">';
+//					temp += '<div class="imgExplain" style="text-align: center;"></div>';
+//					temp += '<div id="mapImgArea" class="imgArea">';
+//					temp += '<img id="njms-eco" src="/mseoulM/js/mobile/newsjelly/mobile-seoul-eco-map.svg" class="obj_autowidth" style="width:100%;hieght:400px;"></img>';					
+//					temp += '<object id="njms-eco" type="image/svg+xml" data="/mseoulM/js/mobile/newsjelly/mobile-seoul-eco-map.svg" class="obj_autowidth" style="width:100%;height:400px;"></object>';
+					temp += '<div class="wrapperImgArea" style="width:450px;">';
+					temp += '<div class="imgExplain" style="text-align: center;"></div>';
+					temp += '<div id="mapImgArea" class="imgArea">';
+					temp += '<iframe id="njms-eco"src="/res_mseoulM/js/mobile/newsjelly/mobile-seoul-eco-map.svg" class="obj_autowidth" style="width:450px;height:400px;"></iframe>';
+//					temp += '<div class="blank_img"><img src="/mseoulM/images/mobile/eco/blank_img.png" alt="" /></div>';
+					temp += '</div>';
+					temp += '</div>';
+					temp += '</div>';
+					temp += '</div>';
+					
+					temp += '<div class="air-info">';
+					temp += '<p><strong>서울시 평균 대기 정보</strong></p>';
+					temp += '<div class="airFigure">';
+					temp += '<table>';
+					temp += '<tr> <td class="MateriaName"> 미세먼지(PM-10) </td> <td class="MateriaValue"> <div class="aImgIconWrap">' + convertPM10IconImg(I107)+ '</div>'
+							+ A107 + '</td> </tr>';
+					temp += '<tr> <td class="MateriaName"> 초미세먼지(PM-2.5) </td> <td class="MateriaValue"><div class="aImgIconWrap">' + convertPM25IconImg(I108)+ '</div>'
+						+ A108 + '</td> </tr>';
+					temp += '<tr> <td class="MateriaName"> 오존(O<sub class="subfont">3</sub>) </td> <td class="MateriaValue"><div class="aImgIconWrap">' + convertO3IconImg(I106)+ '</div>'
+							+ A106 + '</td> </tr>';
+					temp += '<tr> <td class="MateriaName"> 이산화질소(NO<sub class="subfont">2</sub>) </td> <td class="MateriaValue"><div class="aImgIconWrap">' + convertNoIconImg(I103)+ '</div>'
+							+ A103 + '</td> </tr>';
+					temp += '<tr> <td class="MateriaName"> 일산화탄소(CO) </td> <td class="MateriaValue"><div class="aImgIconWrap">' + convertCoIconImg(I105)+ '</div>'
+							+ A105 + '</td> </tr>';
+					temp += '<tr> <td class="MateriaName"> 아황산가스(SO<sub class="subfont">2</sub>) </td> <td class="MateriaValue"><div class="aImgIconWrap">' + convertSoIconImg(I101)+ '</div>'
+							+ A101 + '</td> </tr>';
+					temp += '</table>';
+					temp += '</div>'; 
+					temp += '</div>';
+					
+					temp += '</div>';
+					
+					temp += '<div class="btn-group qt">';
+					temp += '<button type="button" class="btn medium bg-point" id="wholePM25"><span>전체구 초미세먼지정보</span></button>';
+					temp += '<button type="button" class="btn medium bg-point" id="wholePM"><span>전체구 미세먼지정보</span></button>';
+					temp += '<button type="button" class="btn medium bg-point" id="wholeOzone"><span>전체구 오존정보</span></button>';
+					temp += '<button type="button" class="btn medium bg-point" id="airStandard"><span>전체구 대기환경기준</span></button>';
+					temp += '</div>';
+					
+					temp += '<div class="sub-title">';
+					temp += '<h4>■ 지역선택</h4>';
+					temp += '</div>';
+					temp += '<div class="dist-select">';
+					temp += '<select id="airGu" name ="airGu"></select>';
+					temp += '</div>';
+					temp += '<div class="airFigure" id="airFigure" />';
+					temp += '<div class="acco-wrap">';
+					temp += '<dl>';
+					temp += '<dt><a href="javascript:;">미세먼지(PM-10)란?</a></dt>';
+					temp += '<dd>흙먼지, 매연, 금속가루, 소금, 황산염, 질산염 등 많은 종류의 물질로 구성된 지름 10㎛(마이크로미터) 이하의<br>아주 작은 먼지를 말하며, 영문자 PM은 Particulate Matter의 약어임 </dd>';
+					temp += '<dt><a href="javascript:;">초미세먼지(PM-2.5)란?</a></dt>';
+					temp += '<dd>질산염․황산염 등의 이온성분과 금속화합물 등 유해물질로 구성된 지름 2.5㎛(마이크로미터) 이하의 아주 작은 먼지를 말하며, 영문자 PM은 Particulate Matter의 약어임</dd>';
+					temp += '<dt><a href="javascript:;">오존 (O3) 란?</a></dt>';
+					temp += '<dd>주로 대기오염물질인 질소산화물(NOx)과 휘발성 유기화합물질의 광화학반응에 의해 생성됨. 살균․소독제로 이용되기도 하나 호흡기, 눈 등 인체의 약한 부분에 해로움</dd>';
+					temp += '<dt><a href="javascript:;">아황산가스(SO2)란?</a></dt>';
+					temp += '<dd>연료나 폐기물에 함유되어 있는 미량의 황 성분이 연소될 때 발생함. 물에 녹으면 산(acid)이 되고 산성비를 내리게 하면서 폐나 눈에 해로우며 대기 중에서 암모니아 등과 반응하여 미세먼지가 되기도 함. </dd>';
+					temp += '<dt><a href="javascript:;">이산화질소(NO2)란?</a></dt>';
+					temp += '<dd>자동차 및 보일러 등의 연료연소, 폐기물 소각 등으로부터 배출됨. 물에 녹으면 산(acid)이 되고 산성비를 내리게 하는 등 인체에 해롭고, 대기 중에서 암모니아 등과 반응하여 미세먼지가 되기도 함. </dd>';
+					temp += '<dt><a href="javascript:;">일산화탄소(CO)란? </a></dt>';
+					temp += '<dd>보일러, 자동차, 소각시설 등에서의 불완전연소에 의해 발생함. 폐에서 산소가 혈액으로 흡수되는 것을 방해함으로써 두통, 무력감, 졸음, 구토 등을 유발함. </dd>';
+					temp += '</dl>';
+					temp += '</div>';
+					
+					$("#air_div").html(temp);
+					
+					AirGuList();
+					setTimeout(function(){
+						AirImgData(airType , '0');
+					}, '300');
+					
+					
+					$("#wholePM").click(function() {
+						AirPM10Info();
+					});
+
+					$("#wholePM25").click(function() {
+						AirPM25Info();
+					});
+					
+					$("#wholeOzone").click(function() {
+						AirOzoneInfo();
+					});
+
+					$("#airStandard").click(function() {
+						AirStandard();
+					});
+					
+					$(".acco-wrap dl dt").click(function(e){
+						if($(this).hasClass("active")){
+							$(".acco-wrap dl dt").removeClass("active");
+						}else{
+							$(".acco-wrap dl dt").removeClass("active");
+	                        $(this).addClass("active");	
+						}
+                    })
+					
+					$(".imgRadio").change(function() {
+						
+						var checkRadio = $(':radio[name="imgtype"]:checked').val();
+						var cl = 0;
+						
+						if (checkRadio == 'pm') {
+							AirWholeDataPm();
+						} else if (checkRadio == 'ozone') {
+							AirWholeDataOzone();
+						} else if (checkRadio == 'pm25') {
+							AirWholeDataPM25();
+						}  
+					}); 
+					
+					$("input[name='ColorBlind']").click(function () {
+						 
+						var colorBlindCheck = $("#ColorBlind").is(":checked");
+						 
+						if(colorBlindCheck) {
+							AirImgData('pm25' , '1');
+						} else {
+							AirImgData('pm25' , '0');
+						}
+					});
+					getHeight();
+				},
+				error : function() {
+					alert("네트워크가 불안정하거나 서버정보를 알 수 없습니다.\n 다시 시도해주시기 바랍니다.1");
+				}
+			});
+}
+
+
+//초미세먼지
+function AirWholeDataPM25() {
+	basePMInfo('pm25');
+}
+
+//미세먼지
+function AirWholeDataPm() {
+	basePMInfo('pm');
+}
+
+//미세먼지
+function AirWholeDataOzone() {
+	basePMInfo('ozone');
+}
+
+function AirImgData(value , cl) {
+	var req = { "dataType" : value};
+	var NJMS = window.NJMS;
+	
+	setTimeout(function(){
+		com.ajax( {
+			type : 'POST',
+			dataType : 'json',
+			url : '/mseoul/eco/air/selectAirReformWholeInfoImgData.do',
+			data : req,
+			success : function(jsondata) {
+
+				try {
+					var eco = new NJMS.Eco(document.getElementById('njms-eco'));
+					eco.loadData({ type: value, data: jsondata });
+					
+					if(cl == "0") {
+						eco.setColourWeakness(false);
+					} else {
+						eco.setColourWeakness(true);
+					}
+					
+					$(".imgExplain").text('['+ convertTimeSet(jsondata.measureTime) + ']');
+					
+				} catch(e) {
+					console.log(e);
+//					alert("현재 사용자가 많습니다. 다시 한번 시도해 주세요.");
+				}
+			},
+			error: function() {
+				alert("네트워크가 불안정하거나 서버정보를 알 수 없습니다.\n 다시 시도해주시기 바랍니다.2");
+			}
+		});
+	}, 500);
+}
+
+function convertTimeSet(time) {
+	var temp = parseInt(time.substring(4, 6), 10) + "월  "
+			+ parseInt(time.substring(6, 8), 10) + "일  "
+			+ parseInt(time.substring(8, 10), 10) + "시 기준";
+	if(time == ''){
+		temp = "자료가 존재하지 않습니다.";
+	}
+	return temp;
+}
+
+function convertTimeSet2(time) {
+	var temp = parseInt(time.substring(2, 4), 10) + "."
+			+ parseInt(time.substring(4, 6), 10) + "."
+			+ parseInt(time.substring(6, 8), 10) + "  "
+			+ parseInt(time.substring(8, 10), 10) + ":"
+			+ time.substring(10, 12);
+	if(time == ''){
+		temp = "자료가 존재하지 않습니다.";
+	}
+	return temp;
+}
+
+function AirGuList(searchGu) {
+	var req = {"timeStamp" : parseInt(new Date().getTime().toString().substring(0, 10))};
+	com.ajax( {
+		type : 'POST',
+		dataType : 'json',
+		url : '/mseoul/eco/air/selectAirReformGuList.do',
+		data : req,
+		success : function(data) {
+			
+			var temp = "";
+			temp += '<option value=""> 지역을 선택해 주세요. </option>';
+			for ( var i = 0; i < data.returnValue.length; i++) {
+				temp += '<option value="' + data.returnValue[i].MSRSTE_NM + '">'
+						+ data.returnValue[i].MSRSTE_NM + '</option>';
+			}
+
+			$("#airGu").html(temp);
+
+			$("#airGu > option[value=" + searchGu + "]").attr("selected",
+					"true");
+
+			$("#airGu").change(
+					function() {
+						if( $("#airGu").val() != "" ) {
+							AirInfo($("#airGu").val());
+							$("#airGu > option[value=" + $("#airGu").val() + "]")
+							.attr("selected", "true");
+						} else {
+							$("#airFigure").html('');
+						}
+					});
+
+		},
+		error : function() {
+			alert("네트워크가 불안정하거나 서버정보를 알 수 없습니다.\n 다시 시도해주시기 바랍니다.3");
+		}
+	});
+
+}
+
+function AirInfo(searchGu) {
+	var req = {
+		"msrste_nm" : searchGu,
+		"timeStamp" : parseInt(new Date().getTime().toString().substring(0, 10))
+	};
+	com.ajax( {
+				type : 'POST',
+				dataType : 'json',
+				url : '/mseoul/eco/air/selectAirReformGuInfo.do',
+				data : req,
+				success : function(data) {
+				
+					var A101 = "";
+					var A103 = "";
+					var A105 = "";
+					var A106 = "";
+					var A107 = "";
+
+					var temp = '';
+
+					temp += '<div class="nearbyAirInfo">';
+					temp += '<div class="airInfoTxt">';
+					temp += '<img src="/res_mseoulM/images/mobile/eco/bullet.jpg" alt="" class="bullet">';
+					temp += '<span> 실시간 대기 정보  </span> <span> ('
+							+ convertTimeSet2(data.measureTime) + ')</span>';
+					temp += '</div>';
+					temp += '</div>';
+
+					if (data.returnValue.SULFUROUS != '0') {
+						// 아황산가스
+						A101 = data.returnValue.SULFUROUS + "ppm";
+						I101 = data.returnValue.SULFUROUS;
+					} else {
+						A101 = "점검중";
+						I101 = 0;
+					}
+
+					if (data.returnValue.NITROGEN != '0') {
+						// 이산화질소
+						A103 = data.returnValue.NITROGEN + "ppm";
+						I103 = data.returnValue.NITROGEN;
+					} else {
+						A103 = "점검중";
+						I103 = 0;
+					}
+
+					if (data.returnValue.CARBON != '0') {
+						// 일산화탄소
+						A105 = data.returnValue.CARBON + "ppm";
+						I105 = data.returnValue.CARBON;
+					} else {
+						A105 = "점검중";
+						I105 = 0;
+					}
+
+					if (data.returnValue.OZONE != '0') {
+						// 오존
+						A106 = data.returnValue.OZONE + "ppm";
+						I106 = data.returnValue.OZONE;
+					} else {
+						A106 = "점검중";
+						I106 = 0;
+					}
+
+					if (data.returnValue.PM10 != '0') {
+						// 미세먼지
+						A107 = data.returnValue.PM10 + "㎍/㎥";
+						I107 = data.returnValue.PM10;
+					} else {
+						A107 = "점검중";
+						I107 = 0;
+					}
+					
+					if (data.returnValue.PM25 != '0') {
+						// 미세먼지
+						A108 = data.returnValue.PM25 + "㎍/㎥";
+						I108 = data.returnValue.PM25;
+					} else {
+						A108 = "점검중";
+						I108 = 0;
+					}
+					
+					temp += '<div class="airFigure">';
+					temp += '<table>';
+					temp += '<tr> <td class="MateriaName"> 미세먼지(PM-10) </td> <td class="MateriaValue"> <div class="aImgIconWrap">' + convertPM10IconImg(I107)+ '</div>'
+							+ A107 + '</td> </tr>';
+					temp += '<tr> <td class="MateriaName"> 초미세먼지(PM-2.5) </td> <td class="MateriaValue"><div class="aImgIconWrap">' + convertPM25IconImg(I108)+ '</div>'
+						+ A108 + '</td> </tr>';
+					temp += '<tr> <td class="MateriaName"> 오존(O<sub class="subfont">3</sub>) </td> <td class="MateriaValue"><div class="aImgIconWrap">' + convertO3IconImg(I106)+ '</div>'
+							+ A106 + '</td> </tr>';
+					temp += '<tr> <td class="MateriaName"> 이산화질소(NO<sub class="subfont">2</sub>) </td> <td class="MateriaValue"><div class="aImgIconWrap">' + convertNoIconImg(I103)+ '</div>'
+							+ A103 + '</td> </tr>';
+					temp += '<tr> <td class="MateriaName"> 일산화탄소(CO) </td> <td class="MateriaValue"><div class="aImgIconWrap">' + convertCoIconImg(I105)+ '</div>'
+							+ A105 + '</td> </tr>';
+					temp += '<tr> <td class="MateriaName"> 아황산가스(SO<sub class="subfont">2</sub>) </td> <td class="MateriaValue"><div class="aImgIconWrap">' + convertSoIconImg(I101)+ '</div>'
+							+ A101 + '</td> </tr>';
+					temp += '</table>';
+					temp += '</div>';
+
+					$("#airFigure").html(temp);
+					getHeight();
+					AirGuList(searchGu);
+
+					$("#PM10Title").click(function() {
+						if ($("#PM10Exp").css("display") == "none") {
+							$(".wrapCont").hide();
+							$("#PM10Exp").show();
+						} else {
+							$("#PM10Exp").hide();
+						}
+						getHeight();
+					});
+
+					$("#PM25Title").click(function() {
+						if ($("#PM25Exp").css("display") == "none") {
+							$(".wrapCont").hide();
+							$("#PM25Exp").show();
+						} else {
+							$("#PM25Exp").hide();
+						}
+						getHeight();
+					});
+					
+					$("#O3Title").click(function() {
+						if ($("#O3Exp").css("display") == "none") {
+							$(".wrapCont").hide();
+							$("#O3Exp").show();
+						} else {
+							$("#O3Exp").hide();
+						}
+						getHeight();
+					});
+
+					$("#SO2Title").click(function() {
+						if ($("#SO2Exp").css("display") == "none") {
+							$(".wrapCont").hide();
+							$("#SO2Exp").show();
+						} else {
+							$("#SO2Exp").hide();
+						}
+						getHeight();
+					});
+
+					$("#NO2Title").click(function() {
+						if ($("#NO2Exp").css("display") == "none") {
+							$(".wrapCont").hide();
+							$("#NO2Exp").show();
+						} else {
+							$("#NO2Exp").hide();
+						}
+						getHeight();
+					});
+
+					$("#COTitle").click(function() {
+						if ($("#COExp").css("display") == "none") {
+							$(".wrapCont").hide();
+							$("#COExp").show();
+						} else {
+							$("#COExp").hide();
+						}
+						getHeight();
+					});
+
+				},
+				error : function() {
+					alert("네트워크가 불안정하거나 서버정보를 알 수 없습니다.\n 다시 시도해주시기 바랍니다.4");
+				}
+			});
+}
+
+
+function popupLayerEmpty(){
+	$("#popupLayer").empty();
+} 
+
+function AirPM10Info() {
+	
+	var req = {"timeStamp" : parseInt(new Date().getTime().toString().substring(0, 10))};
+	com.ajax( {
+				type : 'POST',
+				dataType : 'json',
+				url : '/mseoul/eco/air/selectAirReformPM10Info.do',
+				data : req,
+				success : function(data) {
+				
+					var temp = "";
+
+					temp += '<div id="dim-layer"></div>';
+					temp += '<article id="" class="layer-popup layer favorite" style="width:800px; height: 750px;top:30%;left:40%;">';
+					temp += '<header class="layer-header">';
+					temp += '<h1>전체구 미세먼지 정보</h1>';
+					temp += '<button type="text" class="btn btn-close" onClick="popupLayerEmpty()"><span class="sr-only">닫기</span></button>';
+					temp += '</header>';
+					temp += '<section class="layer-body">';
+					temp += '<div class="h-menu type3">';
+					temp += '<h4>서울시 평균</h4>';
+					temp += '</div>';
+
+					temp += '<div class="airFigure">';
+					temp += '<table>';
+					temp += '<tr>';
+					temp += '<td class="MateriaName"> 미세먼지(PM-10)  </td>';
+					if(data.AVGDATA != "0") {
+					temp += '<td class="MateriaValue"><div class="aImgIconWrap">' + convertPM10IconImg(data.AVGDATA)+ '</div>' + data.AVGDATA
+							+ '㎍/㎥</td>';
+					} else {
+						temp += '<td class="MateriaValue"> <div class="aImgIconWrap">' + convertPM10IconImg(0)+ '</div>점검중 </td>';
+					}
+					temp += '</tr>';
+					temp += '</table>';
+
+					temp += '<div class="h-menu type3" style="border-top:0">';
+					temp += '<h4>전체구 미세먼지 정보';
+					if(data.TIME != "") {
+						temp += '<span> (' + convertTimeSet2(data.TIME) + ')</span>';
+					}
+					temp += '</h4>';
+					temp += '</div>';
+					
+					temp += '<div class="airFigure" style="overflow-y:auto;height:400px;">';
+					temp += '<table>';
+					for ( var i = 0; i < data.returnValue.length; i++) {
+						if (data.returnValue[i].PM10 == "점검중" || data.returnValue[i].PM10 == 0) {
+							temp += '<tr>' + '<td class="MateriaName">'
+									+ data.returnValue[i].SITE + '</td> '
+									+ '<td class="MateriaValue"> <div class="aImgIconWrap">' + convertPM10IconImg(0)+ '</div>점검중 </td>';
+							+'</tr>';
+						} else {
+							temp += '<tr>' + '<td class="MateriaName">'
+									+ data.returnValue[i].SITE + '</td> '
+									+ '<td class="MateriaValue"> <div class="aImgIconWrap">' + convertPM10IconImg(data.returnValue[i].PM10)+ '</div>'
+									+ data.returnValue[i].PM10 + '㎍/㎥</td>';
+							+'</tr>';
+						}
+					}
+					temp += '</table>';
+					temp += '</div>';
+					temp += '</section>';  
+					temp += '</article>';  
+				    
+					$("#popupLayer").html(temp);
+
+				},
+				error : function() {
+					alert("네트워크가 불안정하거나 서버정보를 알 수 없습니다.\n 다시 시도해주시기 바랍니다.5");
+				}
+			});
+}
+
+function AirPM25Info() {
+	
+	var req = {"timeStamp" : parseInt(new Date().getTime().toString().substring(0, 10))};
+	com.ajax( {
+				type : 'POST',
+				dataType : 'json',
+				url : '/mseoul/eco/air/selectAirReformPM25Info.do',
+				data : req,
+				success : function(data) {
+				
+					var temp = "";
+
+					temp += '<div id="dim-layer"></div>';
+					temp += '<article id="" class="layer-popup layer favorite" style="width:800px; height: 750px;top:30%;left:40%;">';
+					temp += '<header class="layer-header">';
+					temp += '<h1>전체구 초미세먼지 정보</h1>';
+					temp += '<button type="text" class="btn btn-close" onClick="popupLayerEmpty()"><span class="sr-only">닫기</span></button>';
+					temp += '</header>';
+					temp += '<section class="layer-body">';
+					temp += '<div class="h-menu type3">';
+					temp += '<h4>서울시 평균</h4>';
+					temp += '</div>';
+
+					temp += '<div class="airFigure">';
+					temp += '<table>';
+					temp += '<tr>';
+					temp += '<td class="MateriaName"> 초미세먼지(PM-2.5)  </td>';
+					if(data.AVGDATA != "점검중" || data.AVGDATA != "0") {
+					temp += '<td class="MateriaValue"><div class="aImgIconWrap">' + convertPM25IconImg(data.AVGDATA)+ '</div>' + data.AVGDATA
+							+ '㎍/㎥</td>';
+					} else {
+						temp += '<td class="MateriaValue"> <div class="aImgIconWrap">' + convertPM25IconImg(0)+ '</div>점검중 </td>';
+					}
+					temp += '</tr>';
+					temp += '</table>';
+
+					temp += '<div class="h-menu type3" style="border-top:0">';
+					temp += '<h4>전체구 초미세먼지 정보';
+					if(data.TIME != "") {
+						temp += '<span> (' + convertTimeSet2(data.TIME) + ')</span>';
+					}
+					temp += '</h4>';
+					temp += '</div>';
+					
+					temp += '<div class="airFigure" style="overflow-y:auto;height:400px;">';
+					temp += '<table>';
+					for ( var i = 0; i < data.returnValue.length; i++) {
+						if (data.returnValue[i].PM25 == "점검중" || data.returnValue[i].PM25 == 0) {
+							temp += '<tr>' + '<td class="MateriaName">'
+									+ data.returnValue[i].SITE + '</td> '
+									+ '<td class="MateriaValue"><div class="aImgIconWrap">' + convertPM25IconImg(0)+ '</div>점검중 </td>';
+							+'</tr>';
+						} else {
+							temp += '<tr>' + '<td class="MateriaName">'
+									+ data.returnValue[i].SITE + '</td> '
+									+ '<td class="MateriaValue"><div class="aImgIconWrap">' + convertPM25IconImg(data.returnValue[i].PM25)+ '</div>'
+									+ data.returnValue[i].PM25 + '㎍/㎥</td>';
+							+'</tr>';
+						}
+					}
+					temp += '</table>';
+					temp += '</div>';
+					temp += '</section>';  
+					temp += '</article>';  
+				    
+					$("#popupLayer").html(temp);
+				},
+				error : function() {
+					alert("네트워크가 불안정하거나 서버정보를 알 수 없습니다.\n 다시 시도해주시기 바랍니다.6");
+				}
+			});
+}
+
+
+function AirOzoneInfo() {
+	
+	var req = {"timeStamp" : parseInt(new Date().getTime().toString().substring(0, 10))};
+	com.ajax( {
+				type : 'POST',
+				dataType : 'json',
+				url : '/mseoul/eco/air/selectAirReformOzoneInfo.do',
+				data : req,
+				success : function(data) {
+				
+					var temp = "";
+					
+					temp += '<div id="dim-layer"></div>';
+					temp += '<article id="" class="layer-popup layer favorite" style="width:800px; height: 750px;top:30%;left:40%;">';
+					temp += '<header class="layer-header">';
+					temp += '<h1>전체구 오존 정보</h1>';
+					temp += '<button type="text" class="btn btn-close" onClick="popupLayerEmpty()"><span class="sr-only">닫기</span></button>';
+					temp += '</header>';
+					temp += '<section class="layer-body">';
+					temp += '<div class="h-menu type3">';
+					temp += '<h4>서울시 평균</h4>';
+					temp += '</div>';
+
+					temp += '<div class="airFigure">';
+					temp += '<table>';
+					temp += '<tr>';
+					temp += '<td class="MateriaName"> 오존(O<sub class="subfont">3</sub>)  </td>';
+					if(data.AVGDATA != "점검중" || data.AVGDATA != "0") {
+					temp += '<td class="MateriaValue"><div class="aImgIconWrap">' + convertO3IconImg(data.AVGDATA)+ '</div>' + data.AVGDATA
+							+ '㎍/㎥</td>';
+					} else {
+						temp += '<td class="MateriaValue"> <div class="aImgIconWrap">' + convertO3IconImg(0)+ '</div>점검중 </td>';
+					}
+					temp += '</tr>';
+					temp += '</table>';
+
+					temp += '<div class="h-menu type3" style="border-top:0">';
+					temp += '<h4>전체구 오존 정보';
+					if(data.TIME != "") {
+						temp += '<span> (' + convertTimeSet2(data.TIME) + ')</span>';
+					}
+					temp += '</h4>';
+					temp += '</div>';
+					
+					temp += '<div class="airFigure" style="overflow-y:auto;height:400px;">';
+					temp += '<table>';
+					for ( var i = 0; i < data.returnValue.length; i++) {
+						if (data.returnValue[i].OZONE == "0") {
+							temp += '<tr>' + '<td class="MateriaName">'
+									+ data.returnValue[i].SITE + '</td> '
+									+ '<td class="MateriaValue"><div class="aImgIconWrap">' + convertO3IconImg(0)+ '</div>점검중 </td>';
+							+'</tr>';
+						} else {
+							temp += '<tr>' + '<td class="MateriaName">'
+									+ data.returnValue[i].SITE + '</td> '
+									+ '<td class="MateriaValue"><div class="aImgIconWrap">' + convertO3IconImg(data.returnValue[i].OZONE)+ '</div>'
+									+ data.returnValue[i].OZONE + 'ppm</td>';
+							+'</tr>';
+						}
+					}
+					temp += '</table>';
+					temp += '</div>';
+					temp += '</section>';  
+					temp += '</article>';  
+				    
+					$("#popupLayer").html(temp);
+				},
+				error : function() {
+					alert("네트워크가 불안정하거나 서버정보를 알 수 없습니다.\n 다시 시도해주시기 바랍니다.7");
+				}
+			});
+}
+
+function AirStandard() {
+	
+	var temp = '';
+
+	temp += '<div id="dim-layer"></div>';
+	temp += '<article id="" class="layer-popup layer favorite" style="width:800px; height: 750px;top:30%;left:40%;">';
+	temp += '<header class="layer-header">';
+	temp += '<h1>대기환경기준</h1>';
+	temp += '<button type="text" class="btn btn-close" onClick="popupLayerEmpty()"><span class="sr-only">닫기</span></button>';
+	temp += '</header>';
+	temp += '<section class="layer-body">';
+	temp += '<div>';
+	temp += '<table class="table table-col">';
+	temp += '<colgroup>';
+	temp += '<col style="width:190px">';
+	temp += '<col style="width:auto">';
+	temp += '</colgroup>';
+	temp += '<thead>';
+	temp += '<tr>';
+	temp += '<th scope="col" class="tac">구분</th>';
+	temp += '<th scope="col">기준</th>';
+	temp += '</tr>';
+	temp += '</thead>';
+	temp += '<tbody>';
+	temp += '<tr>';
+	temp += '<td class="tac"><strong>미세먼지<br>(PM-10)</strong></td>';
+	temp += '<td>';
+	temp += '연평균 50㎍/㎥ 이하M<br>24시간평균 100㎍/㎥ 이하';
+	temp += '</td>';
+	temp += '</tr>';
+	temp += '<tr>';
+	temp += '<td class="tac"><strong>초미세먼지<br>(PM-2.5)</strong></td>';
+	temp += '<td>';
+	temp += '연평균 25㎍/㎥ 이하<br>24시간 평균 50㎍/㎥ 이하 <br>※ 2015년부터 환경기준 적용';
+	temp += '</td>';
+	temp += '</tr>';
+	temp += '<tr>';
+	temp += '<td class="tac"><strong>오존<br>(O<sub class="subfont">3</sub>)</strong></td>';
+	temp += '<td>';
+	temp += '연평균 50㎍/㎥ 이하M<br>24시간평균 100㎍/㎥ 이하';
+	temp += '</td>';
+	temp += '</tr>';
+	temp += '<tr>';
+	temp += '<td class="tac"><strong>이산화질소<br>(NO<sub class="subfont">2</sub>)</strong></td>';
+	temp += '<td>';
+	temp += '연평균 0.03ppm 이하<br>24시간평균 0.06ppm 이하<br>1시간평균 0.10ppm 이하';
+	temp += '</td>';
+	temp += '</tr>';
+	temp += '<tr>';
+	temp += '<td class="tac"><strong>일산화질소<br>(CO)</strong></td>';
+	temp += '<td>';
+	temp += '8시간평균 9ppm 이하<br>1시간평균 25ppm 이하';
+	temp += '</td>';
+	temp += '</tr>';
+	temp += '<tr>';
+	temp += '<td class="tac"><strong>아황산가스<br>(SO<sub class="subfont">2</sub>)</strong></td>';
+	temp += '<td>';
+	temp += '연평균 0.02ppm 이하<br>24시간평균 0.05ppm 이하<br>1시간평균 0.15ppm 이하';
+	temp += '</td>';
+	temp += '</tr>';
+	temp += '</tbody>';
+	temp += '</table>';
+	temp += '</div>';
+	temp += '</section>';
+	temp += '</article>';
+	$("#popupLayer").html(temp);
+}
+
+
+
+
+/////////////////////////////////예경보////////////////////////////////////
+function baseFCMain(airType){
+
+	var temp = "";
+	
+	var checkedPm25 = '';
+	var checkedPm = '';
+	var checkedOzone = '';
+	var checkedYs = '';
+	if(airType == 'pm25') checkedPm25 ='checked';
+	if(airType == 'pm10') checkedPm ='checked';
+	if(airType == 'o3') checkedOzone ='checked';
+	if(airType == 'ys') checkedYs ='checked';
+	
+	temp += '<div class="tab-content" id="tab1">';
+	temp += '<div class="fore-cast">';
+	temp += '<div class="radio-set2">';
+	temp += '<input type="radio" id="air01" name="pollutantType" '+checkedPm25+' value="pm25"><label for="air01" class="first"><span>초미세먼지</span></label>';
+	temp += '<input type="radio" id="air02" name="pollutantType" '+checkedPm+' value="pm10"><label for="air02"><span>미세먼지</span></label>';
+	temp += '<input type="radio" id="air03" name="pollutantType" '+checkedOzone+' value="o3"><label for="air03"><span>오존</span></label>';
+	temp += '<input type="radio" id="air04" name="pollutantType" '+checkedYs+' value="ys"><label for="air04" class="last"><span>황사</span></label>';
+	temp += '</div>';
+	temp += '</div>';
+		
+	temp += '<div id="fcInfo_div" />';
+	temp += '<div id="fcDetail_div" />';
+	temp += '</div>';
+	
+	$("#air_div").html(temp);
+
+	//fcInfo_div : 예경보 정보
+	baseForeCastInfo(airType);
+	
+	//fcInfo_div :  행동요령
+//	$('#fcDetail_div').html(baseForeCastDetail(airType));
+	baseForeCastDetail(airType);
+	
+	$("#air01").click(function() {
+		baseFCMain('pm25');
+	});
+
+	$("#air02").click(function() {
+		baseFCMain('pm10');
+	});
+	
+	$("#air03").click(function() {
+		baseFCMain('o3');
+	});
+
+	$("#air04").click(function() {
+		baseFCMain('ys');
+	});
+	
+}
+
+function makeCAIStep(caiStep, content) {
+	
+	var temp = '';
+	if (caiStep == 'G') {
+		temp += '<div class="status st01"> <div><i></i>좋음</div>';
+	} else if (caiStep == 'M') {
+		temp += '<div class="status st02"> <div><i></i>보통</div>';
+	} else if (caiStep == 'S') {
+		temp += '<div class="status st03"> <div><i></i>나쁨</div>';
+	} else if (caiStep == 'U') {
+		temp += '<div class="status st03"> <div><i></i>나쁨</div>';
+	} else if (caiStep == 'V') {
+		temp += '<div class="status st05"> <div><i></i>매우나쁨</div>';
+	} else if (caiStep == 'H') {
+		temp += '<div class="status st05"> <div><i></i>매우나쁨</div>';
+	} else if (caiStep == 'N') {
+		temp += '<div class="status st07"> <div><i></i>산출 불가</div>';
+	}
+	if (typeof (content) == "undefined") content = "";
+	temp += '<p>'+content+'</p></div>';
+	return temp;
+}
+
+function makeAlertStep(caiStep, content) {
+	
+	var temp = '';
+	temp += '<div class="status st07">';
+	if (caiStep == 'N') {
+		temp += '<div class="none"> 경보없음 </div>';
+	} else if (caiStep == 'W') {
+		temp += '<div class="none"> 주의보 </div>';
+	} else if (caiStep == 'A') {
+		temp += '<div class="none"> 경보 </div>';
+	} else if (caiStep == 'S') {
+		temp += '<div class="none"> 중대경보 </div>';
+	} else if(caiStep == 'R') {
+		temp += '<div class="none"> 주의보 예비단계 </div>';
+	} else {
+		temp += '<div class="none"> 경보없음 </div>';
+	}
+	if (typeof (content) == "undefined") content = "";
+	temp += '<p>'+content+'</p></div>';
+	return temp;
+}
+
+function baseForeCastInfo(airType) {
+	
+	var req = {
+		"pollutant" : airType,
+		"timeStamp" : parseInt(new Date().getTime().toString().substring(0, 10))
+	};
+	com.ajax( {
+				type : 'POST',
+				dataType : 'json',
+				url : '/mseoul/eco/air/selectAirReformForecastAlert.do',
+				data : req,
+				success : function(data) {
+
+					var temp = "";
+					var title= "";
+					if(airType == 'pm25') title ='초미세먼지';
+					if(airType == 'pm10') title ='미세먼지';
+					if(airType == 'o3') title ='오존';
+					if(airType == 'ys') title ='황사';
+					
+					temp += '<div class="fore-cast" style="text-align:center;">';
+
+					if (data.foreCastList != null && data.foreCastList.length != 0) {
+						temp += '<div class="left-area">';
+						temp += '<div class="h-menu"><h4>'+title+' 예보 ('	+ convertTimeSet2(data.foreCastList.APPLC_DT)	+ ') </h4></div>';
+						temp += makeCAIStep(data.foreCastList.CAISTEP, data.foreCastList.ALARM_CNDT);
+						temp += '</div>';
+					} else {
+						if(airType != 'ys'){
+							temp += '<div class="left-area">';
+							temp += '<div class="h-menu"><h4>'+title+' 예보 </h4></div>';
+							temp += '<div class="status st07"> <div><i></i>예보 없음</div></div>';
+							temp += '</div>';
+						}
+					}
+                  
+					if (data.alarmList != null && data.alarmList != null) {
+						temp += '<div class="right-area">';
+						temp += '<div class="h-menu"><h4>'+title+' 경보 </h4></div>';
+						temp += makeAlertStep(data.alarmList.ALERTSTEP, data.alarmList.ALARM_CNDT);
+					} else {
+						var style= '';
+						if(airType == 'ys'){
+							style = 'style="width:100%;"';
+						}
+							temp += '<div class="right-area" '+style+'>';
+							temp += '<div class="h-menu"><h4>'+title+' 경보 </h4></div>';
+							temp += '<div class="status st07"> <div><i></i>경보 없음</div></div>';
+							temp += '</div>';
+					}
+					
+					temp += '</div>';
+					
+					$("#fcInfo_div").html(temp);
+					getHeight();
+				},
+				error : function() {
+					alert("네트워크가 불안정하거나 서버정보를 알 수 없습니다.\n 다시 시도해주시기 바랍니다.8");
+				}
+			});
+}
+
+function baseForeCastDetail(airType) {
+	var req = {
+			"airType" : airType	
+	}
+	com.ajax( {
+		type : 'POST',
+		dataType : 'html',
+		url : '/mseoul/eco/air/sub/selectAirForecastDetail.do',
+		data : req,
+		success : function(data) {
+			$("#fcDetail_div").html(data);
+			getHeight();
+		},
+		error : function() {
+			alert("네트워크가 불안정하거나 서버정보를 알 수 없습니다.\n 다시 시도해주시기 바랍니다.9");
+		}
+	});
+}
+
+function getHeight() {
+    contentHeight = jQuery("#airMain").height();
+    window.parent.postMessage(contentHeight, "http://news.seoul.go.kr");
+} 

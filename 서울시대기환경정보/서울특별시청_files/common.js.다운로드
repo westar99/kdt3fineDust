@@ -1,0 +1,195 @@
+$(function(){
+    var isMobile = {
+        Android: function () {
+                 return navigator.userAgent.match(/Android/i) == null ? false : true;
+        },
+        BlackBerry: function () {
+                 return navigator.userAgent.match(/BlackBerry/i) == null ? false : true;
+        },
+        IOS: function () {
+                 return navigator.userAgent.match(/iPhone|iPad|iPod/i) == null ? false : true;
+        },
+        Opera: function () {
+                 return navigator.userAgent.match(/Opera Mini/i) == null ? false : true;
+        },
+        Windows: function () {
+                 return navigator.userAgent.match(/IEMobile/i) == null ? false : true;
+        },
+        any: function () {
+                 return (isMobile.Android() || isMobile.BlackBerry() || isMobile.IOS() || isMobile.Opera() || isMobile.Windows());
+        }
+    };
+    var windowSize = document.body.clientWidth;
+
+    // 모바일 접속일 경우 ios / android 운영체제 구분
+    if(isMobile.any() && windowSize <= 768){
+        if(isMobile.Android()){ 
+            $("html").addClass("android mobile");
+        }else if(isMobile.IOS()){
+            $("html").addClass("ios mobile");
+        }else if(isMobile.BlackBerry()){
+            $("html").addClass("android mobile");
+        }else if(isMobile.Opera()){
+            $("html").addClass("android mobile");
+        }else if(isMobile.Windows()){
+            $("html").addClass("android mobile");
+        }
+    }
+// ie버전 확인 및 크로스 브라우징을 위한 클래스 추가 스크립트
+  var agent = navigator.userAgent.toLowerCase();
+  if ( (navigator.appName == 'Netscape' && agent.indexOf('trident') != -1) || (agent.indexOf("msie") != -1)) {
+      $("#content").attr("tanindex","0"); // ie에서 스킵네비게이션 동작안될경우 
+
+      if(agent.indexOf("trident/7.0") != -1){
+        $("html").addClass("ie11");
+      } else if(agent.indexOf("trident/6.0") != -1){
+        $("html").addClass("ie10");
+      } else if(agent.indexOf("trident/5.0") != -1){
+        $("html").addClass("ie19");
+      } else if(agent.indexOf("trident/4.0") != -1){
+        $("html").addClass("ie8");
+      } else {
+        $("html").addClass("oldIE");
+      }
+  } 
+    // 모바일 서브메뉴
+    $("#snb ul li a").click(function(e){
+        var snbOpen = $("#snb ul").hasClass("fixed");
+        if(windowSize <= 768){
+            if(snbOpen == false){
+                e.preventDefault();
+                $("#snb ul").addClass("fixed");
+                $(this).parent().siblings().slideDown();  
+                console.log("열림");
+            } else{
+                $(this).parent().siblings().hide();
+                $(this).parent().show();
+                console.log("닫힘");
+            }
+        } 
+    })
+
+    var $snb = $("#snb");
+    var $container = $("#container");
+    /*if( $snb.length > 0 && !isMobile.any()){
+        var height = $container.outerHeight();
+        $snb.css("height",height);
+    }*/
+
+    $(window).scroll(function(){
+    })
+
+});
+
+function getWindowSize() {
+
+	var windowWidth, windowHeight;
+
+	if (self.innerHeight) {
+		// all except Explorer
+		if (document.documentElement.clientWidth) {
+			windowWidth = document.documentElement.clientWidth;
+		} else {
+			windowWidth = self.innerWidth;
+		}
+
+		windowHeight = self.innerHeight;
+	} else if (document.documentElement && document.documentElement.clientHeight) { // Explorer
+																					// 6
+																					// Strict
+																					// Mode
+		windowWidth = document.documentElement.clientWidth;
+		windowHeight = document.documentElement.clientHeight;
+	} else if (document.body) { // other Explorers
+		windowWidth = document.body.clientWidth;
+		windowHeight = document.body.clientHeight;
+	}
+	
+	return [windowWidth, windowHeight];
+}
+
+function removeSpace(str) {
+	return str.split(' ').join('');
+}
+
+function getCookie(name){
+	 var dc = document.cookie;
+	 var prefix = name + "=";
+	 var begin = dc.indexOf("; " + prefix);
+	 if(begin == -1){
+		 begin = dc.indexOf(prefix);
+		 if (begin != 0) return null;
+	 }else{
+		begin += 2;
+	 }
+	var end = document.cookie.indexOf(";", begin);
+	if (end == -1)	end = dc.length;
+	return unescape(dc.substring(begin + prefix.length, end));
+}
+
+function deleteCookie(name, path, domain) {
+	path = "/";
+  if (getCookie(name)) {
+   document.cookie = name + "=" +
+   ((path) ? "; path=" + path : "") +
+   ((domain) ? "; domain=" + domain : "") +
+   "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+  }
+}
+
+
+function setCookie(name, value, expires, path, domain, secure) {
+	var expireDay = new Date();
+	expireDay.setDate(expireDay.getDate()+expires);
+	path = "/";
+	var curCookie = name + "=" + escape(value) +
+		 ((expires) ? "; expires=" + expireDay.toUTCString() : "") +
+		 ((path) ? "; path=" + path : "") +
+		 ((domain) ? "; domain=" + domain : "") +
+		 ((secure) ? "; secure" : "");
+	document.cookie = curCookie;
+}
+
+function changeLanguage(langValue) {
+
+	var url = location.href;
+	var pUrl = "";
+	var psUrl = "";
+	var urlChg = '';
+	
+	if(url.indexOf("bus") > -1){
+		pUrl = "http://news.seoul.go.kr/traffic/busstop";
+		psUrl= "https://news.seoul.go.kr/traffic/busstop";
+		urlChg = 'bus/BusMain.do?lang=';
+	}else if(url.indexOf("subway") > -1){
+		pUrl = "https://news.seoul.go.kr/traffic/subwaystop";
+		psUrl= "https://news.seoul.go.kr/traffic/subwaystop";
+		urlChg = 'subway/SubwayMain.do?lang=';
+	}else if(url.indexOf("road") > -1){ 
+		pUrl = "http://news.seoul.go.kr/traffic/road_comm-2";
+		urlChg = 'road/RoadMain.do?lang=';
+		
+	}
+
+	if(langValue == 'ko'){
+		
+		if(url.indexOf("mseoulM") > -1){
+			console.log(1);
+			location.href = '/mseoulM/traffic/' + urlChg;
+		}else{ 
+			console.log(2);
+			location.href = '/mseoul/traffic/' + urlChg;
+			//parent.location.href = psUrl + "?lang=" + langValue;  
+		}
+	}else{ 
+		if(url.indexOf("mseoulM") > -1){
+			console.log(3);
+			location.href = "/mseoulM/lang/traffic/"+ urlChg + langValue;
+		}else{
+			console.log(4);  
+		//	location.href = "/mseoul/lang/traffic/"+ urlChg + langValue;
+		//	console.log(pUrl + "?lang=" + langValue);
+			parent.location.href = pUrl + "?lang=" + langValue; 
+		}
+	}
+}

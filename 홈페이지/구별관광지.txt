@@ -10,9 +10,9 @@
 금천구4,마리오아울렛,싸고 좋은 옷들이 많아요,img/tourPicture/street4.jfif,26785661
 금천구4,금천구청주변,구청앞을 지나 안양천 다목적광장을 가봐요,img/tourPicture/park4.jfif,8203023
 금천구4,G밸리박물관,다양한전시품이 와우, img/tourPicture/museum4.jfif,1363614560
-관악구5,신림사거리,젊은이들의 거리-랜드마크로 타임스트림이 있어요,img/tourPicture/street5.jpg,
-관악구5,낙성대공원,관악구에서 태어난 강감찬 장군,img/tourPicture/park5.png,
-관악구5,호림박물관,작지만 강한 박물관.미세먼지가 많을 때 추천!!,img/tourPicture/museum5.png
+관악구5,신림사거리,젊은이들의 거리-랜드마크로 타임스트림이 있어요,img/tourPicture/street5.jpg,15139364
+관악구5,낙성대공원,관악구에서 태어난 강감찬 장군,img/tourPicture/park5.png,10203930
+관악구5,호림박물관,작지만 강한 박물관.미세먼지가 많을 때 추천!!,img/tourPicture/museum5.png,21330649
 동작구6,컵밥거리,노량진에서 값싸게 컵밥을먹어요!,img/tourPicture/street6.png,27418138
 동작구6,효사정,한강을 보며 왕이된 기분으로,img/tourPicture/park6.png,8163283
 동작구6,숭실대박물관,한국기독교자료를 볼수 있는 박물관,img/tourPicture/museum6.jpg,8457278

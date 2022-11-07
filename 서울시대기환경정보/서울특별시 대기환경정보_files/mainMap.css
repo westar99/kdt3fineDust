@@ -1,0 +1,62 @@
+.name-marker{
+	background-color: #e5e5e5;
+	color: #1b1b1b;
+	width: 3rem;
+	height: 3rem;
+	border-radius: 75px;
+	text-align: center;
+	margin: 0 auto;
+	font-size: 12px;
+	vertical-align: middle;
+	line-height: 3rem;
+}
+.name-marker.alert-forecast{
+	display: none;
+	width: 35px;
+	height: 35px;
+	background-color: #ec7a7a;
+}
+.name-marker.alert-forecast::before{
+	display: inline-block;
+	width: 40px;
+	height: 50px;
+	content: '';
+	background: url(../../../images/icons.png) -383px -398px no-repeat;
+	transform: scale(0.4);
+	transform-origin: top left;
+	margin-top: 3px;
+	margin-left: 6px;
+}
+.name-marker.alert-forecast.on{
+	display: block;
+}
+
+.name-marker-active{
+	border: solid 2px;
+	border-color:black;
+}
+.simple-marker{
+	background-color: #e5e5e5;
+	color: #1b1b1b;
+	width: 10px;
+	height: 10px;
+	border-radius: 20px;
+	text-align: center;
+	margin: 0 auto;
+	font-size: 6px;
+	vertical-align: middle;
+	line-height: 10px;
+}
+
+a{
+	cursor:pointer;
+}
+
+.date-unit{
+	color:#767676;
+}
+
+.currentAirType{
+	display: inline;
+}
+

@@ -1,0 +1,116 @@
+var PollutantUtil = {
+		STATUS: {
+			ERROR: 0,
+			GOOD: 1,
+			NORMAL: 2,
+			BAD: 3,
+			SEVERE: 4,
+		},
+		getBaseline : function (pollutantType, status) {
+			if (pollutantType === 'pm10') {
+				return PollutantUtil.dustBaseline(status);
+			} else if (pollutantType === 'pm25') {
+				return PollutantUtil.fineDustBaseline(status);
+			} else if (pollutantType === 'o3') {
+				return PollutantUtil.ozoneBaseline(status);
+			} else if (pollutantType === 'no2') {
+				return PollutantUtil.no2Baseline(status);
+			} else if (pollutantType === 'so2') {
+				return PollutantUtil.so2Baseline(status);
+			} else if (pollutantType === 'co') {
+				return PollutantUtil.coBaseline(status);
+			}
+			else return -1;
+			
+		},
+		getUnit : function (pollutantType) {
+			if (pollutantType === 'pm10' || pollutantType === 'pm25') {
+				return "㎍/㎥";
+			} else if (['o3', 'no2', 'so2', 'co'].indexOf(pollutantType) !== -1) {
+				return "ppm";
+			} 
+			else return "";
+			
+		},
+		
+		getAbbreviation: function (pollutantType) {
+			var abbr = "";
+			
+			if (pollutantType === 'pm10') {
+				abbr = "PM-10";
+			} else if (pollutantType === 'pm25') {
+				abbr = "PM-2.5";
+			} else if (['o3', 'no2', 'so2', 'co'].indexOf(pollutantType) !== -1) {
+				abbr = pollutantType.toUpperCase();
+			}
+			
+			return abbr;
+		},
+		
+		fineDustBaseline: function (status) {
+			/*
+			* 
+			초미세먼지 (PM-2.5)
+			① 좋음 0~15 
+			② 보통 16~35 
+			③ 나쁨 36~75 
+			④ 매우나쁨 76~
+			*/
+			
+			if( status === this.STATUS.ERROR ) return -1;
+			else if( status === this.STATUS.GOOD ) return 0;
+			else if( status === this.STATUS.NORMAL ) return 16;
+			else if( status === this.STATUS.BAD ) return 36;
+			else if( status === this.STATUS.SEVERE ) return 76;
+		},
+		dustBaseline: function (status) {
+			/*
+			* 미세먼지 (PM-10)
+			① 좋음 0~30 
+			② 보통 31~80 
+			③ 나쁨 81~150 
+			④ 매우나쁨 151~
+			*/
+			
+			if( status === this.STATUS.ERROR ) return -1;
+			else if( status === this.STATUS.GOOD ) return 0;
+			else if( status === this.STATUS.NORMAL ) return 31;
+			else if( status === this.STATUS.BAD ) return 81;
+			else if( status === this.STATUS.SEVERE ) return 151;
+		},
+		ozoneBaseline: function (status) {
+			/*
+			* 오존 (o3)
+			① 좋음 0~0.03 
+			② 보통 0.031~0.09 
+			③ 나쁨 0.091~0.15 
+			④ 매우나쁨 0.151~
+			*/
+			if( status === this.STATUS.ERROR ) return -1;
+			else if( status === this.STATUS.GOOD ) return 0;
+			else if( status === this.STATUS.NORMAL ) return 0.031;
+			else if( status === this.STATUS.BAD ) return 0.091;
+			else if( status === this.STATUS.SEVERE ) return 0.151;
+		},
+		no2Baseline: function(status){
+			if( status === this.STATUS.ERROR ) return -1;
+			else if( status === this.STATUS.GOOD ) return 0;
+			else if( status === this.STATUS.NORMAL ) return 0.031;
+			else if( status === this.STATUS.BAD ) return 0.061 ;
+			else if( status === this.STATUS.SEVERE ) return 0.201;
+		},
+		coBaseline: function(status){
+			if( status === this.STATUS.ERROR ) return -1;
+			else if( status === this.STATUS.GOOD ) return 0;
+			else if( status === this.STATUS.NORMAL ) return 2.01;
+			else if( status === this.STATUS.BAD ) return 9.01;
+			else if( status === this.STATUS.SEVERE ) return 15.01;
+		},
+		so2Baseline: function(status){
+			if( status === this.STATUS.ERROR ) return -1;
+			else if( status === this.STATUS.GOOD ) return 0;
+			else if( status === this.STATUS.NORMAL ) return 0.021;
+			else if( status === this.STATUS.BAD ) return 0.051;
+			else if( status === this.STATUS.SEVERE ) return 0.151;
+		}
+}

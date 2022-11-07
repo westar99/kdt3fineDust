@@ -1,0 +1,1023 @@
+select{font-family: 'Nanum Gothic';font-size: 14px}
+.tabs {margin-bottom:20px;}
+.tabs ul {display:table;table-layout: fixed;width:100%;}
+.tabs ul li {display:table-cell;vertical-align: top}
+.tabs ul li a {position:relative; display:block; width:100%; padding:15px 0px; border:1px solid #ddd; border-right:0;box-sizing:border-box;font-size: 14px;color:#767676;text-align: center}
+.tabs ul li:last-child a{border-right:1px solid #ddd;}
+.tabs ul li.active a {border:1px solid #0c82e9; color:#0c82e9; font-weight:700; z-index:2;background: #f3f9fe}
+.tabs ul li.active + li a{ border-left:0}
+.tabs ul li.multiline a{padding:6px 0 7px}
+
+.tabs.type02{margin-bottom: 0}
+.tabs.type02 ul li{text-align: center}
+.tabs.type02 ul li a{border:0;display: inline-block;width:auto;font-size: 16px;padding:15px 0}
+.tabs.type02 ul li.active a{color: #2597e8;border-bottom:2px solid #2597e8;background: none}
+
+.table.table-type01 td{font-size: 14px;color:#767676;padding:16px}
+.table.table-type01 td strong{color:#222}
+.align-right{float:right}
+.stop-name{font-size: 14px;color:#222}
+.stop-number{font-size: 14px;color:#767676}
+.traffic .select:after{content:'';display: block;clear:both}
+.traffic .sel-lang{float:right;width:240px;margin-top:20px}
+.traffic .sel-lang label{float:left;width:73px;height:40px;line-height:40px;font-weight: 700;font-size: 14px}
+.traffic .sel-lang select{float:left;width:166px;font-size: 14px}
+.traffic_search{margin:20px 0 40px;padding:20px 40px;background: #f4f6f7;border:1px solid #dddddd}
+.traffic_search label{font-weight: 700;font-size: 14px;margin-right:14px}
+.traffic_search input{background: #fff;width:543px;}
+.traffic_search input + button{background: #fff}
+.traffic_search input + button span{font-size: 14px}
+.traffic-list .table tbody td .stop-name{font-size: 14px;color:#222}
+.traffic-list .table tbody td .stop-number{font-size: 14px;color:#767676}
+.bus-type{display: inline-block;width:40px;height:25px;line-height: 25px;color:#fff;font-weight: 700;font-size: 14px !important;text-align: center;margin-right:6px;margin-bottom: 1px;}
+.bus-type.main{background: #1f84bf}
+.bus-type.branch{background: #94c91d}
+.bus-type.air{background: #d4bf9b}
+.bus-type.village{background: #8ea82a}
+.bus-type.circular{background: #ffbb02}
+.bus-type.wide{background: #ef363d}
+.bus-type.kyonggi{background: #029a6a}
+.bus-type.incheon{background: #a5a5a5}
+.icon-setting{display:inline-block;width:26px;height:26px;background: url(/res_mseoul/images/icon_setting.png) no-repeat 0 0}
+.icon-delete{display:inline-block;width:26px;height:26px;background: url(/res_mseoul/images/icon_delete.png) no-repeat 0 0}
+.fav-type{display: block;width:30px;height: 30px;text-indent: -9999px}
+.fav-type.bus{background:url(/res_mseoul/images/bg_bus.png) no-repeat center center}
+.fav-type.stop{background:url(/res_mseoul/images/bg_bus_stop.png) no-repeat center center}
+.bg-fav{display: block;background: #646977;width:47px;height:25px;line-height: 25px;color:#fff;font-size: 14px !important;border-radius: 13px;text-align: center;font-weight: 700}
+.arrow-both{display: inline-block;width:20px;height:15px;background: url(/res_mseoul/images/arrow_both.png) no-repeat center center;margin:0 10px}
+.arr-dep{font-size: 14px}
+.arr-dep em{font-size:14px;color:#767676}
+.bus-num{font-weight: 700;font-size: 18px}
+.empty{text-align: center;padding:60px 0}
+.empty p{font-size: 14px;}
+.empty p strong{font-size:14px;display: block;padding-bottom:180px;margin:10px 0 30px;background: url(/res_mseoul/images/bg_bus_favorite.png) no-repeat center bottom}
+.empty p small{font-size:14px;color:#767676}
+.emptySubway{text-align: center;padding:60px 0}
+.emptySubway p{font-size: 14px;}
+.emptySubway p strong{font-size:20px;display: block;padding-bottom:180px;margin:10px 0 30px;background: url(/res_mseoulM/images/lang/traffic/subway/img_help01.png) no-repeat center bottom}
+.emptySubway p small{font-size:14px;color:#767676}
+.icon-fav{width:26px;height:26px;display:block;text-indent:-9999px;background: url(/res_mseoul/images/icon_favorite.png) no-repeat 0 0}
+.icon-map{width:30px;height:28px;display:block;text-indent:-9999px;background: url(/res_mseoul/images/icon_map.png) no-repeat 0 0}
+.icon-detail{width:26px;height:26px;display:block;text-indent:-9999px;background: url(/res_mseoul/images/icon_detail.png) no-repeat 0 0} /* 2018-05-14 박시인 지하철 추가 */
+.icon-fav.on{background: url(/res_mseoul/images/icon_favorite_on.png) no-repeat 0 0}
+.icon-list{width:37px;height:37px;text-indent:-9999px;background: url(/res_mseoul/images/traffic/bus/btn_list.png) no-repeat 0 0; background-size:51px;}
+.icon-pic{width:37px;height:37px;text-indent:-9999px;background: url(/res_mseoul/images/traffic/bus/btn_pic.png) no-repeat 0 0; background-size:28px; position: absolute;top: 41%; right: 61px;}
+.night-num{color:#222;font-weight: 700;font-size: 18px}
+.night-num i{display:inline-block;vertical-align:middle;width:14px;height:14px;border-radius: 50%;margin-right: 6px}
+.night-num i.n13{background-color:#ffd22f}
+.night-num i.n15{background-color:#32c0c4}
+.night-num i.n16{background-color:#ee3635}
+.night-num i.n26{background-color:#b42990}
+.night-num i.n30{background-color:#91401a}
+.night-num i.n37{background-color:#888}
+.night-num i.n61{background-color:#33803d}
+.night-num i.n62{background-color:#ec8221}
+.night-num i.n65{background-color:#1b7fcd}
+.night-num i.n854{background-color:#333}
+.night-num i.n876{background-color:#333}
+.traffic-list table td{font-size: 14px;color:#222;padding:20px}
+.traffic-list table td span{font-size: 14px;}
+.traffic-list table td span.subway-num_s{background-size:28px auto;}/* 지하철 노선 2018-05-15 지하철 추가 */
+.traffic-list table td span.subway-num_m{background-size:65px auto; margin-right:5px;}/* 지하철 노선 2018-05-16 지하철 추가 */
+.night-info{padding:30px 18px;background: #f4f6f7;border-top:1px solid #767676;border-bottom: 1px solid #767676;font-size: 14px;color:#555555}
+.night-info strong{font-size: 20px;margin-right: 50px;color:#222}
+.night-bus-route{margin: 40px 0 0px;text-align: center}
+.icon-search{padding-left:10px;background:url(/res_mseoul/images/bus_search.png) no-repeat left center}
+.fc_b{color:#2597e8; line-height:1em;font-size:1.0em}
+
+/* 지하철 정보 박시인 추가 start -----------------------------------------------------------------------------------------------------------*/
+
+.ico_subline01{width:50px;height:30px;display:inline-block;vertical-align:middle; text-indent:-9999px;background: url(/res_mseoul/images/ico_subline01.png) no-repeat 0 0}
+.ico_subline02{width:50px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline02.png) no-repeat 0 0}
+.ico_subline03{width:50px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline03.png) no-repeat 0 0}
+.ico_subline04{width:50px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline04.png) no-repeat 0 0}
+.ico_subline05{width:50px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline05.png) no-repeat 0 0}
+.ico_subline06{width:50px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline06.png) no-repeat 0 0}
+.ico_subline07{width:50px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline07.png) no-repeat 0 0}
+.ico_subline08{width:50px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline08.png) no-repeat 0 0}
+.ico_subline09{width:50px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline09.png) no-repeat 0 0}
+.ico_subline10{width:68px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline10.png) no-repeat 0 0}
+.ico_subline11{width:58px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline11.png) no-repeat 0 0}
+.ico_subline12{width:76px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline12.png) no-repeat 0 0}
+.ico_subline13{width:96px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline13.png) no-repeat 0 0}
+.ico_subline14{width:58px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline14.png) no-repeat 0 0}
+.ico_subline15{width:58px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline15.png) no-repeat 0 0}
+.ico_subline16{width:58px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline16.png) no-repeat 0 0}
+.ico_subline17{width:96px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline17.png) no-repeat 0 0}
+.ico_subline18{width:76px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline18.png) no-repeat 0 0}
+.ico_subline19{width:96px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline19.png) no-repeat 0 0}
+.ico_subline20{width:68px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline20.png) no-repeat 0 0}
+.ico_subline21{width:58px;height:30px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_subline21.png) no-repeat 0 0}
+
+.ico_linenum01{width:44px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum01.png) no-repeat center}
+.ico_linenum02{width:44px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum02.png) no-repeat center}
+.ico_linenum03{width:44px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum03.png) no-repeat center}
+.ico_linenum04{width:44px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum04.png) no-repeat center}
+.ico_linenum05{width:44px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum05.png) no-repeat center}
+.ico_linenum06{width:44px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum06.png) no-repeat center}
+.ico_linenum07{width:44px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum07.png) no-repeat center}
+.ico_linenum08{width:44px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum08.png) no-repeat center}
+.ico_linenum09{width:44px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum09.png) no-repeat center}
+.ico_linenum10{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum10.png) no-repeat center}
+.ico_linenum11{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum11.png) no-repeat center}
+.ico_linenum12{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum12.png) no-repeat center}
+.ico_linenum13{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum13.png) no-repeat center}
+.ico_linenum14{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum14.png) no-repeat center}
+.ico_linenum15{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum15.png) no-repeat center}
+.ico_linenum16{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum16.png) no-repeat center}
+.ico_linenum17{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum17.png) no-repeat center}
+.ico_linenum18{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum18.png) no-repeat center}
+.ico_linenum19{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum19.png) no-repeat center}
+.ico_linenum20{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum20.png) no-repeat center}
+.ico_linenum21{width:65px;height:28px;display:inline-block;vertical-align:middle;text-indent:-9999px;background: url(/res_mseoul/images/ico_linenum21.png) no-repeat center}
+
+.subway-type{display:inline-block;width:47px;height:25px;line-height:25px;color:#fff;font-weight: 700;font-size: 14px !important;text-align: center;margin-right:6px;}
+.subway-type_b{display:inline-block;width:90px;height:50px;line-height:20px;color:#000;font-weight: 700;font-size: 14px !important;text-align: center;margin-right:6px;}
+.subway-type.transfer{background: #3bafda;}
+
+.subway-num_s{background-size:27px auto;}
+.subway-num_m{background-size:65px auto; margin-right:5px;}
+
+.nearest .list li .type_sub{margin-top:15px}
+.nearest .list li .type_sub a.icon-fav{position: absolute;right:60px;top:50%;margin-top:-10px}
+
+.type_sub .subway-type_b .icon-fav{width:26px;height:26px;display:inline-block;text-indent:-9999px;background: url(/res_mseoul/images/icon_favorite.png) no-repeat 0 0}
+.type_sub .subway-type_b .icon-map{width:30px;height:28px;display:inline-block;text-indent:-9999px;background: url(/res_mseoul/images/icon_map.png) no-repeat 0 0}
+.type_sub .subway-type_b .icon-detail{width:26px;height:26px;display:inline-block;text-indent:-9999px;background: url(/res_mseoul/images/icon_detail.png) no-repeat 0 0}
+.type_sub .subway-type_b .icon-fav.on{background: url(/res_mseoul/images/icon_favorite_on.png) no-repeat 0 0}
+
+.station-warp_s{position:relative;width:100%;display:inline-block;padding:0;background-image:url(/res_mseoul/images/traffic/bus/bg_route_normal.png);background-repeat:no-repeat;background-position:32px 32px}
+.station-warp_s .station-item_s{position:relative;padding:27px 8px 20px 80px;font-size:0;line-height:0}
+.station-warp_s .station-tbox_s{display:inline-block;width:88%;white-space:normal;vertical-align:middle}
+
+.subwaytime{display:block;position: relative;}
+.subwaytime_item{display:block;text-align:center;position: relative;padding:10px 0;margin-left:45px;background:#0c82e9;}
+.subwaytime_item .jam{left:330px;right:auto;font-size: 14px;top:20px}
+.subwaytime_item .b-first span{display:inline-block;width:40%;color:#FFF;font-size:14px;letter-spacing:-0.5px;line-height:1.0em;font-weight:600;text-align:left;vertical-align: top}
+.subwaytime_item .b-first span:first-child{text-align:right;padding-left:0;padding-right:20px}
+.subwaytime_item .b_second span{display:inline-block;width:40%;color:#d8eff8;font-size:1.154em;letter-spacing:-0.5px;line-height:1.0em;font-weight:600;text-align:left;padding-left:20px}
+.subwaytime_item .b_second span:first-child{text-align:right;padding-left:0;padding-right:20px}
+.subwaytime_item .b-first.notime span, .bustime_item .b_second.notime span{padding-left:0;padding-right:0;text-align:center;letter-spacing:0;font-size: 14px;opacity: 0.6;}
+.subwaytime_item.type2{margin:16px 0 0;background:url(/res_mseoul/images/traffic/bus/bg_bustime3.png) 50% 0 repeat-y}
+.subwaytime_item.type2 li{padding-top:0}
+.subwaytime_item.type2 .b-first span{color:#333;margin-bottom:10px;font-size:1.385em}
+.subwaytime_item.type2 .b-first span:first-child{text-align:right;padding-left:0;padding-right:20px}
+.subwaytime_item.type2 .b_second span{color:#333;font-size:1.154em;font-weight:200;}
+.subwaytime_item.type2 .b_second span:first-child{text-align:right;padding-left:0;padding-right:20px}
+.subwaytime_item.type2 .b-first.notime span{padding:8px 0 0 0;text-align:center;letter-spacing:0;background-image:none;background-color:#FFF}
+.subwaytime_item.type2 .b-first.notime{background-color:#FFF}
+
+.traffic_list.station_s{margin-bottom:-15px;padding-bottom:10px;background:url(/res_mseoul/images/traffic/bus/bg_route2.png) 36px 0 repeat-y}
+.icon-arrow-right{display:inline-block;width:16px;height:28px;background: url(/res_mseoul/images/arrow_right_b.png) no-repeat 0 0}
+.icon-arrow-to{display:inline-block;width:22px;height:16px;background: url(/res_mseoul/images/arrow_to.png) no-repeat 0 0}
+
+.bus_num{display:inline-block;margin:4px 0 0 2px;width:54px;line-height:22px;font-size:1.077em;letter-spacing:-1px;vertical-align:middle;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ico_busline{display:inline-block;margin:-3px 2px 0 0;width:13px;height:16px;line-height:0;vertical-align:middle}
+.ico_busline img{width:100%}
+.b_line1 .ico_busline{background-color:#1f84bf} /* Bus Line Color-간선*/
+.b_line2 .ico_busline{background-color:#94c91d} /* Bus Line Color-지선*/
+.b_line3 .ico_busline{background-color:#ffbb02} /* Bus Line Color-순환*/
+.b_line4 .ico_busline{background-color:#ef363d} /* Bus Line Color-광역*/
+.b_line5 .ico_busline{background-color:#029a6a} /* Bus Line Color-경기*/
+.b_line6 .ico_busline{background-color:#d4bf9b} /* Bus Line Color-공항*/
+.b_line7 .ico_busline{background-color:#8ea82a} /* Bus Line Color-마을*/
+.b_line8 .ico_busline{background-color:#a5a5a5} /* Bus Line Color-인천*/
+
+/* 실시간 도착정보 주미숙 수정 2018-07-26*/
+.subway_boxcon{ overflow:hidden;display:block;margin:20px 10px 0;padding-bottom:16px;background-color:#ffffff;}
+.subway_boxcon.b_shadow{box-shadow:0px 1px 0px 0px rgba(0, 0, 0, 0.2);-moz-box-shadow:0px 1px 0px 0px rgba(0, 0, 0, 0.2);-webkit-box-shadow:0px 1px 0px 0px rgba(0, 0, 0, 0.2)}
+.subway_boxcon.b_shadow2{margin-top:80px;box-shadow:0px 0px 4px 0px rgba(0, 0, 0, 0.2);-moz-box-shadow:0px 0px 4px 0px rgba(0, 0, 0, 0.2);-webkit-box-shadow:0px 0px 4px 0px rgba(0, 0, 0, 0.2);border-radius:16px;-moz-border-radius:16px;-webkit-border-radius:16px}
+.subway_boxcon li.txtcon{margin:10px 12px;font-size:1.154em}
+.subway_boxcon input[type="text"]{float:left;width:70%;height:34px;font-size:1.0em;line-height:30px;font-weight:nomal;padding-left:6px;border:1px solid #4fc1e9;border-radius:4px;-moz-border-radius:4px;-webkit-border-radius:4px;-webkit-appearance:none}
+.subway_boxcon input[type="text"]::-webkit-input-placeholder, .bus_sch .inputbox input[type="search"]::-webkit-input-placeholder {/* WebKit browsers */color:#999;}
+.subway_boxcon input[type="text"]:-moz-placeholder, .bus_sch .inputbox input[type="search"]:-moz-placeholder {/* Mozilla Firefox 4 to 18 */color:#999;}
+.subway_boxcon input[type="text"]::-moz-placeholder, .bus_sch .inputbox input[type="search"]::-moz-placeholder {/* Mozilla Firefox 19+ */color:#999;}
+.subway_boxcon input[type="text"]:-ms-input-placeholder, .bus_sch .inputbox input[type="search"]:-ms-input-placeholder {/* Internet Explorer 10+ */color:#999;}
+.subway_boxcon .selbox_con{position:relative;border:1px solid #4fc1e9;width:100%;height:34px; background-color:#FFF;/*background:url(images/bg_sel.png) right 0  no-repeat #FFF;*/border-radius:4px;-moz-border-radius:4px;-webkit-border-radius:4px;}
+.selbox_con .txt{display:inline-block;width:80%;height:34px;font-size:1.077em;line-height:34px;letter-spacing:-0.5px;font-weight:600;text-align:left;padding-left:10px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.selbox_con .txt2{display:inline-block;padding-right:6px;margin-right:6px;font-size:1.077em;line-height:1.0em;letter-spacing:-0.5px;font-weight:600;text-align:left;border-right:1px solid #999}
+.selbox_con .ico_pd{float:right;width:24px;height:34px}
+.selbox_con .ico_pd img{width:100%}
+.selbox_con select{position:absolute;z-index:5;left:0;top:0;width:100%;height:100%;border:none;background:none;outline:none;opacity:0;-webkit-appearance:none;filter:alpha(opacity=0)}
+.arrive_info{margin:0;height:70px}
+.stationinfo_con1{position:relative;height:46px;text-align:center}
+.stationinfo_con1 .st_line{position:absolute;z-index:0;left:0;right:0;top:50%;margin-top:-4px;height:8px}
+.stinfo_box{position:relative;z-index:1;display:inline-block;height:46px;text-align:center}
+.stinfo_box img{width:100%}
+.stinfo_box .left{float:left;display:block;width:19px;height:46px;background:url(/res_mseoulM/images/mobile/traffic/subway2016/bg_stinfo_left.png) 0 0 no-repeat;background:url(/res_mseoul/images/bg_stinfo_left_ie8.png) 0 0 no-repeat\9;background-size:contain;}
+.stinfo_box .right{float:right;display:block;width:19px;height:46px;background:url(/res_mseoulM/images/mobile/traffic/subway2016/bg_stinfo_right.png) 0 0 no-repeat;background:url(/res_mseoul/images/bg_stinfo_right_ie8.png) 0 0 no-repeat\9;background-size:contain;}
+.stinfo_box .middle{float:left;display:inline-block;padding-top:0;height:46px;line-height:44px;background:url(/res_mseoulM/images/mobile/traffic/subway2016/bg_stinfo_middle.png) 0 0 repeat-x;background:url(/mseoul/images/bg_stinfo_middle_ie8.png) 0 0 repeat-x\9;;background-size:contain;font-size:0;}
+.stinfo_box .st_ico{display:inline-block;margin:0 6px 0 0;height:15px;background-position:0 0;background-size:cover;line-height:46px;vertical-align:middle}
+.stinfo_box .st_name{display:inline-block;color:#333;font-size:14px;font-weight:600;letter-spacing:-0.5px;vertical-align:middle}
+.stinfo_box .st_num{display:inline-block;margin:-1px 0 0 2px;color:#333;font-size:15px;font-weight:400;letter-spacing:-0.5px;vertical-align:middle}
+.stationinfo_con2 li{display:block;width:40%;height:23px;white-space:nowrap;}
+.stationinfo_con2 .st_pre{float:left;padding:0 10px 0 16px;text-align:left;background:url(/res_mseoulM/images/mobile/traffic/subway2016/si_arrowleft.png) left 8px no-repeat;background-size:12px 7px}
+.stationinfo_con2 .st_next{float:right;padding:0 16px 0 10px;text-align:right;background:url(/res_mseoulM/images/mobile/traffic/subway2016/si_arrowright.png) right 8px no-repeat;background-size:12px 7px}
+.stationinfo_con2 .name{display:inline-block;max-width:80%;margin-right:3px;color:#333;font-size:1.077em;font-weight:400;letter-spacing:-0.5px;line-height:23px;vertical-align:middle;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+.stationinfo_con2 .num{display:inline-block;color:#333;font-size:1.0em;font-weight:400;letter-spacing:-0.5px;line-height:23px;vertical-align:middle;}
+.stationinfo_con2 .arrow{display:inline-block;width:14px;height:23px;background-repeat:no-repeat;background-size:14px 23px; vertical-align:middle}
+.st_pre .arrow{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/si_arrowleft.png);background-position:left 0}
+.st_next .arrow{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/si_arrowright.png);background-position:right 0}
+.subwaytime_item{display:block;margin:10px 0}
+.subwaytime_item li{display:block;text-align:center;margin-left:50px;letter-spacing:0;line-height:1.2em;font-weight:600;text-align:left;padding:0 10px}
+.subwaytime_item .b_first{color:#FFF;font-size:1.308em}
+.subwaytime_item .b_second{margin-top:10px;color:#d8eff8;font-size:1.077em}
+.subwaytime_item.type2{margin:0px 0 0;background:url(/res_mseoul/images/bg_subtime3.png) 50% 0 repeat-y}
+.subwaytime_item.type2 li{margin-left:0;font-weight:400}
+.subwaytime_item.type2 .b_first>span{float:right;display:inline-block;width:43%;color:#333;margin-bottom:8px;font-size:1.0em;padding-left:4px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.subwaytime_item.type2 .b_first>span:first-child{float:none;text-align:right;padding-left:0;padding-right:20px}
+.subwaytime_item.type2 .b_first>span>strong{color:#3bafda;font-size:1.0em;font-weight:600;margin-right:4px}
+.subwaytime_item.type2 .b_second>span{float:right;display:inline-block;width:43%;color:#333;font-size:1.0em;font-weight:200;padding-left:4px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.subwaytime_item.type2 .b_second>span:first-child{float:none;text-align:right;padding-left:0;padding-right:20px}
+.subwaytime_item.type2 .b_second>span>strong{font-size:1.077em;font-weight:400;margin-right:4px}
+.subwaytime_item.type2 .b_first.notime span{width:80%;padding:8px 0 0 0; font-size:1.2em;text-align:center;letter-spacing:0;background-image:none;background-color:#FFF}
+.subwaytime_item.type2 .b_first.notime{padding-left:0;text-align:center;background-color:#FFF}
+.subway-wrap{display:none}
+.subway-wrap.active{display:block}
+.bt_con{ display:block;padding:0;width:100%}
+.bt_con li{float:left; display:block;margin-top:8px;width:50%;text-align:center}
+.bt_con li:after{display:block;clear:both;content:''}
+.bt_con li:first-child{background:url(/res_mseoul/images/bt_con_line.png) right 6px no-repeat; background-size:1px 73px}
+.bt_graphic{position:relative;display:inline-block;width:78px;height:90px;border:0;line-height:none}
+.bt_graphic:first-child{margin-left:0}
+.bt_graphic .bg_sw{z-index:2;position:absolute;left:0;top:0;right:0;bottom:0;background:url(/res_mseoul/images/bg_siinfo.png) 0 0 no-repeat;/*background:url(images/bg_siinfo_ie8.png) 0 0 no-repeat\9;*/background-color:transparent;background-size:cover}
+.bt_graphic .bg_sw.local{background:url(/res_mseoul/images/bg_siinfo2.png) 0 0 no-repeat;/*background:url(images/bg_siinfo2_ie8.png) 0 0 no-repeat\9;*/background-size:cover}
+.bt_graphic .sb_time{z-index:5;position:absolute;left:0;top:24px;width:100%;height:20px;color:#333;font-size:0.95em;letter-spacing:0px;line-height:1.3em;font-weight:600;text-align:center;}
+.bt_graphic .sb_time .time{color:#333;font-size:1.385em;padding-left:4px;}
+.bt_graphic .sb_time .time2{color:#333;font-size:1em;font-weight:700}
+.bt_graphic .sb_time .timeTxt {color:#333;font-size:0.7em;color:#777;}
+.bt_graphic .sb_time:after{display:inline-block;margin-left:2px;color:#777;font-size:0.75em;letter-spacing:-0.5px;font-weight:600;line-height:0.8em;}
+.bt_graphic .sb_station{z-index:5;position:absolute;left:0;top:28px;width:100%;padding-left:0px;height:20px;color:#333;font-size:1.231em;letter-spacing:0px;line-height:0.8em;font-weight:600;text-align:center;}
+.bt_graphic .sb_station:after{display:inline-block;margin-left:2px;color:#777;font-size:0.75em;letter-spacing:-0.5px;font-weight:600;line-height:0.8em;content:'도착'}
+.bt_con li .st_name{position:relative;margin:4px 4px 0;height:20px;text-align:center;white-space:nowrap;}
+.bt_con li .st_name .st_namebox1{display:inline-block;color:#333; letter-spacing:-0.5px;font-weight:600;line-height:20px;overflow:hidden;white-space:nowrap;word-wrap:break-word;vertical-align:middle}
+.bt_con li .st_name .st_namebox2{display:inline-block;color:#999;font-size:1.085em;letter-spacing:-0.5px;font-weight:600;line-height:20px;vertical-align:middle}
+ /* 실시간 도착정보 line*/
+.ai_line1 .st_ico, .ai_line1.st_ico{width:15px;height:15px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum01_s.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum01_sie8.png)\9}
+.ai_line2 .st_ico, .ai_line2.st_ico{width:15px;height:15px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum02_s.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum02_sie8.png)\9}
+.ai_line3 .st_ico, .ai_line3.st_ico{width:15px;height:15px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum03_s.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum03_sie8.png)\9}
+.ai_line4 .st_ico, .ai_line4.st_ico{width:15px;height:15px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum04_s.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum04_sie8.png)\9}
+.ai_line5 .st_ico, .ai_line5.st_ico{width:15px;;height:15px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum05_s.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum05_sie8.png)\9}
+.ai_line6 .st_ico, .ai_line6.st_ico{width:15px;;height:15px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum06_s.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum06_sie8.png)\9}
+.ai_line7 .st_ico, .ai_line7.st_ico{width:15px;;height:15px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum07_s.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum07_sie8.png)\9}
+.ai_line8 .st_ico, .ai_line8.st_ico{width:15px;;height:15px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum08_s.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum08_sie8.png)\9}
+.ai_line9 .st_ico, .ai_line9.st_ico{width:15px;;height:15px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum09_s.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum09_sie8.png)\9}
+.ai_line10 .st_ico, .ai_line10.st_ico{width:47px;height:18px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum10.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum10_ie8.png)\9}
+.ai_line11 .st_ico, .ai_line11.st_ico{width:47px;height:18px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum11.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum11_ie8.png)\9}
+.ai_line12 .st_ico, .ai_line12.st_ico{width:47px;height:18px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum12.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum12_ie8.png)\9}
+.ai_line13 .st_ico, .ai_line13.st_ico{width:47px;height:18px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum13.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum13_ie8.png)\9}
+.ai_line14 .st_ico, .ai_line14.st_ico{width:47px;height:18px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum14.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum14_ie8.png)\9}
+.ai_line15 .st_ico, .ai_line15.st_ico{width:47px;height:18px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum15.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum15_ie8.png)\9}
+.ai_line16 .st_ico, .ai_line16.st_ico{width:47px;height:18px;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum16.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum16_ie8.png)\9}
+.ai_line17 .st_ico, .ai_line17.st_ico{width:47px;height:18px;;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum17.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum17_ie8.png)\9}
+.ai_line18 .st_ico, .ai_line18.st_ico{width:47px;height:18px;;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum18.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum18_ie8.png)\9}
+.ai_line19 .st_ico, .ai_line19.st_ico{width:47px;height:18px;;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum19.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum19_ie8.png)\9}
+.ai_line20 .st_ico, .ai_line20.st_ico{width:47px;height:18px;;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum20.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum20_ie8.png)\9}
+.ai_line21 .st_ico, .ai_line21.st_ico{width:47px;height:18px;;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum21.png);background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum21_ie8.png)\9}
+.ai_line00 .st_ico, .ai_line00.st_ico{width:47px;height:18px;;background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/ico_linenum00.png)}
+
+.ai_line1 .st_line, .ai_line1 .stinfo_box, .ai_line1 .bt_graphic, .ai_line1 .subinfo_bg, .ai_line1 .rst_line, .ai_line1 .r_dot{background-color:#1468be}
+.ai_line2 .st_line, .ai_line2 .stinfo_box, .ai_line2 .bt_graphic, .ai_line2 .subinfo_bg, .ai_line2 .rst_line, .ai_line2 .r_dot{background-color:#10b851}
+.ai_line3 .st_line, .ai_line3 .stinfo_box, .ai_line3 .bt_graphic, .ai_line3 .subinfo_bg, .ai_line3 .rst_line, .ai_line3 .r_dot{background-color:#ff6a00}
+.ai_line4 .st_line, .ai_line4 .stinfo_box, .ai_line4 .bt_graphic, .ai_line4 .subinfo_bg, .ai_line4 .rst_line, .ai_line4 .r_dot{background-color:#049eec}
+.ai_line5 .st_line, .ai_line5 .stinfo_box, .ai_line5 .bt_graphic, .ai_line5 .subinfo_bg, .ai_line5 .rst_line, .ai_line5 .r_dot{background-color:#9e53dd}
+.ai_line6 .st_line, .ai_line6 .stinfo_box, .ai_line6 .bt_graphic, .ai_line6 .subinfo_bg, .ai_line6 .rst_line, .ai_line6 .r_dot{background-color:#ce7b2b}
+.ai_line7 .st_line, .ai_line7 .stinfo_box, .ai_line7 .bt_graphic, .ai_line7 .subinfo_bg, .ai_line7 .rst_line, .ai_line7 .r_dot{background-color:#869212}
+.ai_line8 .st_line, .ai_line8 .stinfo_box, .ai_line8 .bt_graphic, .ai_line8 .subinfo_bg, .ai_line8 .rst_line, .ai_line8 .r_dot{background-color:#f02e9f}
+.ai_line9 .st_line, .ai_line9 .stinfo_box, .ai_line9 .bt_graphic, .ai_line9 .subinfo_bg, .ai_line9 .rst_line, .ai_line9 .r_dot{background-color:#b09025}
+.ai_line10 .st_line, .ai_line10 .stinfo_box, .ai_line10 .bt_graphic, .ai_line10 .subinfo_bg, .ai_line10 .rst_line, .ai_line10 .r_dot{background-color:#5f8bc5}
+.ai_line11 .st_line, .ai_line11 .stinfo_box, .ai_line11 .bt_graphic, .ai_line11 .subinfo_bg, .ai_line11 .rst_line, .ai_line11 .r_dot{background-color:#faac25}
+.ai_line12 .st_line, .ai_line12 .stinfo_box, .ai_line12 .bt_graphic, .ai_line12 .subinfo_bg, .ai_line12 .rst_line, .ai_line12 .r_dot{background-color:#cd2b41}
+.ai_line13 .st_line, .ai_line13 .stinfo_box, .ai_line13 .bt_graphic, .ai_line13 .subinfo_bg, .ai_line13 .rst_line, .ai_line13 .r_dot{background-color:#68cba0}
+.ai_line14 .st_line, .ai_line14 .stinfo_box, .ai_line14 .bt_graphic, .ai_line14 .subinfo_bg, .ai_line14 .rst_line, .ai_line14 .r_dot{background-color:#45c39c}
+.ai_line15 .st_line, .ai_line15 .stinfo_box, .st_next, .ai_line15 .bt_graphic, .ai_line15 .subinfo_bg, .ai_line15 .rst_line, .ai_line15 .r_dot{background-color:#f4a721}
+.ai_line16 .st_line, .ai_line16 .stinfo_box, .ai_line16 .bt_graphic, .ai_line16 .subinfo_bg, .ai_line16 .rst_line, .ai_line16 .r_dot{background-color:#0aaf16}
+.ai_line17 .st_line, .ai_line17 .stinfo_box, .ai_line17 .bt_graphic, .ai_line17 .subinfo_bg, .ai_line17 .rst_line, .ai_line17 .r_dot{background-color:#0da1b4}
+.ai_line18 .st_line, .ai_line18 .stinfo_box, .ai_line18 .bt_graphic, .ai_line18 .subinfo_bg, .ai_line18 .rst_line, .ai_line18 .r_dot{background-color:#ff9d27}
+.ai_line19 .st_line, .ai_line19 .stinfo_box, .ai_line19 .bt_graphic, .ai_line19 .subinfo_bg, .ai_line19 .rst_line, .ai_line19 .r_dot{background-color:#c6c100}
+.ai_line20 .st_line, .ai_line20 .stinfo_box, .ai_line20 .bt_graphic, .ai_line20 .subinfo_bg, .ai_line20 .rst_line, .ai_line20 .r_dot{background-color:#ffb850}
+.ai_line21 .st_line, .ai_line21 .stinfo_box, .ai_line21 .bt_graphic, .ai_line21 .subinfo_bg, .ai_line21 .rst_line, .ai_line21 .r_dot{background-color:#2673f2}
+.mmark{position:absolute;z-index:5}
+.mmark_mask{position:absolute;z-index:20;left:0;right:0;top:0;bottom:0;background-color:#000;opacity:0.5;*opacity:0.5;height:120%;}
+.mmark.over{z-index:21;}
+.linebtn{position:relative;display:block;overflow:hidden;width:82px;height:88px;margin:0 auto;background-position:0 0;background-repeat:no-repeat;background-size:82px 88px}
+.linebtn  .ths_tbox1{display:block;position:absolute;left:0;right:0;top:20%;bottom:20%;overflow:hidden;padding:0 15px;text-align:center;box-sizing:border-box;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;white-space:nowrap}
+.linebtn  .ths_tbox1:after{display:inline-block;height:100%;vertical-align:middle;content:''}
+.linebtn  .ths_tbox2{display:inline-block;max-width:100%;white-space:normal;word-wrap:break-word;vertical-align:middle}
+.linebtn .ths_name{display:-webkit-box;overflow:hidden;margin:0;max-height:28px;font-size:1.077em;letter-spacing:-1px;line-height:1.077em;font-weight:600;text-align:center;white-space:normal;word-wrap:break-word;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-overflow:ellipsis; background-color:transparent}
+.linebtn .ths_num{display:-webkit-box;overflow:hidden;color:#000;font-size:1.0em;font-weight:400;letter-spacing:0;text-align:center;white-space:normal;word-wrap:break-word;-webkit-line-clamp:1;-webkit-box-orient:vertical;text-overflow:ellipsis}
+.linebtn.ai_line1{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_01.png)}
+.linebtn.ai_line2{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_02.png)}
+.linebtn.ai_line3{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_03.png)}
+.linebtn.ai_line4{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_04.png)}
+.linebtn.ai_line5{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_05.png)}
+.linebtn.ai_line6{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_06.png)}
+.linebtn.ai_line7{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_07.png)}
+.linebtn.ai_line8{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_08.png)}
+.linebtn.ai_line9{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_09.png)}
+.linebtn.ai_line10{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_10.png)}
+.linebtn.ai_line11{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_11.png)}
+.linebtn.ai_line12{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_12.png)}
+.linebtn.ai_line13{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_13.png)}
+.linebtn.ai_line14{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_14.png)}
+.linebtn.ai_line15{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_15.png)}
+.linebtn.ai_line16{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_16.png)}
+.linebtn.ai_line17{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_17.png)}
+.linebtn.ai_line18{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_18.png)}
+.linebtn.ai_line19{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_19.png)}
+.linebtn.ai_line20{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_20.png)}
+.linebtn.ai_line21{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_21.png)}
+.linebtn.ai_line00{background-image:url(/res_mseoulM/images/mobile/traffic/subway2016/linebtn_transfer.png)}
+.map_info{display:block;/*position:absolute; left:50%; top:144px;*/border:none;background-color:#FFF;box-shadow:0px 2px 3px 0px rgba(0, 0, 0, 0.6);-moz-box-shadow:0px 2px 3px 0px rgba(0, 0, 0, 0.6);-webkit-box-shadow:0px 2px 3px 0px rgba(0, 0, 0, 0.6);border-radius:6px;-moz-border-radius:6px;-webkit-border-radius:6px}
+.map_info .minfo_arrow{display:block;position:absolute;z-index:22;left:50%;top:-13px;margin-left:-8px;width:18px;height:10px}
+.map_info .minfo_arrow img{width:100%}
+.map_info .minfo_txtbox{display:block;padding:0 8px;height:40px;line-height:40px;text-align:center;font-size:0;white-space:nowrap;}
+.map_info .minfo_ico{display:inline-block;height:20px;margin-right:3px;vertical-align:middle}
+.map_info .minfo_ico img{width:auto;height:100%}
+.map_info .minfo_txt1{margin-right:3px;color:#333;font-size:15px;font-weight:600;letter-spacing:-0.5px;line-height:20px;vertical-align:middle}
+.map_info .minfo_txt2{color:#999;font-size:14px;font-weight:600;letter-spacing:-0.5px;line-height:20px;vertical-align:middle}
+.map_info .minfo_btnbox{position:relative;display:table;width:100%;height:54px;font-size:0;border-radius:0 0 6px 6px;-moz-border-radius:0 0 6px 6px;-webkit-border-radius:0 0 6px 6px;}
+.map_info .minfo_btn{display:table-cell;width:50%;min-width:70px;font-size:0;text-align:center;background:url(/images/mobile/traffic/subway2016/ico_linebt_bar.png) 0 6px no-repeat;background-size:2px 30px}
+.map_info .minfo_btn:first-child{background:none}
+.map_info .minfo_btn .ico{display:block;padding:10px 0 6px;height:20px;text-align:center}
+.map_info .minfo_btn .ico img{width:auto;height:100%}
+.map_info .minfo_btn .txt{display:block;color:#e7f2f7;font-size:12px;font-weight:600;letter-spacing:0.5px;text-align:center}
+.map_info.route{position:relative; margin-top:5px;height:60px;/*margin-left:-50px;top:88px;*/border:1px solid #53b2e0}
+.map_info .minfo_btn .txt{display:inline-block;color:#e7f2f7;font-size:12px;font-weight:600;letter-spacing:0.5px;text-align:center;white-space:nowrap}
+.route .minfo_btnbox2{position:relative;display:inline-block;padding-top:4px;height:56px;font-size:0;background:#3c9dcc;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;}
+.route .minfo_btn{display:table-cell;width:auto;min-width:60px;font-size:0;text-align:center;background:url(../images/ico_linebt_bar.png) 0 6px no-repeat;background-size:2px 30px}
+.route .minfo_btn:first-child{background:none}
+.route .minfo_btn .ico{display:block;padding:10px 0 6px;height:20px;text-align:center}
+.route .minfo_btn .ico img{width:auto;height:100%}
+/* 지하철 정보 박시인 추가 -----------------------------------------------------------------------------------------------------------*/
+
+
+/* 버스 노선 */
+.traffic_list.station{margin-bottom:-15px;padding-bottom:10px;background:url(/res_mseoul/images/traffic/bus/bg_route2.png) 135px 0 repeat-y}
+.station-warp{position:relative;width:100%;display:inline-block;padding:0;background-image:url(/res_mseoul/images/traffic/bus/bg_route_normal.png);background-repeat:no-repeat;background-position:131px 32px}
+.station-warp.return{background-image:url(/res_mseoul/images/traffic/bus/bg_route_return.png);}
+.station-warp.bustime{background:url(/images/bus/bg_bustime.png) 0 0 repeat-x #3bafda}
+.station-warp .station-item{position:relative;padding:27px 8px 20px 174px;font-size:0;line-height:0}
+.station-warp .station-tbox{display:inline-block;width:83%;white-space:normal;vertical-align:middle}
+.station-warp .station-txt1{display:inline-block;clear:both;margin-bottom:0.10em;height:1.154em;line-height:1.385em;font-size:14px;font-weight:600;letter-spacing:-1.0px;-webkit-box-orient:vertical;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;vertical-align:middle}
+.station-warp .station_txt2{display:inline-block;clear:both;height:1.385em;line-height:normal;color:#767676;font-size:14px;font-weight:600;letter-spacing:-0.5px;-webkit-box-orient:vertical;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;vertical-align: middle}
+.station-warp .businfo{position:absolute;width:159px;height:50px;left:3px;top:50%;margin-top:-25px}
+.station-warp .businfo.ing{margin-top:22px;z-index:3;}
+.station-warp .businfo img{width:100%;}
+.station-warp .businfo .businfo_a{position:relative;display:block;width:100%;height:100%;}
+.station-warp .businfo .info_txt{z-index:5;position:absolute;display:block;margin:10px 0 0 20px;text-align:center}
+.station-warp .businfo .info_txt strong{display:block;color:#FFF;font-size:0.923em;letter-spacing:-0.5px;line-height:1.05em;font-weight:600;}
+.station-warp.bustime{display:none; overflow:hidden}
+.jam{z-index:5;position:absolute;display:block;top:17px;right:50px;font-size:1.0em;letter-spacing:0px;line-height:1.05em;font-weight:600}
+.jam.relax{color:#d4ffa6}
+.jam.relax::after{content:'여유'}
+.jam.nomal{color:#fff076}
+.jam.nomal::after{content:'보통'}
+.jam.busy{color:#f000cc}
+.jam.busy::after{content:'혼잡'}
+
+.bustime{display:block;position: relative;}
+.bustime_item{display:block;text-align:center;position: relative;padding:20px 0;margin-left:145px;background:#0c82e9;}
+.bustime_item .jam{left:258px;right:auto;font-size: 14px;top:20px}
+.bustime_item .b-first span{display:inline-block;width:40%;color:#FFF;font-size:14px;letter-spacing:-0.5px;line-height:1.0em;font-weight:600;text-align:left;vertical-align: top}
+.bustime_item .b-first span:first-child{text-align:right;padding-left:0;padding-right:20px}
+.bustime_item .b_second span{display:inline-block;width:40%;color:#d8eff8;font-size:1.154em;letter-spacing:-0.5px;line-height:1.0em;font-weight:600;text-align:left;padding-left:20px}
+.bustime_item .b_second span:first-child{text-align:right;padding-left:0;padding-right:20px}
+.bustime_item .b-first.notime span, .bustime_item .b_second.notime span{padding-left:0;padding-right:0;text-align:center;letter-spacing:0;font-size: 14px;opacity: 0.6;}
+.bustime_item.type2{margin:16px 0 0;background:url(/res_mseoul/images/traffic/bus/bg_bustime3.png) 50% 0 repeat-y}
+.bustime_item.type2 li{padding-top:0}
+.go-busstop{display: inline-block;background: #fff;border:1px solid #767676;width:92px;height:38px;line-height:38px;text-align: center;position: absolute;right:30px;top:50%;margin-top:-19px}
+.bustime_item.type2 .b-first span{color:#333;margin-bottom:10px;font-size:1.385em}
+.bustime_item.type2 .b-first span:first-child{text-align:right;padding-left:0;padding-right:20px}
+.bustime_item.type2 .b_second span{color:#333;font-size:1.154em;font-weight:200;}
+.bustime_item.type2 .b_second span:first-child{text-align:right;padding-left:0;padding-right:20px}
+.bustime_item.type2 .b-first.notime span{padding:8px 0 0 0;text-align:center;letter-spacing:0;background-image:none;background-color:#FFF}
+.bustime_item.type2 .b-first.notime{background-color:#FFF}
+#traffic_map{float:left}
+.bt_con{padding:0;width:100%;border-bottom:1px solid #767676;padding-bottom: 40px}
+
+/* Slide Bar */
+.traffic_slide{position:relative;height:101px;border-bottom:1px solid #767676;background-color:#f3f9fe;overflow: hidden;}
+.traffic_slide .slaide_arrow{z-index:3;position:absolute;display:block;top:0;width:40px;height:43px;margin-left:-20px}
+.traffic_slide .slaide_arrow img{width:100%}
+.traffic_slide .slide_mask{z-index:2;position:absolute;display:table;width:100%;height:101px;overflow:hidden}
+.traffic_slide .slide_mask li{display:table-cell;height:101px;font-size:0;background:url(/res_mseoul/images/traffic/bus/bg_slide_bg.png) 0 0 repeat-x;background-size:contain}
+.traffic_slide .slide_mask li:after{display:block;clear:both;content:''}
+.traffic_slide .slide_mask .fix{width:29px;background:none}
+.traffic_slide .slide_bar{z-index:1;position:absolute;left:0;top:0;bottom:0;background-color:#aaaaaa}
+#wrapper {position:relative;z-index: 1;left: 0;width: 100%;overflow: hidden;margin-bottom:-15px;}
+#scroller {heigith:100%;z-index: 1;-webkit-tap-highlight-color: rgba(0,0,0,0);width: 100%;-webkit-transform: translateZ(0);-moz-transform: translateZ(0);-ms-transform: translateZ(0);-o-transform: translateZ(0);transform: translateZ(0);-webkit-touch-callout: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;-webkit-text-size-adjust: none;-moz-text-size-adjust: none;-ms-text-size-adjust: none;-o-text-size-adjust: none;text-size-adjust: none;}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {font-weight: normal;color: #555555;}
+.ui-slider-horizontal .ui-slider-handle {margin-left: -10px;}
+.ui-slider .ui-slider-handle {position: absolute;z-index: 2;width: 28px;height: 35px;cursor: default;top:25px}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {background:url(/res_mseoul/images/traffic/bus/btn_slidearrow.png) no-repeat; background-size:100% 100%;font-weight: normal;}
+.ui-widget-content {border: 1px solid #aaaaaa;background: #ffffff;color: #222222;}
+.ui-widget {font-family: Verdana,Arial,sans-serif;font-size: 1.1em;}
+.ui-slider-horizontal {height: .3em;}
+.ui-slider {position:absolute;z-index:none;}
+#traffic_slide {left:40px;right:50px;}
+.traffic_slide .slide_bar {top:70px;height:22px;left:-5px;padding-left:20px}
+
+/* nerest */
+.nearest:after{content:'';display: block;clear: both;}
+.nearest .list{float:right;width:344px;max-height:544px;overflow-y: scroll;border-top:1px solid #767676;border-bottom: 1px solid #767676}
+.nearest .list li{position: relative;padding:10px;border-bottom: 1px solid #dddddd}
+.nearest .list li a.icon-fav{position: absolute;right:37px;top:50%;margin-top:-13px}
+.nearest .list li .type{margin-top:5px}
+.h-menu{background: #f4f6f7;border-top:1px solid #767676;border-bottom:1px solid #767676;padding:20px 30px;position: relative;}
+.h-menu h4{font-weight: 700;font-size:20px}
+.h-menu h4 span{font-size: 14px;color:#555555}
+.h-menu.type2{padding:0;position: relative;}
+.h-menu.type2 h4{float:left;padding:26px 40px 26px}
+.h-menu.type2 .chk-box{position: absolute;right:20px;top:50%;margin-top:-10px}
+.h-menu.type3{text-align: center;padding:20px 0;border-bottom: 0}
+.h-menu:after{content:'';display: block;clear: both;}
+.h-menu ul{float:right}
+.h-menu ul li{float:left;border-left:1px solid #dddddd}
+.h-menu ul li a{display:block;width:70px;height: 71px;padding-top:10px;text-align: center;font-size: 14px;color:#555555}
+.h-menu ul li a span{display: block;padding-top:40px;color:#555555;font-size: 14px}
+.h-menu.around{padding:0;margin-bottom: 20px}
+.h-menu.around .search{position: absolute;width:344px;right:157px;top:20px}
+.h-menu.around .search .btn.tiny{background: #fff}
+.h-menu.around .search .btn.tiny span{min-width: 42px;}
+.h-menu.around .search input{background: #fff;width:250px; border:1px solid #ccc;}
+.h-menu.around .current {background: url(/res_mseoul/images/img_current_location.png) no-repeat top center}
+.h-menu.around .location2 {background: url(/res_mseoul/images/img_change_place.png) no-repeat top center}
+.h-menu.around .build {background: url(/res_mseoulM/images/mobile/poi/btn_build.png) no-repeat top center;background-size: 32px;}
+.h-menu.around h4{float:left;padding:27px 0 27px 25px}
+.nearest-detail .menu{background: #f4f6f7;border-top:1px solid #767676;border-bottom:1px solid #767676}
+.nearest-detail .menu:after{content:'';display: block;clear: both;}
+.nearest-detail .menu p{float:left;padding-left:20px;line-height: 80px}
+.nearest-detail .menu p span{ margin-top:25px;}
+.nearest-detail .menu p .stop-name{font-weight: 700;font-size: 20px}
+.nearest-detail .menu p .stop-number{font-size:20px;color:#555555;margin-left:10px;}
+.nearest-detail .menu p .stop-number strong{vertical-align: middle}
+.nearest-detail .menu ul{float:right}
+.nearest-detail .menu ul li{float:left;border-left:1px solid #dddddd}
+.nearest-detail .menu ul li a{display:block;width:70px;height: 71px;padding-top:10px;text-align: center;font-size: 14px;color:#555555}
+.nearest-detail .menu ul li a span{display: block;padding-top:40px;}
+.nearest-detail .bt_con{display: none}
+.nearest-detail .bt_con.active{display: block}
+.nearest-detail .text-list{display: none}
+.nearest-detail .text-list.active{display: block}
+.icon-text{background: url(/res_mseoul/images/bus_menu01.png) no-repeat top center}
+.icon-text.active{background: url(/res_mseoul/images/bus_menu06.png) no-repeat top center}
+.icon-favorite{background: url(/res_mseoul/images/bus_menu02.png) no-repeat top center}
+.icon-favorite.on{background:url(/res_mseoul/images/icon_favorite_on.png) no-repeat top center}
+.icon-location{background: url(/res_mseoul/images/bus_menu03.png) no-repeat top center}
+.icon-picture{background: url(/res_mseoul/images/bus_menu04.png) no-repeat top center}
+.icon-refresh{background: url(/res_mseoul/images/bus_menu05.png) no-repeat top center}
+.icon-gps{background: url(/res_mseoul/images/ico_gps.png) no-repeat top center}
+
+.bt_con li:after{display:block;clear:both;content:''}
+.bt_con li{position: relative;float:left;display:block;height:120px;margin-top:40px;width:20%;text-align:center}
+.bt_graphic{position:relative;display:inline-block;width:78px;height:90px;border:0;line-height:none}
+.bt_graphic:first-child{margin-left:0}
+.bt_graphic .bg_bus{z-index:2;position:absolute;left:0;top:0;right:0;bottom:0}
+.bt_graphic .bg_subway{z-index:2;position:absolute;left:0;top:0;right:0;bottom:0}
+.bt_graphic img{width:100%}
+.bt_graphic.line1{background-color:#1f84bf;}
+.bt_graphic.line2{background-color:#94c91d;}
+.bt_graphic.line3{background-color:#ffbb02;}
+.bt_graphic.line4{background-color:#ef363d;}
+.bt_graphic.line5{background-color:#029a6a;}
+.bt_graphic.line6{background-color:#d2bfa4;}
+.bt_graphic.line7{background-color:#a5a5a5;}
+.bt_graphic.line8{background-color:#8ea82a;}
+.bt_con.subway{border:0}
+.bt_con.subway li{width:50%;margin-top:0}
+.subway .bt_graphic .time{position:static}
+.bt_graphic .time{z-index:5;position:absolute;left:0;top:17px;width:100%;padding-left:2px;height:20px;color:#333;font-size:1.308em;letter-spacing:0px;line-height:0.8em;font-weight:600;text-align:center;}
+.bt_graphic .time span{display:inline-block;color:#777;font-size:0.75em;letter-spacing:-0.5px;font-weight:600;line-height:0.8em}
+.bt_graphic .busno{position:relative;margin:40px 2px 0;height:40px;}
+.bt_graphic .busno:after{display:block;clear:both;content:''}
+.bt_graphic .busno_box1{display:block;position:absolute;;left:0;right:0;top:0;bottom:0;overflow:hidden;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box; white-space:nowrap}
+.bt_graphic .busno_box1:after{display:inline-block;height:100%;vertical-align:middle;content:''}
+.bt_graphic .busno_box2{display:inline-block;width:100%;max-height:34px;color:#FFF;font-size:14px/*1.077em 1.154em*/;letter-spacing:-0.5px;line-height:1.15em;font-weight:600;overflow:hidden;white-space:normal;word-wrap:break-word;vertical-align:middle}
+.bt_graphic .subwayno{position:relative;margin:15px 2px 0;height:40px;z-index: 3;}
+.bt_graphic .subwayno:after{display:block;clear:both;content:''}
+.bt_graphic .subwayno_box1{display:block;position:absolute;;left:0;right:0;top:0;bottom:0;overflow:hidden;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box; white-space:nowrap}
+.bt_graphic .subwayno_box1:after{display:inline-block;height:100%;vertical-align:middle;content:''}
+.bt_graphic .subwayno_box2{display:inline-block;width:100%;max-height:34px;color:#333;font-size:14px/*1.077em 1.154em*/;letter-spacing:-0.5px;line-height:1.15em;font-weight:600;overflow:hidden;white-space:normal;word-wrap:break-word;vertical-align:middle}
+.bt_con .congestion{position: absolute;bottom:-33px;width: 100%;text-align: center;}
+.congestion .left-area .status.cs01{color:#ffb300}
+.congestion .left-area .status.cs02{color:#23db05}
+.congestion .left-area .status.cs03{color:#f000cc}
+.congestion .left-area strong{display: inline-block}
+.congestion .right-area strong{display: inline-block}
+.bus-head + .congestion ul li:last-child span,.bus-head + .congestion ul li:last-child strong{font-size: 14px}
+.bus-head + .congestion ul li:last-child strong{color:#555555}
+.congestion .left-area{border-right:1px solid #dddddd;margin-right:20px}
+.congestion span{display: inline-block;width:64px;height:26px;border-radius: 13px;line-height: 26px;color:#fff;font-size: 14px;margin:0 auto;}
+.congestion.cs01 span{background-color:#96d60b;}
+.congestion.cs02 span{background-color:#fcbd35;}
+.congestion.cs03 span{background-color:#ff6fe9;}
+.congestion span i{display: inline-block;width:17px;height: 12px;margin-right:2px;vertical-align: middle;background-repeat: no-repeat;background-position: left center}
+.congestion.cs01 span i{background-image:url(/res_mseoul/images/icon_cs01.png)}
+.congestion.cs02 span i{background-image:url(/res_mseoul/images/icon_cs02.png)}
+.congestion.cs03 span i{background-image:url(/res_mseoul/images/icon_cs03.png)}
+.bt_con .congestion span{display: inline-block;width:64px;height:26px;border-radius: 13px;line-height: 26px;color:#fff;font-size: 14px;margin:0 auto;}
+.bt_con .congestion.cs01 span{background-color:#96d60b;}
+.bt_con .congestion.cs02 span{background-color:#fcbd35;}
+.bt_con .congestion.cs03 span{background-color:#ff6fe9;}
+.bt_con .congestion span i{display: inline-block;width:17px;height: 12px;margin-right:2px;vertical-align: middle;background-repeat: no-repeat;background-position: left center}
+.bt_con .congestion.cs01 span i{background-image:url(/res_mseoul/images/icon_cs01.png)}
+.bt_con .congestion.cs02 span i{background-image:url(/res_mseoul/images/icon_cs02.png)}
+.bt_con .congestion.cs03 span i{background-image:url(/res_mseoul/images/icon_cs03.png)}
+.text-list{border-bottom:1px solid #767676}
+.text-list li:after{content:'';display: block; clear: both;}
+.text-list > li{padding:25px 20px;border-top:1px solid #ddd}
+.text-list > li:first-child{border-top:0}
+.text-list > li > div{float:left}
+.text-list > li > div.bus-head{width: 309px;padding-top:15px}
+.text-list > li > div.congestion{margin:0 90px 0 0}
+.text-list > li > div.congestion .left-area{float:left;width: 125px}
+.text-list > li > div.congestion .right-area{float:left;width: 70px}
+.text-list > li > div.next{width:255px;font-size: 14px;color:#767676;position: relative;}
+.text-list > li > div.next .icon-fav{position: absolute;right: 0;top:50%;margin-top:-13px}
+.text-list > li > div.next strong{color:#0c82e9}
+.layer.favorite{width:580px;height:397px;margin-left:-290px;margin-top:-200px}
+.basic-box .radio-set{text-align: center}
+.basic-box .radio-set span{margin-right:15px}
+.basic-box .tit{display: block;text-align: center;font-size: 20px}
+.layer.favorite .btn.bg-point span{font-size: 14px}
+.layer.favorite .basic-box{margin-top:40px}
+.step > ul{margin-bottom: 17px}
+.step > ul > li {float:left;width:282px;height:390px;background: #f4f6f7;margin-left:33px;text-align: center;padding:40px 0 30px;box-sizing: border-box}
+.step > ul > li:first-child{margin-left:0}
+.step > ul > li p{font-weight: 700}
+.step > ul > li p strong{font-size: 20px;margin-bottom: 10px;display: block}
+.step > ul > li .img{text-align: center}
+.step > ul:after{content:'';display: block;clear:both}
+.step  + ul li{color:#767676}
+.traffic-btn{display:inline-block;vertical-align:middle;width:26px;background-color:transparent;border:none;margin-left:20px}
+.traffic-btn img{width:100%}
+.sms-alram .txt2{font-size: 18px}
+.sms-alram li{position: relative;margin-top: 10px}
+.sms-alram li:first-child {margin-top: 0px}
+.sms-alram li input{width: 346px;}
+.sms-alram li input.disabled{background: #f4f6f7}
+.sms-alram li input::-webkit-input-placeholder { font-size: 14px }
+.sms-alram li input.disabled::-webkit-input-placeholder { color: #aaaaaa !important; font-size: 14px }
+.sms-alram li input.disabled::-moz-placeholder { color: #aaa; font-size: 14px }
+.sms-alram li input.disabled:-ms-input-placeholder { color: #aaa; font-size: 14px}
+.sms-alram li .btn{height: 38px;}
+.sms-alram li .btn.bg-white{border:1px solid #676767;height:39px}
+.sms-alram li .btn span{min-width:50px;}
+ul li.lile1 div{font-weight: 700;font-size: 18px;padding-left:30px;margin-bottom: 10px}
+ul li.lile1 div+select{margin-bottom:20px;font-size: 14px}
+ul li.lile1 select.disabled{background: #f4f6f7;color:#aaa}
+ul li.lile1 div.bus{background: url(/res_mseoul/images/traffic/bus/icon_bus.png) no-repeat left center}
+ul li.lile1 div.stop{background: url(/res_mseoul/images/traffic/bus/icon_stop.png) no-repeat left center}
+.btn.bg-white.btn-change{border:1px solid #767676}
+.btn.bg-white.btn-change span{min-width: 50px;}
+.alram-bottom{margin-top:40px}
+.alram-bottom ul.list-type li{font-size: 14px;color:#555}
+/**/
+.layer-popup.cong{width:582px;height:397px;margin-left:-291px;margin-top:-198px}
+.layer-popup.map{width:582px;height:547px;margin-left:-291px;margin-top:-273px}
+.layer-popup .pic-view{position: relative;margin-bottom: 18px}
+.layer-popup .pic-view img{vertical-align: top}
+.layer-popup .pic-view+.etc{color:#555}
+.layer-popup .pic-view span{position: absolute;width:166px;height:36px;right:0;bottom: 0;color:#fff;background:rgba(0,0,0,0.7);font-size: 14px;line-height: 36px;text-align: center}
+.layer-popup.cong .congestion{margin-bottom: 20px;line-height: 24px;position: relative;padding-left:137px;box-sizing: border-box}
+.layer-popup.cong .congestion span{text-align: center;float:left;position: absolute;left:40px}
+.layer-popup.cong .congestion:last-child{margin-bottom: 0}
+
+/*지하철*/
+.subinfo{position:absolute;width:30px;height:30px;left:0px;top:50%;margin-top:-6.5px}
+.subinfo_bg{height:100%;background-color:#1468be;}
+.subinfo.ing{margin-top:0px}
+.subinfo img{width:100%}
+
+ /* 지도 */
+.traffic_map{position:relative;margin-bottom:-15px}
+.traffic_map img{width:100%}
+.map_util{position:absolute;z-index:10;width:36px;top:12px;}
+.map_util.left{left:12px}
+.map_util.right{right:12px}
+.map_util a{display:block;width:36px;height:36px;}
+.map_util a img{width:100%}
+.map_util a.place{margin-bottom:12px}
+.map_util a.plus{height:37px}
+.mmark{position:absolute;z-index:5;}
+.mmark a{display:block;position:relative;width:26px;}
+.mmark.over{z-index:6;}
+.mapname{position:absolute;left:50%;top:-28px;margin-left:-27px;width:48px;height:20px;display:block;border:3px solid #3bafda;background-color:#FFF;color:#333; letter-spacing:-0.5px;text-align:center;line-height:20px;border-radius:20px;-moz-border-radius:20px;-webkit-border-radius:20px;}
+
+.noresult{padding:50px 0 30px;font-size:1.308em;text-align:center;font-weight:600}
+.noresult .subtxt{clear:both;display:block;margin-top:6px;color:#999;font-size:0.769em;;letter-spacing:-0.5px;line-height:1.4em;font-weight:100;text-align:center;padding:0 16px}
+
+/*도로소통*/
+.road-list{border-top:1px solid #767676;border-bottom: 1px solid #767676}
+.traffic_route:after{content:'';display: block;clear:both}
+.traffic_route li{float:left;width:50%;border-top:1px solid #dddddd}
+.traffic_route li.bdnone{border-top:0}
+.traffic_route li a{display:block;font-size: 14px;padding:20px 35px;background:url(../images/img_list_arrow.png) no-repeat 84% center;box-sizing:border-box;font-weight: 700}
+.road-map .select{margin-bottom: 20px}
+.road-map .select select{font-size: 14px}
+.road-map:after{content:'';display: block;clear:both}
+.road-map .legend:after{content:'';display: block;clear:both}
+.road-map .legend{margin:15px 0}
+.road-map .r-map{min-height:534px}
+.road-map .r-map img{vertical-align: top}
+.road-map .legend ul{float:left;width:70%}
+.road-map .chk-box{float:right}
+.traffic_legend:after{content:'';display: block;clear:both}
+.traffic_legend li{float:left;color:#fff;text-align: center;padding:5px 10px;margin-right:5px;font-size: 14px;border-radius: 15px;font-weight: 700}
+.traffic_legend li.color1 {background-color: #81c44e;}
+.traffic_legend li.color2 {background-color: #fdc742;}
+.traffic_legend li.color3 {background-color: #ff544c;}
+.traffic_legend li.color4 {background-color: #c0c0c0;}
+.stat{display: inline-block;color:#fff;text-align: center;font-size: 14px;padding:2px 10px;border-radius: 10px}
+.stat.stat01{background:#81c44e}
+.stat.stat02{background:#fdc742}
+.stat.stat03{background:#ff544c}
+.stat.stat04{background:#00aeef}
+.road-map.type02 > div:after{content:'';display: block;clear:both}
+.road-map.type02 .r-map{float:left;width:500px}
+.road-map.type02 .traffic-list{float:right;width:400px}
+.road-map.type02 .traffic_route li a{background:none;text-align: center;font-weight: 400;padding:25px 0}
+.road-map.type02 .traffic_route li a.active,.road-map.type02 .traffic_route li a:hover{color:#0c82e9;font-weight: 700}
+.acclist_sub{margin-top:20px;border-top:1px solid #767676;border-bottom: 1px solid #767676}
+.acclist_sub > dd{position:relative;padding:20px;min-height:100px;border-top:1px solid #d8dee4;background-color:#FFF;box-sizing:border-box;-webkit-box-sizing:border-box;-moz-box-sizing:border-box}
+.acclist_sub > dd:first-child{border-top:0}
+.acclist_sub > dd > a{display:block;margin-right:10px}
+.acclist_sub .acc_road{display:block;color:#333;font-size:16px;font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.acclist_sub .acc_type{color:#f93169;margin-right:5px;font-size:16px;font-weight: 700}
+.acclist_sub .acc_type::before{content:'['}
+.acclist_sub .acc_type::after{content:']'}
+.acclist_sub .acc_dtype{display:block;margin-top:10px;color:#333;font-size:18px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.acclist_sub .acc_txt{display:block;margin-top:10px;overflow:hidden;color:#333;font-size:14px;letter-spacing:0px;line-height:1.20em;white-space:normal;word-wrap:break-word}
+.acclist_sub .acc_date{color:#1b8bb5;margin-top:10px;display: block}
+.acclist_sub .acc_link{color:#1b8bb5;margin-top:10px;display: block}
+.cont-wrap .list li{float:left;height:152px}
+.cont-wrap .list li a{display: inline-block;width:110px;height:110px}
+.cont-wrap .list li a img{width:100%;height:100%}
+.board-list > ul{border-top:1px solid #767676;border-bottom: 1px solid #767676}
+.board-list > ul li{height:65px;border-top:1px solid #dddddd}
+.board-list > ul li:first-child{border-top:0}
+.board-list > ul li a{display:inline-block;width:672px;line-height: 65px;font-size: 14px;color:#222;font-weight: 700;padding-left:20px}
+.board-list > ul li span{display: inline-block;height:65px;line-height:65px;color:#767676}
+.borad-view .board-head{background: #f4f6f7;border-top:1px solid #767676;border-bottom:1px solid #767676;padding:25px 45px;box-sizing:border-box}
+.borad-view .board-head strong{font-size:20px}
+
+.r-map {width:100%;position:relative;text-align:center;}
+.r-map img {width:100%;}
+.r-map img.bg {position:absolute;top:0;bottom:0;left:0;right:0;z-index:10;}
+.traffic_legend.cw li.color1 {background-color: #d6e9fb;color: #000;}
+.traffic_legend.cw li.color2 {background-color: #77b4ee;color: #000;}
+.traffic_legend.cw li.color3 {background-color: #3a68b5;}
+.traffic_legend.cw li.color4 {background-color: #152f60;}
+
+/* Accident */
+.accident_con {margin:20px 0;}
+.accident_con .txt_con {overflow: hidden;display: block;margin:10px;padding: 10px 10px 14px;color: #4b5d68;font-size: 1.0em;font-weight: normal;line-height: 1.4em;letter-spacing: -0.5px;background-color: #f6f8fa;border: 0.5px solid #b1bac1;border-radius: 2px;-moz-border-radius: 2px;-webkit-border-radius: 2px;box-sizing: border-box;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;}
+.accident_con .txt_con .status {display: inline-block;margin: -4px 6px 0 0;padding: 0 8px;height: 20px;color: #FFF;font-size: 0.933em;letter-spacing: 0;line-height: 20px;font-weight: 600;vertical-align: middle;border-radius: 14px;-moz-border-radius: 14px;-webkit-border-radius: 14px;box-sizing: border-box;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;background-color: #f93169;}
+
+/* Button */
+.tb_btnbox{display:table;width:100%;margin:30px 0}
+.tb_btnbox li{display:table-cell;vertical-align:top}
+.tb_btnbox>.gab1{width:6px}
+.tb_btnbox>.basic_btn{display:block;text-align:center}
+.tb_btnbox .basic_btn button{display:inline-block;width:32%}
+.tb_btnbox>.basic_btn button+button{margin-left:6px}
+.basic_btnbox{padding:40px 10px 30px;height:42px;text-align:center;background-color:#FFF}
+.btn_basic{display:block;height:36px;line-height:34px;font-size:1.067em;font-weight:nomal;text-align:center;vertical-align:middle;letter-spacing:0;
+border-radius:2px;-moz-border-radius:2px;-webkit-border-radius:2px;
+box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;
+box-shadow:none;-moz-box-shadow:none;-webkit-box-shadow:none
+}
+.tb_btnbox.triple>.basic_btn>button:last-child{float:right}
+.tb_btnbox.triple>.basic_btn>button:first-child{float:left}
+.tb_btnbox.solo>.basic_btn{padding:0 40px;}
+.tb_btnbox.solo>.basic_btn button{width:100%}
+.btn_basic.btn_blue{color:#FFF !important;border:1px solid #3ba8ec;
+background-color:#2597e8; /* Old browsers */
+background-image: -moz-linear-gradient(top, #52baf1 0%,#2798e8 100%); /* FF3.6+ */
+background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#52baf1), color-stop(100%,#2798e8)); /* Chrome,Safari4+ */
+background-image: -webkit-linear-gradient(top, #52baf1 0%,##2798e8 100%); /* Chrome10+,Safari5.1+ */
+background-image: -o-linear-gradient(top, #52baf1 0%,##2798e8 100%); /* Opera 11.10+ */
+background-image: -ms-linear-gradient(top, #52baf1 0%,##2798e8 100%); /* IE10+ */
+background-image: linear-gradient(to bottom, #52baf1 0%,##2798e8 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#52baf1', endColorstr='#2798e8',GradientType=0 ); /* IE6-9 */
+}
+.btn_basic.btn_blue2{ color:#2597e8 !important;border:1px solid #38a5dd;
+background-color:#FFF; /* Old browsers */
+background-image: -moz-linear-gradient(top, #ffffff 50%, #eaf5fd 100%); /* FF3.6+ */
+background-image: -webkit-gradient(linear, left top, left bottom, color-stop(50%,#ffffff), color-stop(100%,#eaf5fd)); /* Chrome,Safari4+ */
+background-image: -webkit-linear-gradient(top, #ffffff 50%, #eaf5fd 100%); /* Chrome10+,Safari5.1+ */
+background-image: -o-linear-gradient(top, #ffffff 50%, #eaf5fd 100%); /* Opera 11.10+ */
+background-image: -ms-linear-gradient(top, #ffffff 50%, #eaf5fd 100%); /* IE10+ */
+background-image: linear-gradient(to bottom, #ffffff 50%, #eaf5fd 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#eaf5fd',GradientType=0 ); /* IE6-9 */
+}
+
+.board-list > ul{border-top:1px solid #767676;border-bottom: 1px solid #767676}
+.board-list > ul li{height:65px;border-top:1px solid #dddddd}
+.board-list > ul li:first-child{border-top:0}
+.board-list > ul li a{display:inline-block;width:672px;line-height: 65px;font-size: 14px;color:#222;font-weight: 700;padding-left:42px}
+.board-list > ul li span{display: inline-block;height:65px;line-height:65px;color:#767676;font-size: 14px}
+.board-view .board-head{background: #f4f6f7;border-top:1px solid #767676;border-bottom:1px solid #767676;padding:25px 45px;box-sizing:border-box}
+.board-view .board-head strong{font-size:20px}
+.board-view .board-cont{padding:30px 45px;border-bottom:1px solid #767676}
+/*재난행동요령*/
+.cont-wrap > div:after{content:'';display: block;clear: both;}
+.citizenship {padding:30px 0 0 8px}
+.citizenship li{float:left;height:152px;margin:0 20px 30px}
+.citizenship li a{display: inline-block;width:110px;height:110px;text-align: center}
+.citizenship li a img{width:100%;height:100%}
+.citizenship li a .txt{font-weight: 700;margin-top:20px}
+.etc{border-top:1px solid #888;padding:20px 45px;text-align: right}
+.etc2{padding:20px 0;text-align: right;font-size: 14px}
+/*날씨*/
+.sub-title{padding:25px 20px;font-size: 14px}
+.weather-wrap:after{content:'';display: block;clear: both;}
+.weather-wrap .weather-ico{float:left;width:336px;height:267px;position: relative;}
+.weather-wrap .weather-ico .ico{width:127px;margin:40px auto}
+.weather-wrap .weather-ico .txt{text-align: center;font-size: 14px}
+.weather-wrap.weather-ico .txt strong{font-size: 18px}
+.weather-wrap .WeatherForeCast{float: right;width:576px}
+table.table.type03{border:1px solid #dddddd;border-width: 1px 0 0 1px}
+table.table.type03 th{border-right:1px solid #ddd;border-bottom:1px solid #ddd;padding:18px 0;font-size: 14px;background: #f4f6f7;font-weight: bold}
+table.table.type03 td{border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align: center;padding:20px 0;font-size: 14px}
+table.table.type03 td strong{font-size: 14px}
+.btn-group.wt .btn span{min-width: 125px}
+.w-info h2{font-size: 16px;margin-bottom: 20px}
+.w-info p{font-size: 14px;color:#555;word-break: keep-all}
+.acco-wrap{margin-top:20px}
+.acco-wrap dl dt{margin-bottom: 11px}
+.acco-wrap dl dt.active{margin-bottom: 0}
+.acco-wrap dl dt a{display: block;background: #f5f5f5;border:1px solid #c4c4c4;padding:8px 0;border-radius: 8px;text-align: center;font-size: 14px;color:#555}
+.acco-wrap dl dd{display:none;position: relative;text-align: center;padding:30px 60px;color:#555555;font-size: 14px}
+.acco-wrap dl dt.active + dd{display: block;}
+.air-wrap{position: relative;}
+.air-wrap:after{content:'';display: block;clear:both}
+.air-wrap .air-map{float:left;width:500px}
+.air-wrap .air-type .radio-set{padding:30px 20px;box-sizing: border-box}
+.air-wrap .air-type .radio-set label{margin-left:65px}
+.air-wrap .air-type .radio-set label.first{margin-left: 30px}
+.air-wrap .air-info{float:right;width:400px}
+.air-wrap .airInfoTxt{margin-bottom:8px;}
+.air-wrap .air-wrap{position: relative;height: 100%;}
+.air-wrap .air-map{position: absolute;height:100%}
+.air-wrap .media >*{position: absolute;height:400px;width:100%;background:#fafafa}
+.air-wrap .air-info > p{text-align: center;padding:30px 0}
+.air-wrap .air-info > p strong{font-size: 14px;}
+.air-wrap .air-info table th,.air-wrap .air-info table td{padding:22px 20px 23px;}
+.aImgIconWrap{display: inline-block;vertical-align: middle;margin-right:8px}
+.dist-select{margin-bottom:20px}
+.btn-group.qt{display: flex;flex-wrap:wrap;justify-content: space-between}
+.airFigure table th,.airFigure table td{font-size: 14px}
+.h-menu.type3 + .airFigure table td:first-child{font-weight:700}
+.table.table-col th{background: #f4f6f7;font-weight:700}
+.table.table-col th.tac{border-right:1px solid #ddd}
+.table.table-col td.tac{text-align: center;border-right:1px solid #ddd}
+.layer-popup .acco-wrap dl dd{padding:15px 10px;word-break:keep-all}
+.fore-cast:after{content:'';display: block;clear:both}
+.fore-cast .radio-set2 label{width:30%}
+.fore-cast .radio-set2 label.last{width:auto}
+.fore-cast .radio-set2{padding:0 64px 20px}
+.fore-cast .status{text-align:center;margin:30px 0 20px;min-height: 65px;display: table;width:100%}
+.fore-cast .status > div{text-align: center;font-weight:700;font-size:14px;vertical-align: middle;display: table-cell;padding-bottom: 10px}
+.fore-cast .status > div.none{padding-bottom: 0}
+.fore-cast .status i{display:inline-block;width:24px;height:24px;position:relative;vertical-align: middle;margin-right:10px;}
+.fore-cast .status p{font-size:14px;display: table-row;}
+.fore-cast .status.st01 i{background: #0000FF;}
+.fore-cast .status.st02 i{background: #00FF00;}
+.fore-cast .status.st03 i{background: #FFFF00;}
+.fore-cast .status.st04 i{background: #FF9900;}
+.fore-cast .status.st05 i{background: #FF0000;}
+.fore-cast .status.st06 i{background: #861313;}
+.fore-cast .status.st07 i{background: #fff;border:1px solid #222222;box-sizing: border-box}
+.fore-cast .status.st07 i:after{content:'';width:12px;height:12px;background:#222222;position: absolute;left:50%;top:50%;margin-left:-6px;margin-top:-6px }
+.fore-cast .left-area,.fore-cast .right-area{float:left;width:50%}
+.table-wrap .title{display: block;background: #f5f5f5;border:1px solid #c4c4c4;padding:8px 0;border-radius: 8px;text-align: center;font-size: 14px;color:#555;margin: 20px 0}
+.table.table-row-col{border:1px solid #ddd;border-width:1px 0 0 1px}
+.table.table-row-col thead th,.table.table-row-col tbody th{background: #f4f6f7;font-weight: 700;font-size: 14px;vertical-align: middle;border-right:1px solid #ddd}
+.table.table-row-col td{border-right:1px solid #ddd}
+.table.table-row-col .tac{text-align: center}
+/*알바*/
+.subfont {font-size:10px;	position:relative;}
+.sort{position: relative;margin-bottom: 20px}
+.sort:after{content:'';display: block; clear: both;}
+.sort .count{float:left;font-size: 14px;}
+.sort .count strong{font-size: 14px}
+.sort .sort-order{float:right}
+.sort .sort-order ul li{float:left;padding:0 10px 0 11px;position: relative;}
+.sort .sort-order ul li:last-child{padding-right:0}
+.sort .sort-order ul li a{display: block;font-size: 13px}
+.sort .sort-order ul li.active a{color:#0c82e9;font-weight: 700}
+.sort .sort-order ul li:before{content:'';display: inline-block;width:1px; height: 14px;background:#222;position: absolute;left:0;top:50%;margin-top:-6px}
+.sort .sort-order ul li:first-child{padding-left:0;}
+.sort .sort-order ul li:first-child:before{display: none}
+.job-list{border:1px solid #767676;border-width: 1px 0 1px 0}
+.job-list li{border-top:1px solid #ddd;padding:20px;box-sizing: border-box;display:table;width:100%;}
+.job-list li:after{content:'';display:block;clear:both}
+.job-list li:first-child{border-top:0}
+.job-list li .fav{display:table-cell;width:28px;vertical-align: middle}
+.job-list li .fav i{display: inline-block;width:28px;height:24px;background:url(/res_mseoul/images/icon_favorite.png) no-repeat;text-indent:-9999px}
+.job-list li .fav i.on{background:url(/res_mseoul/images/icon_favorite_on.png) no-repeat}
+.job-list li .tel{display:table-cell;vertical-align: middle;font-weight:700;font-size:14px}
+.job-list li a{display: inline-block;width:670px;margin-left:20px;color:#767676;font-size:14px}
+.job-list li a .company{color:#0c82e9;font-size:14px}
+.job-list li a .title{color:#222;font-size:14px;font-weight:700;margin:10px 0}
+.job-list li a .area{font-size:14px;color:#767676}
+.job-type{margin-bottom:30px;}
+.job-type:after{content:'';display: block;clear: both}
+.job-type select{font-size:14px}
+.job-type select.half-type{float:left;width:445px}
+.job-type select.half-type:last-child{float:right}
+.job-view .btn-group{margin-bottom: 20px}
+.job-head{border:1px solid #767676;border-width: 1px 0 1px 0;padding:25px 0;margin-bottom: 20px}
+.job-head p.company{color:#0c82e9;font-weight: 700;font-size: 14px}
+.job-head p.title{font-size: 14px;margin:7px 0 14px}
+.job-head p.area{font-size: 14px}
+.job-cont{padding:25px 45px}
+.job-cont ul li{margin-bottom: 15px}
+.job-cont ul li span,.job-cont ul li strong{display: inline-block;}
+.job-cont ul li span{width:105px;color:#767676}
+.job-cont ul li strong,.job-cont ul li span.subway{width: 700px}
+
+.job-cont ul li span.subway{margin-left:-10px}
+.job-cont ul li span.subway > span{width:auto;margin:0 10px;vertical-align:top;}
+
+.job-cont ul.type2 li span{color:#0c82e9}
+.job-detail{border-bottom: 1px solid #767676}
+.job-cont ul li span.subway span{display: inline-block;font-weight: 700;color:#222}
+.job-cont ul li span.subway i{display: inline-block;width:45px;height:26px;margin-right:10px;vertical-align: middle}
+.job-cont ul li span.subway i.sub01{background: url(/res_mseoul/images/economy/img_subway_line01.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub02{background: url(/res_mseoul/images/economy/img_subway_line02.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub03{background: url(/res_mseoul/images/economy/img_subway_line03.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub04{background: url(/res_mseoul/images/economy/img_subway_line04.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub05{background: url(/res_mseoul/images/economy/img_subway_line05.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub06{background: url(/res_mseoul/images/economy/img_subway_line06.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub07{background: url(/res_mseoul/images/economy/img_subway_line07.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub08{background: url(/res_mseoul/images/economy/img_subway_line08.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub09{background: url(/res_mseoul/images/economy/img_subway_line09.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub10{background: url(/res_mseoul/images/economy/img_subway_line10.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub11{background: url(/res_mseoul/images/economy/img_subway_line11.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub12{background: url(/res_mseoul/images/economy/img_subway_line12.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub13{background: url(/res_mseoul/images/economy/img_subway_line13.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub14{background: url(/res_mseoul/images/economy/img_subway_line14.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub15{background: url(/res_mseoul/images/economy/img_subway_line15.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub16{background: url(/res_mseoul/images/economy/img_subway_line16.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub17{background: url(/res_mseoul/images/economy/img_subway_line17.png) no-repeat 0 0}
+.job-cont ul li span.subway i.sub18{background: url(/res_mseoul/images/economy/img_subway_line18.png) no-repeat 0 0}
+
+.realstate-cont{padding:25px 45px}
+.realstate-cont ul li{margin-bottom: 15px}
+.realstate-cont ul li span,.job-cont ul li strong{display: inline-block;}
+.realstate-cont ul li span{width:105px;color:#767676}
+.realstate-cont ul li strong{width: 700px}
+.realstate-cont ul.type2 li span{color:#0c82e9}
+.radio-set.arch{text-align: center;margin:30px 0}
+.radio-set.arch label{width:35%}
+.type-select label{margin-left:15px;color:#767676}
+.realstate{border-bottom:1px solid #767676}
+.realstate-head {border-color:#767676;border-width: 1px 0 1px 0;border-style: solid;padding:25px 20px;margin:20px 0}
+.realstate-head .name {font-size: 24px;font-weight: 700}
+.realstate-head .name em{font-weight: 400;font-size:18px;display: inline-block;margin-left:10px}
+.realstate .btn-group{margin-top:0;margin-bottom: 20px}
+.table-state {border:0;border-bottom: 1px solid #767676;margin-top:20px}
+.table-state th{background: #93a2b0;color:#fff;font-size: 14px;padding:13px 0;font-weight: 700}
+.table-state td{text-align: center;font-size: 14px;color:#222;padding:10px 0}
+.table-state tr:last-child td{border-bottom:0}
+.realstate .page-control{margin-bottom: 30px}
+.realstate .empty p strong{font-size:14px;padding:80px 0 0 0;background:url(/res_mseoul/images/img_empty.png) no-repeat top center}
+.realstate .acco-wrap{margin-top:20px;}
+.realstate .acco-wrap dl dt{margin-bottom: 11px;margin-bottom: 0;}
+.realstate .acco-wrap dl dt.active{margin-bottom: 0}
+.realstate .acco-wrap dl dt a{display: block;border:0;background:#fff;border-top:1px solid #767676;padding:20px 17px;border-radius: 0;text-align: left;font-size:14px;color:#555;font-weight: bold;background:url(/res_mseoul/images/img_acco_down.png) no-repeat 97% center;}
+.realstate .acco-wrap dl dt.active a{color:#0c82e9;;background:url(/res_mseoul/images/img_acco_up.png) no-repeat 97% center;border-bottom:1px solid #767676}
+.realstate .acco-wrap dl dt:last-of-type a{border-bottom:1px solid #767676}
+.realstate .acco-wrap dl dd{display:none;position: relative;text-align: center;padding:20px 0px;color:#555555;font-size: 14px}
+.realstate .acco-wrap dl dd table{margin-top:0}
+.appstore .acco-wrap{margin-top:20px;}
+.appstore .acco-wrap dl dt{margin-bottom: 11px;margin-bottom: 0;}
+.appstore .acco-wrap dl dt.active{margin-bottom: 0}
+.appstore .acco-wrap dl dt a{display: block;border:0;background:#fff;border-top:1px solid #767676;padding:20px 15px;border-radius: 0;text-align: left;font-size: 16px;color:#555;font-weight: bold;background:url(/res_mseoul/images/img_acco_down.png) no-repeat 97% center;}
+.appstore .acco-wrap dl dt.active a{color:#0c82e9;;background:url(/res_mseoul/images/img_acco_up.png) no-repeat 97% center;border-bottom:1px solid #767676}
+.appstore .acco-wrap dl dt:last-of-type a{border-bottom:1px solid #767676}
+.appstore .acco-wrap dl dd{display:none;position: relative;text-align: center;padding:0px;color:#555555;font-size: 14px}
+.appstore .acco-wrap dl dd table{margin-top:0}
+.appstore dd ul li{padding:20px 15px;border-bottom:1px solid #dddddd;box-sizing: border-box}
+.appstore dd ul li:after{content: '';display: block;clear:both}
+.appstore dd ul li .app-info{float:left;width:730px;height:60px;}
+.appstore .ty2 dd ul li .app-info{float:left;width:100%;height:80px;}
+.appstore dd ul li .app-info .thumb{float:left;width:60px;height:60px;margin-right:15px}
+.appstore .ty2 dd ul li .app-info .thumb img{margin-top:10px;border-radius: 5px;border:1px solid #ddd}
+.appstore dd ul li .app-info .thumb img{width:60px;height:60px}
+.appstore dd ul li .app-info .info{padding:3px 0}
+.appstore dd ul li .app-info .info p.txt{margin-top:8px}
+.appstore dd ul li .app-info .info p.url a{color:#0c82e9}
+.appstore dd ul li .app-info .info p,.appstore dd ul li .app-info .info p strong{font-size: 14px;text-align: left}
+.appstore dd ul li .app-store{float:right;width:132px;margin-top:10px}
+.appstore dd ul li .app-store ul:after{content:'';display: block;clear: both;}
+.appstore dd ul li .app-store ul li{float:left;width: 40px;height:40px;margin-left:10px;border-bottom:0;padding:0}
+.appstore dd ul li .app-store ul li:first-child{margin-left:0;width:32px}
+.appstore dd ul li .app-store ul li:first-child a{display: block;width:32px;height:40px}
+.appstore dd ul li .app-store ul li a{display: block;width:40px;height:40px}
+.appstore dd ul li .app-store ul li a span{display: block;width: 100%;height:100%;text-indent: -9999px;background: url(/res_mseoul/images/img_appstore.png) no-repeat 0 0}
+.appstore dd ul li .app-store ul li a span.app01{background-position: 0 0}
+.appstore dd ul li .app-store ul li a span.app02{background-position: -45px 0}
+.appstore dd ul li .app-store ul li a span.app03{background-position: -95px 0}
+
+.info-box{border-top:1px solid #767676;border-bottom:1px solid #767676;padding:35px 25px}
+.info-box .title{font-size: 24px;color:#0c82e9;font-weight: bold;margin-bottom: 30px}
+.info-box ul li{font-size: 14px;margin-top:45px}
+.info-box ul li:first-child{margin-top:0}
+.info-box ul li strong{font-size: 18px}
+.info-box ul li p{margin-top:10px}
+.info-box ul li img{vertical-align: middle;margin-right:5px}
+.map-area{height:500px;background:#eee;margin-bottom: 20px}
+.map-area > *{width:100%;height:500px}
+.current-location{position: absolute;width:386px;height: 147px;top:46px;left:-440px;background: url("/res_mseoul/images/info01.png") no-repeat 0 0;z-index:5000}
+.current-location .arrow{position:absolute;right:-84px;top:36px;width:76px;height:60px;background: url(/res_mseoul/images/arrow01.png) no-repeat 0 0}
+.current-location .bt-group{margin:80px auto 0;width:190px;text-align: center}
+.current-location .bt-group button{width:92px;height:52px;border:0;}
+.current-location .bt-group button.btn-ok{background: url(/res_mseoul/images/btn_current_ok.png) no-repeat 0 0}
+.current-location .bt-group button.btn-cancel{background: url(/res_mseoul/images/btn_current_cancel.png) no-repeat 0 0}
+.poi-search{position: absolute;width:480px;height: 265px;top:46px;left:-440px;background: url("/res_mseoulM/images/mobile/poi/cis_search.png") no-repeat 0 0;z-index:5000}
+.poi-search .arrow{position:absolute;right:40px;top:-66px;width:76px;height:60px;background: url(/res_mseoulM/images/mobile/poi/arrow03.png) no-repeat 0 0}
+.poi-search .bt-group{margin:80px auto 0;width:190px;text-align: center}
+.poi-search .bt-group button{width:92px;height:52px;border:0;margin-top: 18px;}
+.poi-search .bt-group button.btn-ok{background: url(/res_mseoulM/images/mobile/poi/btn_search2.png) no-repeat 0 0}
+.poi-search .bt-group button.btn-cancel{background: url(/res_mseoulM/images/mobile/poi/btn_cancle.png) no-repeat 0 0}
+.poi-search .bt-group .searchInput {width: 430px;height: 40px;line-height: 28px;	border-radius: 3px;border: none; background-color: white;margin-top: 50px;margin-left: -120px;}
+.basic-content{padding:20px 20px 0 20px}
+.basic-content .search-box{position: relative;width:100%;margin:20px auto 30px;padding-right:99px;box-sizing: border-box}
+.basic-content .search-box input{font-size: 14px}
+.basic-content .search-box .btn.tiny{position: absolute;right:0;top:0}
+.basic-content .search-box .btn.tiny span{min-width: 42px;}
+.addr-serach-list{border-top:1px solid #767676;border-bottom: 1px solid #767676;max-height: 290px;overflow: auto}
+.addr-serach-list ul li a{display: block;padding:18px 12px;box-sizing: border-box;}
+.addr-serach-list ul li{border-top:1px solid #ddd}
+.addr-serach-list ul li:first-child{border-top:0}
+.cur-address{position: relative;width:100%;padding-right:99px;height:40px;margin-bottom:20px;box-sizing: border-box}
+.cur-address strong{font-size:16px;height:40px;display: block;line-height:40px}
+.cur-address .btn{position: absolute;right:0;top:0}
+.cur-address .btn span{font-size: 14px}
+.description{font-size: 16px}
+.road p{font-size: 14px;margin-bottom: 10px}
+.map-select > p{padding:25px 15px 20px}
+.map-select .map-area{height:409px}
+.map-select .map-area > iframe,.map-select .map-area >* {position:absolute;width:100%;height:100%}
+.nr-list li{margin-bottom:20px}
+.nr-list li:last-child{margin-bottom:0}
+.nr-list li:after{content:'';display: block;clear:both}
+span.tt{color:#0c82e9;width:140px;display: inline-block;font-size:18px;font-weight: 700;}
+span.tt:before{content:'';display: inline-block;width:10px;height:10px;background:#33abf5;border-radius:50%;margin:0 10px 0 5px}
+.nr-list li span{display: inline-block;font-size:14px;font-weight: 700;}
+.nr-list li span.tt{color:#0c82e9;width:140px}
+.nr-list li span.tt:before{content:'';display: inline-block;width:10px;height:10px;background:#33abf5;border-radius:50%;margin:0 10px 0 5px}
+.nr-list.type2 li span{font-weight: 400;float:left;width:315px;letter-spacing: -0.8px;line-height: 40px;word-break: keep-all}
+.nr-list.type2 li span.tt{font-weight: 700;width:145px;}
+P.tt{color:#0c82e9;font-size:16px;font-weight: 700;margin-bottom: 20px}
+P.tt:before{content:'';display: inline-block;width:10px;height:10px;background:#33abf5;border-radius:50%;margin:0 10px 0 5px}
+.map-area.wty{height:299px}
+.st.st01{color:#0b4593}
+.st.st02{color:#df1e1e}
+.table.table-arch{border:1px solid #dddddd;border-width: 1px 0 0 1px}
+.table.table-arch th{background:#f4f6f7;font-weight: 700;vertical-align: middle}
+.table.table-arch th, .table.table-arch td{padding:10px 15px;font-size: 14px;border-right:1px solid #ddd;border-bottom: 1px solid #ddd;}
+.table.table-arch td{font-size: 14px}
+.table.table-arch td .percent{background: #ddd;position: relative;height:18px;border:1px solid #767676;overflow: hidden;}
+.table.table-arch td .plan span.graph{position: absolute;left:0;height:100%;width:0;background: #3294d2}
+.table.table-arch td .record span.graph{position: absolute;left:0;height:100%;width:0;background: #f15620}
+.table.table-arch td .percent .txt{position: absolute;right:0;text-align:right;height:18px;line-height:18px;color:#fff;top:-2px}
+.table.table-arch td .percent .txt em{color:#fff}
+.access dl dt{position: relative;background: #f2faff;padding:10px 16px}
+.access dl dt span.tt{width:auto}
+.access dl dt em{position: absolute;right:16px;color:#ff6600;font-size: 14px}
+.access dl dt em.able{color:#066c08}
+.access dl dd{padding:15px 30px;line-height: 40px;font-size: 14px}
+.p-image{margin-top:20px}
+.woman dl dt{position: relative;background: #f2faff;padding:10px 16px}
+.woman dl dt span.tt{width:auto}
+.woman dl dd{padding:15px 0px 15px 15px;line-height:24px;font-size: 14px;word-break: keep-all}
+.w-icon{text-align:center;margin-top:20px}
+.sort-wrap{padding:20px 0 0}
+.sort-wrap:after{content:'';display: block;clear:both}
+.sort-wrap .btn-group{float:left;width:250px;margin-top:0}
+.sort-wrap .btn-group .btn{height: 40px;}
+.sort-wrap .btn-group .btn span{background: url(../images/img_btn_check.png) no-repeat}
+.sort-wrap .btn-group .btn.checked{background:#0c82e9}
+.sort-wrap .btn-group .btn.checked span{background: url(../images/img_btn_checked.png) no-repeat;color:#fff}
+.sort-wrap .btn-group .btn span{font-size: 14px}
+.sort-wrap .input-wrap{float:right;width:50%}
+.sort-wrap .input-wrap input{width:356px}
+.search_li{height: 40px; line-height: 40px; width:100%; border-bottom: 1px solid #D8DEE4;}
+
+/* 버스.지하철정보 이용안내 추가 */
+.layer.bus_info, .layer.subway_info {width:850px; height:580px; margin-left:-425px; margin-top:-200px; overflow:auto;}
+.layer-body .top_text {color:#0c82e9; line-height:28px; background:#f4f6f7; border-top:1px solid #d0d0d0; border-bottom:1px solid #d0d0d0; padding:20px;}
+.layer-body .sub_title {font-weight:bold; color:#222; margin:50px 0 5px;}
+.layer-body .text_exp {color:#555;}
+.layer-body .text_exp_b {color:#555; text-align:center;}
+.layer-body .img_box {border:3px solid #ddd; padding:15px 0; text-align:center; margin:10px 0 5px;}
+.bus_info .btn-group, .subway_info .btn-group {margin-bottom:50px;}
+
+
+/* 임시 */
+#airMain .tabs ul li#airFc {display: none;}

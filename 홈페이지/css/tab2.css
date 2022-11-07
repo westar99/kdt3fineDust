@@ -19,6 +19,7 @@ h3 {
     margin: 0px auto;
     background: #ededed;
     max-width: 100%;/* 추가 이미지크기 자동조절*/
+    max-width: 100%;/* 추가 이미지크기 자동조절*/
     height: auto;/* 추가 이미지크기 자동조절 auto*/
     display: block;/* 추가 이미지크기 자동조절*/
     transition: 0.3s;
