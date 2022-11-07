@@ -16,8 +16,7 @@ body1{
     top:-1100px
 }
 iframe{
-    width: 43%;/* 추가 이미지크기 자동조절 43%*/
-    height: 100%;/* 추가 이미지크기 자동조절600px*/
+    
     overflow: hidden;/* 추가 이미지크기 자동조절*/
     left:0;right: 0;margin: 0 auto ;
    
