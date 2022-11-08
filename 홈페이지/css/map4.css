@@ -6,6 +6,7 @@ body{
 
 
 .top_nav{
+    z-index: 2;
     width:50%;
     left:0;right: 0;margin: 0 auto ;
     padding-top: 40px;
@@ -29,14 +30,32 @@ li{
     font-weight: 900;
     
 }
+.map{
+    z-index: 2;
+    width: 600px;/* 추가 이미지크기 자동조절 43%*/
+    height: 500px;/* 추가 이미지크기 자동조절600px*/
+    overflow: hidden;/* 추가 이미지크기 자동조절:넘어간건 숨김*/
+    left: 45px;top: 50px;right: 0;margin: 0 auto ;
+    padding:30px;
+    bottom: 10px;
+    /* min-width: 90px; */
+    position: relative;
+}
+
+.map img{
+    max-width: 100%;/* 추가 이미지크기 자동조절*/
+    height: auto;/* 추가 이미지크기 자동조절*/
+    display: block;/* 추가 이미지크기 자동조절*/
+    /* transition: 0.3s; */
+    opacity: 0;
+    transform: scale(1.1);
+}
+a{text-decoration: none;}
+
 outer{
-    
-    
     position:absolute;
     left:0;right:0;margin: 0px auto ;
-    /* top:500px;숨겨지지 않는 부분 */
-   
-    
+    z-index: 1;
 }
 #iframediv{
     
@@ -44,26 +63,20 @@ outer{
     left:0;right:0;margin: 0px auto ;
     OVERFLOW: hidden;
     width: 50%;
-    HEIGHT: 550px;
+    HEIGHT: 540px;
     TOP: 10px; 
     border:2px solid #333 ;
     border-radius: 10px;
-    
-   
 }
 iframe{
+    
     width: 430px;
     height: 550px;
-
-    top:-130px;
+    top:-150px;
     overflow: hidden;
     position:absolute;
-    
     left:0;right: 0;margin: 0px auto ;
     transform: scale(1.5);
-  
-
-
 }
 
 a{text-decoration: none;}
@@ -76,7 +89,7 @@ a{text-decoration: none;}
     background-color: rgb(230, 228, 245);/* beige*/
     position: relative;/*more의 위치기준을 news로 하기 위해*/
     left:0;right: 0;margin: 0px auto ;
-    margin-top: 45%;/* 50px*/
+    margin-top: 10px;/* 50px*/
     
     overflow: hidden;
     
@@ -120,12 +133,4 @@ a{text-decoration: none;}
 .news .date{
     float:right;
     color:#999;
-}
-.post{
-    text-align: center;
-    width: 500px;
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform: translate(-50%,-50%);
 }
