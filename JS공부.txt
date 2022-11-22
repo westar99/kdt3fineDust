@@ -1,0 +1,200 @@
+const:절대로 바뀌지 않는 상수.수정불가.대문자로 이름 지정
+alert('삭제되었습니다.');->확인버튼만 있음
+prompt('예약일을 입력하세요'.'2020-10-');->취소시 null값반환
+confirm('구독을 취소하시겠습니까?');->true.false를 반환
+Number(null)//0  Number(undefined)//Nan Number(0)//false Number('0')//true Numver('')//false Numver(" ")//true
+===일치연산자. 값 형태 모두 동일해야 한다.
+함수선언문:어디서든 호출가능(이유:JS는 함수들을 먼저 계산하는 호이스팅현상 발생)
+함수표현식: 중간에 =를 집어넣어서 코드에 도착하면 생성
+화살표 함수(자신만의 this가 없기에 외부에서 값을 가져오니 조심할것)
+let add = function(num1,num2)   {return num1+num2;}
+let add =           (num1,num2)=>{return num1+num2;}
+객체Object
+const superman={name:'clark', age:'33',}
+접근방법: "."사용 ex)superman.name//clark superman['age']//33
+추가: ex)superman.gender='male'; superman['hairColor']='black';
+삭제: ex)delete superman.hairColor;
+프로퍼티 존재 여부 확인:'birthDay'in superman;//false 'age'in superman;//true
+for in 반복문(key는 슈퍼맨이 가지고 있는 프로퍼티)
+for(let key in superman){console.log(key) console.log(superman[key])}
+const user={name:'mike',sayHello:function(){console.log(`hello.iam ${this.name}`);}}/*여기서 디스는 유저를 말함//hello iam mike
+
+
+쳅터 1
+assign1.부여하다2.할당하다3.지정하다4.정하다
+ca user2 = object.assigh({},user);
+user2.name = mike ->user2에 name이라는 key에 value로 mike를 넣어라. 
+ca result = object.value(user); console.log(result); mike
+ca result = object.key(user);->name
+ca result = object.entries(user);->["name";"mike"]
+let x= Number('x');//nan 
+isNaN(x)//true
+챕터 2 수학
+매스)
+올림		ceil [실] 1.칠하다2.대다3.천장을 치다
+Math.ceil(5.1) //6
+내림		floor[플로우]1.바닥2.의원3.층4.	마루5.발언권
+Math.floor(5.1)//5
+반올림
+Math.round(5.1)//5
+예)
+소수점2번째에서 반올림->let userRate=30.1234
+	 Math.round(userRate*100)/100 //30.12 or
+ 	userRate.toFixed(2)//"30.12" (2)를 (0)으로 하면 30(문자)
+	->Number(userRate.toFixed(2))//30.12 넘버는 문자를 숫자로 바꿔줌  
+perseInt()는 문자와 숫자가 혼용되도 사용가능함  parseInt(10px)//10 Number(10 px)//Nan
+perseFloat()는 파스인트와 비슷하지만 부동소숫점을 표현함.
+임의의 숫자
+1-100사이의 임의의 숫자 뽑기 ->Math.floor(Math.random()*100)+1
+절대값		absolute
+Math.abs(-1)//1
+제곱		power
+Math.pow(2,10);//2의 10승 1024
+제곱근
+Math.sqrt(16)//4
+
+챕터3 문자열
+html은 ' '사용(안에""); 문장은""(안에' ') ;$은 ``(백틱)사용
+백틱은 여러줄을 사용 가능하나 ' '는 \n을 사용해야 한다.
+문자열 길이측정		가입 ID
+let dec='안녕하세요'; dec.length//6 ;desc[2]//'하' ->배열처럼 글자를 읽을 수 있지만 바꿀 수는 없다.
+대소문자 변경
+let dec="hi" ; dec.toUpperCase();//"HI"->toLowCase();소문자로 변경하는 함수
+글자 몇번째
+dec.indexof('hi');//0->없으면 (nam)//-1
+if(dec.indexof('hi')>-1){console.log('hi가 포함된 문장입니다.');}->금칙어를 만들어 주려면 -1을 넣어줘야 함:include도 사용
+특정범위의 문자열 반환
+dec.slice(n.m) str.substring(n.m)n과 m사이의 문자; str.substr(n.m)n에서 시작해서 m개의 문자;
+앞뒤공백제거
+str.trim();
+n번반복
+str.repeat(3);//"hellohellohello"
+
+챕터4 배열Array
+push():뒤에 삽입 
+pop():뒤에 삭제
+unshift():앞에 삽입
+shift():앞에 삭제
+특정요소 지움
+arr.splice(시작수,갯수); 0부터 시작하는거 기억
+arr.splice(시작수,갯수,추가)->지운 자리에 추가
+삭제된요소 반환
+let arr=[1,2,3,4,5]; let result=arr.splice(1,2); console.log(arr);//[1,4,5] console.log(result);//[2,3]
+합쳐서 새배열반환
+let arr=[1,2]; arr.concat([3,4]);//[1,2,3,4]
+배열 내부를 분해 
+let users=["mike","tom","ahn"]; users.forEach((item,index,arr)=>{});
+users.forEach((name,index)=>{console.log(`${index+1}.${name}`);}); //1.mike 2.tom 3.ahn
+포함하는지 확인(참거짓)
+arr.includes(2);//true
+함수를 사용해서 찾기->첫번째 true값만 반환하고 끝, 없으면 undefined를 반환
+arr.find(fn)/arr.findIndex(fn)
+
+ex) ->짝수를 찾고 리턴값이 true일 때 멈춰 
+let arr=[1,2,3,4,5]; const result = arr.find((item)=>{return item %2 ===0;}); console.log(result); //2 
+
+ex)->미성년자를 찾아라.
+let userList=[{name:"mike",age:30},{name:"tom",age:20}.{name:"ahn",age:10},];
+const result = userList.find((user)=>{
+	if(user.age<19){
+	return true;
+	}
+	return false;
+	}); 
+console.log(result);//{name:"ahn", age:10}
+userList.findIndex는 조건에 맞는 인덱스를 찾음 //2
+
+조건에 맞는 모든 미성년자를 찾으려면 find대신 fillter를 사용해주면 됌
+
+역순으로 재정렬->최근가입된 유저부터 보여주기,게시판에서 가장 최근에 작성된 글 순서 보여주기
+arr.reverse()
+
+함수를 받아 특정기능을 시행하고 새로운 배열을 반환
+let newUserList = userList.map((user,index)=>{
+	return Object.assign({},user,{
+	  isAdult: user.age>19,
+	});
+}); console.log(newUserList)// [0:{name:"mike", age:30,isAdult: true} 1:{name:"tom", age:20,isAdult: true} 2:{name:"ahn", age:10,isAdult: false}]
+
+배열을 합해 줌
+let  result=arr.join("-"); console.log(result); //안녕 - 나는 - 철수야 ()안에 안넣어주면 ,로 구분
+배열을 분해해줌
+cont result=user.split(",")~//["mike","jane","tom","tony"]
+배열인지 확인해 보려면
+console.log(Array.isArray(user));//false   console.log(Array.isArray(userList));//true console.log(typeof user);//object
+배열의 재정렬	->문자로 판단
+arr.sort()
+숫자로 재정렬
+arr.sort((a,b)=>{return a-b;}); ->리턴값이 음수이면 a가 앞으로가고 양수이면 b가 앞으로 감
+Lodash라이브러리를 이용하면 _.sortBy(arr); 쉬움.
+배열의 모든 수합치기(누적계산값,현재값)
+const result = arr.reduce((prev,cur)=>{ return prev+cur;},0);
+배열 중 성인만 찾기
+let result = arr.reduce((prev,cur)=>{if(cur.age>19){prev.push(cur.name);}return prev;}.[]) 
+구조분해할당
+[a,b]=[b,a]
+
+전달받은 수를 모두 더해줌
+function add(...numbers){
+let result = 0;
+numbers.forEach(num)=>(result+=num));//let result=numbers.reduce((prev,cur)=>prev+cur);
+console.log(result);
+}
+add(1,2,3,4,5,6,7,8,9,10);//55
+
+객체를 만들어주는 함수(나머지 매개변수를 사용)
+function User(name,age,...skills){
+ this.name =name;
+ this.age=age;
+ this.skills=skills;}
+const user1 =new User("Mike",30,"html","css");
+const user2 =new User("tom",20,"js");
+
+전개구문(spread syntax))배열
+let arr1 = [1,2,3];
+let arr2 = [4,5,6];
+let result =[0,...arr1,...arr2,7,8,9];//[0,1,2,3,4,5,6,7,8,9]
+let arr = [1,2,3];
+let arr2 =[...arr];//[1,2,3] 복제가 아주 쉽다!!!
+
+전개구문[4,5,6,1,2,3]
+arr2.reverse().forEach((num)=>{arr1.unshift(num);});
+or arr1=[...arr2,...arr1](아주 쉽다)
+
+클로저(Closure)
+- 함수와 렉시컬 환경의 조합, 함수가 생성될 당시의 외부변수를 기억, 생성 이후에도 계속 접근가능
+function makeCounter(){
+ let num = 0; //은닉화
+ return function(){
+	return num++;
+ };
+}
+let counter = makeCounter();
+console.log(counter());//0
+console.log(counter());//1
+console.log(counter());//2->값을 임의로 변경이 불가
+
+일정시간이 지난후 함수 실행
+funtion fn(){console.log(3)}
+setTimeout(fn,3000);//*3초후 fn함수를 실행하라.
+function ShowName(name){console.log(name);} /*인수가 필요하면 시간 뒤에 적어줌
+setTimeout(showName,3000,'kim');/*취소시키려면 clearTimeout(함수)을 사용
+일정시간 간격으로 함수를 반복
+const tId=setInterval(showName,3000,'mike');/*clearInterval(tId);
+
+함수에 this값을 지정해주는 매서드
+call	call메서드는 모든 함수에서 사용할 수 있으며 this를 특정값으로 지정할 수 있다.
+apply	apply는 함수 매개변수를 처리하는 방법을 제외하면 call과 완전히 같다.매개변수를 배열로 받는다.
+const minNum = Math.min.apply(null,nums);//=Math.min,apply(null,[3,10,1,5,6])/*어플라이는 어레이로 받는다.
+const maxNum = Math.max.apply(null,...nums);//=Math.min,apply(null,3,10,1,5,6)
+
+객체가 가지고 있는 프로퍼티 확인을 위해 프로토 타입.
+user.hasOwnProperty('name')//true(or) false
+benz._proto_=car;/*카를 상위객체로 만들고 벤츠로 하여금 상속을 받게 함. 카는  프로토 타입으로 저장됨.
+
+콜백함수->어떤일이 실행된 뒤에 행해지는 함수.
+generator-->함수의 실행을 중간에 멈췄다가 재개할 수 있는 기능.
+ next(),return(),throw()
+
+
+

@@ -29,7 +29,7 @@ h3 {
     padding: 2vw; box-sizing: border-box;
     border-top: 1px solid #ccc;
     background-color: #fff;
-    font-size: 3vw;/* 50px; */
+    font-size: 3vw;/*50px ; */
 
 }
 .gallery .tabContents h3{
@@ -41,7 +41,7 @@ h3 {
 }
 .gallery .tabContents p{
     width: 100%; height: 30px;/* width: 100%; height: 30px; */
-    font-size: 1.5vw;
+    font-size: 20px;/* 1.5vw; */
 }
 .gallery .tabContents img{
     display: block;

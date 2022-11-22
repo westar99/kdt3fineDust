@@ -16,6 +16,7 @@
 
     <outer>
         <div id="iframediv">
+            <!-- <div class="dust"></div> -->
             <iframe src="https://www.seoul.go.kr/mseoul/eco/air/AirMain.do"  scrolling="no" aligh="middle" > iframe이 있어던 자리 입니다 </iframe>
         </div>
     </outer>
@@ -81,5 +82,22 @@
         
     </div>
 
+    <script>
+        function creatDust(){
+
+            const el = document.createElement("div");
+            el.classList.add('dust');
+            el.style.marginLeft=randomPosition()+'px';
+            document.getElementById('iframediv').appendChild(el);
+            // 아이프레임디브에 들어가게 할 수가 없다.ㅂㅂ.따옴표까먹음.
+        }
+        function randomPosition(){
+            return Math.floor(Math.random()*window.innerWidth);
+        }
+        for(let i=0;i<300;i++){
+            creatDust();
+        }
+        createDust();
+    </script>
 </body>
 </html>
